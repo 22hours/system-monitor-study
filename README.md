@@ -29,8 +29,8 @@
 
 1. [레지스트리 개념과 키(Key)의 열기/닫기](https://jongwuner.github.io/2019/09/08/레지스트리-키의-열기,닫기/)
 2. [레지스트리 키(Key)의 조회/생성/삭제](https://jongwuner.github.io/2019/10/03/레지스트리-키의-조회,생성,삭제/)
-3. [레지스트리 값(key)의 조회/생성/삭제 (1)](https://jongwuner.github.io/2019/10/03/레지스트리-기본값의-조회,수정/)
-4. [레지스트리 값(key)의 조회/생성/삭제 (2)](https://jongwuner.github.io/2019/10/03/레지스트리-기본값의-조회,수정/)
+3. [레지스트리 값(Value)의 조회/생성/삭제 (1)](https://jongwuner.github.io/2019/10/03/레지스트리-기본값의-조회,수정/)
+4. [레지스트리 값(Value)의 조회/생성/삭제 (2)](https://jongwuner.github.io/2019/10/03/레지스트리-기본값의-조회,수정/)
 
 ##### -----PDH(Performance Data Helper) 
 
