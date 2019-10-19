@@ -5,11 +5,14 @@ int main() {
 	int testCases;
 	scanf("%d", &testCases);
 	while (testCases--) {
+		// input
 		double a, b, x, y, k;
 		scanf("%lf%lf%lf%lf%lf", &a, &b, &x, &y, &k);
 
 		double A = ceil(a / x);
 		double B = ceil(b / y);
+		
+		//algorithm
 		if (A + B > k) {
 			printf("-1\n");
 		}
