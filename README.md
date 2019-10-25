@@ -16,6 +16,11 @@
 -> 제품에 포함<br>
 
 <br><br>
+# How-to
+1. Kanban board :+1:
+2. Issues
+3. Pull Request
+4. Milestone<br><br>
 
 # Reference
 
