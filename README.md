@@ -17,8 +17,10 @@
 
 <br><br>
 # How-to
-1. Kanban board :+1:
+1. Kanban board:+1:
+- **거시적인** 프로젝트의 흐름과 **모듈별** 개발과정을 한 눈에 보여줌 
 2. Issues
+- **의견공유** 및 **개진**을 위해 소통수단으로 사용중.
 3. Pull Request
 4. Milestone<br><br>
 
