@@ -21,10 +21,10 @@
 1. Kanban board:+1: **거시적인** 프로젝트의 흐름과 **모듈별** 개발과정을 한 눈에 보여줌 
 2. Issues : **의견공유** 및 **개진**을 위해 소통수단으로 사용중.
 3. Pull Request : 
-   -  `Sketch`를 통해 **Test-ing**
    -  `Merging`이랑 `Pull Rueset` 구분
-4. Milestone<br><br>
-5.  Branch
+   - `Pull Request` -> `Code Review`
+4. Milestone : Grouping `Issues`
+5. Branch : `Issue` 별로 생성
 
 # Reference
 
