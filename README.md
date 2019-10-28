@@ -24,6 +24,7 @@
    -  `Sketch`를 통해 **Test-ing**
    -  `Merging`이랑 `Pull Rueset` 구분
 4. Milestone<br><br>
+5.  Branch
 
 # Reference
 
