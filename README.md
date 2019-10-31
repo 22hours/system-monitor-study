@@ -7,20 +7,25 @@
 
 * **추상적인 방향성 : 다솔관 PC 관리 에이전트**<br>
 
-2. **기획(모듈단위)**
+2. **기획(모듈단위)**<br>
 -> 기술조사 <br>
 -> 기술연구 <br>
 -> poc작성 <br>
 -> 모듈개발 <br>
+-> UI 명세 <br>
 -> 모듈화 <br>
 -> 제품에 포함<br>
 
 <br><br>
+
 # How-to
-1. Kanban board 
-2. Issues
-3. Pull Request
-4. Milestone<br><br>
+1. Kanban board:+1: **거시적인** 프로젝트의 흐름과 **모듈별** 개발과정을 한 눈에 보여줌 
+2. Issues : **의견공유** 및 **개진**을 위해 소통수단으로 사용중.
+3. Pull Request : 
+   -  `Merging`이랑 `Pull Rueset` 구분
+   - `Pull Request` -> `Code Review`
+4. Milestone : Grouping `Issues`
+5. Branch : `Issue` 별로 생성
 
 # Reference
 
