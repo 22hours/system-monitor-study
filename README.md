@@ -1,6 +1,10 @@
 # **system-monitor-study**
 :computer: Catholic Univ PC Remote Management System.<br>
 <br><br>
+# Architecture
+![image](https://user-images.githubusercontent.com/16419202/68312879-0c35dc80-00f7-11ea-8466-41156b55b2e9.png)
+
+
 # To-do
 1. **전체적인 기획부터 잡는 것이 아니라, 추상적인 방향성을 가지고,**<br> 
 모듈단위에서부터 개발하자<br>
