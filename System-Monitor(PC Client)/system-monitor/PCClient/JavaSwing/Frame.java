@@ -1,29 +1,28 @@
-package Client;
+package PCClient.JavaSwing;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import HttpServer.PCServer;
+import PCServer.PCServer;
+import PCClient.Module.*;
 
 public class Frame {
 
 	public static void main(String[] args) {
-		PCServer test = new PCServer();
-		// TODO Auto-generated method stub
+		//PCServer test = new PCServer();
 		JFrame frame = new JFrame();
 		JPanel panel = new JPanel();
 		JLabel label = new JLabel("22Hours");
 		JButton btn1 = new JButton("Click");
 		JButton btn2 = new JButton("Exit");
-		JTextArea textArea = new JTextArea();
+		final JTextArea textArea = new JTextArea();
 		JPanel btnPanel = new JPanel();
 		btnPanel.add(btn1);
 		btnPanel.add(btn2);
@@ -34,7 +33,9 @@ public class Frame {
 		btn1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				textArea.append("22Hours Cheer Up!!");
+				textArea.append("22Hours CopyRight\n");
+				textArea.append(CPU.getCPU().showCPU());
+				textArea.append(Memory.getMemory().showMemory());
 			}
 			
 		});
