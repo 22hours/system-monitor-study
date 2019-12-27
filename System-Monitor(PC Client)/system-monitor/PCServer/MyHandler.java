@@ -1,4 +1,4 @@
-package HttpServer;
+package PCServer;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -49,10 +49,10 @@ public class MyHandler implements HttpHandler{
 	private String decode(String str) {
 		try {
 			return URLDecoder.decode(str,"UTF-8");
-			
 		}
 		catch(UnsupportedEncodingException e) {
 			return "?";
 		}
+		
 	}
 }
