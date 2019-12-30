@@ -16,7 +16,7 @@ import PCClient.Module.*;
 public class Frame {
 
 	public static void main(String[] args) {
-		//PCServer test = new PCServer();
+		PCServer test = new PCServer();
 		JFrame frame = new JFrame();
 		JPanel panel = new JPanel();
 		JLabel label = new JLabel("22Hours");
