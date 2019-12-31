@@ -5,7 +5,7 @@
 ![image](https://user-images.githubusercontent.com/16419202/71482833-01bad800-2848-11ea-92d8-d36137462694.png)
 
 
-# To-do
+# Process
 1. **전체적인 기획부터 잡는 것이 아니라, 추상적인 방향성을 가지고,**<br> 
 모듈단위에서부터 개발하자<br>
 
@@ -30,6 +30,11 @@
    - `Pull Request` -> `Code Review`
 4. Milestone : Grouping `Issues`
 5. Branch : `Issue` 별로 생성
+
+# Repo
+- `~/dev` : 개발의 뼈대
+- `~/exercise` : 개발에 필요한 예제 및 연습
+- `~/module` : 뼈대에 포함되는 모듈
 
 # Reference
 
