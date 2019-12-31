@@ -2,7 +2,7 @@
 :computer: Catholic Univ PC Remote Management System.<br>
 <br><br>
 # Architecture
-![image](https://user-images.githubusercontent.com/16419202/68312879-0c35dc80-00f7-11ea-8466-41156b55b2e9.png)
+![image](https://user-images.githubusercontent.com/16419202/71482833-01bad800-2848-11ea-92d8-d36137462694.png)
 
 
 # To-do
