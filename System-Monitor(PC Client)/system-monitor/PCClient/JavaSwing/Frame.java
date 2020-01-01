@@ -10,13 +10,19 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import PCServer.PCServer;
+import PCClient.Http.PCGet;
+import PCClient.Http.PCPost;
 import PCClient.Module.*;
 
 public class Frame {
 
 	public static void main(String[] args) {
-		PCServer test = new PCServer();
+		try{
+			PCPost.Instance().PostMethod();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
 		JFrame frame = new JFrame();
 		JPanel panel = new JPanel();
 		JLabel label = new JLabel("22Hours");
