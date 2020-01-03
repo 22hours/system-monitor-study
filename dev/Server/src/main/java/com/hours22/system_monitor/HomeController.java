@@ -2,15 +2,22 @@ package com.hours22.system_monitor;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Handles requests for the application home page.
@@ -145,4 +152,30 @@ public class HomeController {
 		model.addAttribute("ramdata", "22.41%" );
 		return "pc_ramdata";
 	}
+	
+	// JSON Get
+	@RequestMapping(value = { "/test/call/{id}" })
+	@ResponseBody
+	public Map testCall(HttpServletRequest request, @PathVariable Long id){
+		int idx = Integer.valueOf(id.toString());
+				/*
+				 * 	private boolean power_status;
+			private int id;
+			private String name;
+			private int cpu_data;
+			private int ram_data;
+				 */
+		
+		Map result = new HashMap<String, String>();
+		result.put("power", (pc[idx].get_power_status() == true) ? "ON" : "OFF");
+		result.put("name", pc[idx].get_name());
+		return result;
+	}
+	// JSON Post
+	  @RequestMapping(value="/test/call/{id}", method=RequestMethod.POST)
+	  public void test(@RequestBody PC tpc, ModelMap map, @PathVariable Long id) {
+	      logger.debug("TestForm : {}", tpc);
+		  logger.info("Pc test/call Á¢¼Ó! By POST" + tpc);
+	  }
+
 }
