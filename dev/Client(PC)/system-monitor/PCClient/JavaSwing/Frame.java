@@ -10,14 +10,22 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import PCServer.PCServer;
+import PCClient.Http.PCGet;
+import PCClient.Http.PCPost;
 import PCClient.Module.*;
 
 public class Frame {
 
 	public static void main(String[] args) {
-		PCServer test = new PCServer();
-		JFrame frame = new JFrame();
+		try{
+			PCGet.Instance().GetMethod();
+			//PCPost.Instance().PostMethod();
+			//Shutdown.shutdown();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		/*JFrame frame = new JFrame();
 		JPanel panel = new JPanel();
 		JLabel label = new JLabel("22Hours");
 		JButton btn1 = new JButton("Click");
@@ -56,7 +64,7 @@ public class Frame {
 		frame.setLocationRelativeTo(null); // 가운데에서 Frame 출력하기
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // 닫기 버튼 눌렀을 때 닫아주기(원래는 살아 있음)
 		frame.setResizable(false); // 사용자가 크기 조절 못하게
-		
+		*/
 	}
 
 }

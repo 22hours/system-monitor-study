@@ -3,6 +3,8 @@ package PCServer;
 import java.net.InetSocketAddress;
 import com.sun.net.httpserver.HttpServer;
 
+import org.apache.http.HttpEntity;
+
 public class PCServer { 
 	
 	public PCServer() {

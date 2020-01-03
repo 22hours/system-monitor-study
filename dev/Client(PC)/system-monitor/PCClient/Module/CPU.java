@@ -15,11 +15,13 @@ public class CPU { // 하나의 클래스만 존재해도 된다 생각해서 Singleton으로 만들�
 	 RuntimeMXBean runbean = (RuntimeMXBean) ManagementFactory.getRuntimeMXBean();
 	public String showCPU() {
 		try {
-			String cpuUsage = "CPU Usage : ";
+			int cpuUsage = (int)osBean.getSystemCpuLoad() * 100;
+			String temp = Integer.toString(cpuUsage);
+			/*String cpuUsage = "CPU Usage : ";
 			cpuUsage += String.format("%.2f", osBean.getSystemCpuLoad() * 100);
 			cpuUsage += "%\n";
-			Thread.sleep(1000);
-			return cpuUsage;
+			Thread.sleep(1000);*/
+			return temp;
 		}
 		catch(Exception e) {
 			e.printStackTrace();

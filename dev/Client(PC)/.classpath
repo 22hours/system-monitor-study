@@ -7,5 +7,17 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="F:/eclipse-jee-2019-12-R-win32-x86_64/eclipse-workspace/System-Monitor(PC Client)/lib/httpcomponents-client-4.5.10/lib/commons-codec-1.11.jar"/>
+	<classpathentry kind="lib" path="F:/eclipse-jee-2019-12-R-win32-x86_64/eclipse-workspace/System-Monitor(PC Client)/lib/httpcomponents-client-4.5.10/lib/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="F:/eclipse-jee-2019-12-R-win32-x86_64/eclipse-workspace/System-Monitor(PC Client)/lib/httpcomponents-client-4.5.10/lib/fluent-hc-4.5.10.jar"/>
+	<classpathentry kind="lib" path="F:/eclipse-jee-2019-12-R-win32-x86_64/eclipse-workspace/System-Monitor(PC Client)/lib/httpcomponents-client-4.5.10/lib/httpclient-4.5.10.jar"/>
+	<classpathentry kind="lib" path="F:/eclipse-jee-2019-12-R-win32-x86_64/eclipse-workspace/System-Monitor(PC Client)/lib/httpcomponents-client-4.5.10/lib/httpclient-cache-4.5.10.jar"/>
+	<classpathentry kind="lib" path="F:/eclipse-jee-2019-12-R-win32-x86_64/eclipse-workspace/System-Monitor(PC Client)/lib/httpcomponents-client-4.5.10/lib/httpclient-win-4.5.10.jar"/>
+	<classpathentry kind="lib" path="F:/eclipse-jee-2019-12-R-win32-x86_64/eclipse-workspace/System-Monitor(PC Client)/lib/httpcomponents-client-4.5.10/lib/httpcore-4.4.12.jar"/>
+	<classpathentry kind="lib" path="F:/eclipse-jee-2019-12-R-win32-x86_64/eclipse-workspace/System-Monitor(PC Client)/lib/httpcomponents-client-4.5.10/lib/httpmime-4.5.10.jar"/>
+	<classpathentry kind="lib" path="F:/eclipse-jee-2019-12-R-win32-x86_64/eclipse-workspace/System-Monitor(PC Client)/lib/httpcomponents-client-4.5.10/lib/jna-4.5.2.jar"/>
+	<classpathentry kind="lib" path="F:/eclipse-jee-2019-12-R-win32-x86_64/eclipse-workspace/System-Monitor(PC Client)/lib/httpcomponents-client-4.5.10/lib/jna-platform-4.5.2.jar"/>
+	<classpathentry kind="lib" path="F:/eclipse-jee-2019-12-R-win32-x86_64/eclipse-workspace/System-Monitor(PC Client)/lib/httpcomponents-client-4.5.10/lib/httpclient-osgi-4.5.10.jar"/>
+	<classpathentry kind="lib" path="F:/eclipse-jee-2019-12-R-win32-x86_64/eclipse-workspace/System-Monitor(PC Client)/lib/gson-2.8.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

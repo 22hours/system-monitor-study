@@ -27,7 +27,7 @@ public class GetHandler implements HttpHandler{
         for (String key : parameters.keySet())
                  response += key + " = " + parameters.get(key) + "\n";
         t.sendResponseHeaders(200, response.length());
-
+        
 		//map은 정렬해서 들어온다.
 		response += "22hours CopyRight\n";
 		response+=CPU.getCPU().showCPU();
@@ -35,7 +35,7 @@ public class GetHandler implements HttpHandler{
         OutputStream os = t.getResponseBody();
         os.write(response.getBytes());
         os.close();
-
+        
 	}
 
 }
