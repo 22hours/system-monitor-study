@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="CardButtonText" parent="CardBorder">
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:textSize">10dp</item>
+        <item name="android:height">20dp</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+</resources>
