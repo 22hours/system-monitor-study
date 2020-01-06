@@ -17,6 +17,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import PCClient.Module.*;
+import PCModel.PC;
 
 public class PCGet {
 	private static PCGet instance = null;
@@ -33,7 +34,7 @@ public class PCGet {
 		return instance;
 	}
 
-	public void GetMethod() 
+	public void GetMethod(PC pc) 
 			throws URISyntaxException, ClientProtocolException, IOException{
 		URI uri = new URI("http://172.20.10.10:12345/system_monitor/pc/"+id);
 		System.out.println(uri);
@@ -57,10 +58,18 @@ public class PCGet {
 				String id = object.get("id").getAsString();
 				String power_status = object.get("power_status").getAsString();
 				String end_time = object.get("end_time").getAsString();
-				if(power_status.equals("false")) {
-					//Shutdown.shutdown(); 
+				if(!pc.getId().equals(id)) {
+					System.out.println("잘못된 정보 수신!");
+					return;
 				}
-				//endtime 관리 해줘야 한다.
+				if(power_status.equals("false") || end_time.equals(pc.getEnd_time())) {
+					pc.setPower_status(false);
+					Shutdown.shutdown(); 
+					return;
+				}
+				if(!end_time.equals(pc.getEnd_time())) { // 사용자가 연장 신청하면 다를 수 있다.
+					pc.setEnd_time(end_time);
+				}
 			}
 		}
 		catch(Exception e) {

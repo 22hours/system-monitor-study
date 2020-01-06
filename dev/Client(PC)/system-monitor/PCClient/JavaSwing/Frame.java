@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -13,14 +14,20 @@ import javax.swing.JTextArea;
 import PCClient.Http.PCGet;
 import PCClient.Http.PCPost;
 import PCClient.Module.*;
-
+import PCModel.PC;
 public class Frame {
 
 	public static void main(String[] args) {
-		try{
-			PCGet.Instance().GetMethod();
-			//PCPost.Instance().PostMethod();
-			//Shutdown.shutdown();
+		//PC만의 고유한 주소 얻어와서 id에 넣기
+		/*String id = "1"; // 일단 1이라고 가정
+		PC pc = new PC(id);
+		Thread generalPostThread = new GeneralPostPolling(pc);
+		Thread generalGetThread = new GeneralGetPolling(pc);
+		generalPostThread.start();
+		generalGetThread.start();*/
+		try {
+		Shutdown.shutdown();
+		Shutdown.stopshutdown();
 		}
 		catch(Exception e) {
 			e.printStackTrace();

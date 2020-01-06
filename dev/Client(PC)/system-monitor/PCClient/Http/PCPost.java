@@ -20,10 +20,10 @@ import org.apache.http.util.EntityUtils;
 
 import PCClient.Module.CPU;
 import PCClient.Module.Memory;
+import PCModel.PC;
 
 public class PCPost {
 	private static PCPost instance = null;
-	private static final String id = "1";
 	private PCPost() {
 		
 	}
@@ -33,7 +33,7 @@ public class PCPost {
 		}
 		return instance;
 	}
-	public void PostMethod() 
+	public void PostMethod(PC pc) 
 			throws URISyntaxException, ClientProtocolException, IOException{
 		URI uri = new URI("http://172.20.10.10:12345/system_monitor/");
 		System.out.println(uri);
@@ -41,10 +41,10 @@ public class PCPost {
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		HttpPost postRequest = new HttpPost(uri);
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
-		params.add(new BasicNameValuePair("id",id));
+		params.add(new BasicNameValuePair("id",pc.getId()));
 		params.add(new BasicNameValuePair("power_status","true"));
-		params.add(new BasicNameValuePair("start_time","18:00"));
-		params.add(new BasicNameValuePair("end_time","21:00"));
+		params.add(new BasicNameValuePair("start_time", pc.getStart_time()));
+		params.add(new BasicNameValuePair("end_time", pc.getEnd_time()));
 		try {
 			UrlEncodedFormEntity ent = new UrlEncodedFormEntity(params,"UTF-8");
 			postRequest.setEntity(ent);
@@ -62,17 +62,19 @@ public class PCPost {
 			e.printStackTrace();
 		}
 	}
-	public void GeneralPollingPost() 
+	public void GeneralPollingPost(PC pc) 
 			throws URISyntaxException, ClientProtocolException, IOException{
-		URI uri = new URI("http://172.20.10.10:12345/"+id);
+		URI uri = new URI("http://172.20.10.10:12345/" + pc.getId());
 		System.out.println(uri);
 		
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		HttpPost postRequest = new HttpPost(uri);
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
-		params.add(new BasicNameValuePair("id",id));
-		params.add(new BasicNameValuePair("cpu_data",CPU.getCPU().showCPU()));
-		params.add(new BasicNameValuePair("ram_data",Memory.getMemory().showMemory()));
+		params.add(new BasicNameValuePair("id", pc.getId()));
+		pc.setCpu_data(CPU.getCPU().showCPU());
+		params.add(new BasicNameValuePair("cpu_data",pc.getCpu_data()));
+		pc.setRam_data(Memory.getMemory().showMemory());
+		params.add(new BasicNameValuePair("ram_data",pc.getRam_data()));
 		try {
 			UrlEncodedFormEntity ent = new UrlEncodedFormEntity(params,"UTF-8");
 			postRequest.setEntity(ent);
@@ -90,16 +92,16 @@ public class PCPost {
 			e.printStackTrace();
 		}
 	}
-	public void Extension() 
+	public void Extension(PC pc) 
 			throws URISyntaxException, ClientProtocolException, IOException{
-		URI uri = new URI("http://172.20.10.10:12345/"+id);
+		URI uri = new URI("http://172.20.10.10:12345/" + pc.getId());
 		System.out.println(uri);
 		
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		HttpPost postRequest = new HttpPost(uri);
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
-		params.add(new BasicNameValuePair("id",id));
-		params.add(new BasicNameValuePair("end_time","23:00"));
+		params.add(new BasicNameValuePair("id",pc.getId()));
+		params.add(new BasicNameValuePair("end_time",pc.getEnd_time()));
 		try {
 			UrlEncodedFormEntity ent = new UrlEncodedFormEntity(params,"UTF-8");
 			postRequest.setEntity(ent);
