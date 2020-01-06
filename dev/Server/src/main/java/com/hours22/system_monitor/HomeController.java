@@ -28,17 +28,13 @@ public class HomeController {
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	private static PC[] pc = new PC[100];
 	private static int pcCnt = 0;
+	private static JsonUtils JManager = new JsonUtils()
 	/**
 	 * Simply selects the home view to render by returning its name.
 	 */
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String getHome(Locale locale, Model model) {
 		logger.info("Welcome 22Hours! Home.jsp By GET");
-		
-		Date date = new Date();
-		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-		
-		String formattedDate = dateFormat.format(date);
 		
 		model.addAttribute("test", "by jjongwuner" );
 		
@@ -48,134 +44,56 @@ public class HomeController {
 	@RequestMapping(value = "/", method = RequestMethod.POST)
 	public String postHome(Locale locale, Model model) {
 		logger.info("Welcome 22Hours! Home.jsp By POST");
-		logger.info("Make a PC Instance! ID : "+pcCnt);
-		
 
-		pc[pcCnt] = new PC(pcCnt);
+		//pc[pcCnt] = new PC(pcCnt);
+		//pcCnt++;
+		
 		model.addAttribute("test", "by jjongwuner" );
 		
-		pcCnt++;
 		return "home";
 	}
 	
-	
-	@RequestMapping(value = "/pc/{id}", method = RequestMethod.GET)
-	public String pc_getOverallData(Model model, @PathVariable Long id) {
-		logger.info("Pc Instances 접속! ID : "+ id +" By GET");
-		logger.info("정보를 출력합니다.");
-		// 모든 PC의 instance를 출력하는 형태
-		//model.addAttribute("name", "jjongwuner );
-		//model.addAttribute("cpudata", "12.11%" );
-		//model.addAttribute("ramdata", "8.34%" );
-		//model.addAttribute("power_status", "on" );
-		int idx = Integer.valueOf(id.toString());
-		
-		model.addAttribute("name", pc[idx].get_name() );
-		model.addAttribute("cpudata", pc[idx].get_cpu_data()+"%" );
-		model.addAttribute("ramdata", pc[idx].get_ram_data()+"%" );
-		model.addAttribute("power_status", (pc[idx].get_power_status()) ? "ON" : "OFF" );
-				
-		return "pc_overall";
-	}
-	
-	
-	@RequestMapping(value = "/pc/{id}", method = RequestMethod.POST)
-	public void pc_postOverallData(Model model, @PathVariable Long id) {
-		logger.info("Update aPC Instance! ID : "+ id +" By POST");
-		int idx = Integer.valueOf(id.toString());
-		
-		pc[idx].set_name("jjongwunerPC");
-		pc[idx].set_power_status(true);
-		pc[idx].set_ram_data(15);
-		pc[idx].set_cpu_data(52);
-	}
-	
-	@RequestMapping(value = "/pc/{id}/name/{tname}", method = RequestMethod.POST)
-	public void pc_postOverallData(Model model, @PathVariable Long id, @PathVariable String tname) {
-		logger.info("Update aPC Instance! ID : [Name] "+ id +" By POST");
-		int idx = Integer.valueOf(id.toString());
-		
-		pc[idx].set_name(tname);
-	}
-	
-	@RequestMapping(value = "/pc/{id}/power/{opt}", method = RequestMethod.POST)
-	public void pc_postPowerStatus(Model model, @PathVariable Long id, @PathVariable Long opt) {
-		logger.info("Update aPC Instance! ID : [Power On/Off] "+ id +" By POST");
-		int idx = Integer.valueOf(id.toString());
-		int tmp = Integer.valueOf(opt.toString());
-		boolean button = tmp !=0 ? true : false;
-		
-		pc[idx].set_power_status(button);
-	}
-	
-	@RequestMapping(value = "/pc/{id}/cpu/{val}", method = RequestMethod.POST)
-	public void pc_postCpuData(Model model, @PathVariable Long id, @PathVariable Long val) {
-		logger.info("Update aPC Instance! ID : [Cpu] "+ id +" By POST");
-		int idx = Integer.valueOf(id.toString());
-		int value = Integer.valueOf(val.toString());
-		pc[idx].set_cpu_data(value);
-	}
-	
-	@RequestMapping(value = "/pc/{id}/ram/{val}", method = RequestMethod.POST)
-	public void pc_postRamData(Model model, @PathVariable Long id, @PathVariable Long val) {
-		logger.info("Update aPC Instance! ID : [Ram] "+ id +" By POST");
-		int idx = Integer.valueOf(id.toString());
-		int value = Integer.valueOf(val.toString());
-		pc[idx].set_ram_data(value);
-	}
-	
-	
-	
-	@RequestMapping(value = "/pc/{id}/power", method = RequestMethod.GET)
-	public String pc_getPowerData(Model model, @PathVariable Long id) {
-		logger.info("Pc Instances 접속! By GET");
-		// 모든 PC의 instance를 출력하는 형태
-		model.addAttribute("name", "junghwan" );
-		model.addAttribute("power_status", "on" );
-		return "pc_power";
-	}
-	
-	@RequestMapping(value = "/pc/{id}/cpudata", method = RequestMethod.GET)
-	public String pc_getCpuData(Model model, @PathVariable Long id) {
-		logger.info("Pc Instances 접속! By GET");
-		// 모든 PC의 instance를 출력하는 형태
-		model.addAttribute("name", "damin" );
-		model.addAttribute("cpudata", "55.23%" );
-		return "pc_cpudata";
-	}
-	
-	@RequestMapping(value = "/pc/{id}/ramdata", method = RequestMethod.GET)
-	public String pc_getRamData(Model model, @PathVariable Long id) {
-		logger.info("Pc Instances 접속! By GET");
-		// 모든 PC의 instance를 출력하는 형태
-		model.addAttribute("name", "jungu" );
-		model.addAttribute("ramdata", "22.41%" );
-		return "pc_ramdata";
-	}
-	
 	// JSON Get
-	@RequestMapping(value = { "/test/call/{id}" })
+	@RequestMapping(value = "/pc/{id}", method=RequestMethod.GET)
 	@ResponseBody
-	public Map testCall(HttpServletRequest request, @PathVariable Long id){
+	public Map pcJsonGet(HttpServletRequest request, @PathVariable Long id){
 		int idx = Integer.valueOf(id.toString());
-				/*
-				 * 	private boolean power_status;
-			private int id;
-			private String name;
-			private int cpu_data;
-			private int ram_data;
-				 */
 		
-		Map result = new HashMap<String, String>();
-		result.put("power", (pc[idx].get_power_status() == true) ? "ON" : "OFF");
+		logger.info("Call GET Method - ["+id+"] pcJson ");
+		
+		
+		/*
+		result.put("id", Integer.toString(pc[idx].get_id()));
 		result.put("name", pc[idx].get_name());
+		result.put("power_status", (pc[idx].get_power_status() == true) ? "ON" : "OFF");
+		result.put("cpu_data", Integer.toString(pc[idx].get_cpu_data()));
+		result.put("ram_data", Integer.toString(pc[idx].get_ram_data()));
+		result.put("start_time", Integer.toString(pc[idx].get_ram_data()));
+		result.put("end_time", Integer.toString(pc[idx].get_ram_data()));
+		*/
+
+		//GET == 1) Local Load
+		PC tpc = JManager.LocalLoad_JsonToObj(idx);
+		
+		// Get == 2) Http Response
+		Map result = JManager.HttpResponse_ObjToJson(tpc); 
+
+		
 		return result;
 	}
 	// JSON Post
-	  @RequestMapping(value="/test/call/{id}", method=RequestMethod.POST)
-	  public void test(@RequestBody PC tpc, ModelMap map, @PathVariable Long id) {
-	      logger.debug("TestForm : {}", tpc);
-		  logger.info("Pc test/call 접속! By POST" + tpc);
-	  }
 
+	@RequestMapping(value="/pc/{id}", method=RequestMethod.POST)
+	@ResponseBody
+	public void pcJsonPost(@RequestBody Map<String, String> tpc, @PathVariable Long id) {
+		int idx = Integer.valueOf(id.toString());
+		logger.info("Call POST Method - ["+id+"] pcJson ");
+		logger.info(tpc.toString());
+		
+		// Post == 1) HTTP Request
+		PC tpc = JManager.HttpRequest_JsonToObj(idx);
+		
+		// Post == 2) Local Save
+		Map result = JManager.LocalSave_ObjToJson(tpc);
+	}
 }
