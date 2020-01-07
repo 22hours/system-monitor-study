@@ -9,6 +9,7 @@ public class Shutdown {
 	public static void shutdown() throws IOException {
 		run.exec("shutdown -s -t 10");
 		System.out.println("10초 뒤에 꺼집니다");
+
 	}
 	public static void stopshutdown() throws IOException{
 		run.exec("shutdown -a");

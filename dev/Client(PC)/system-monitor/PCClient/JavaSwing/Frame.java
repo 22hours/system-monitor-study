@@ -26,12 +26,20 @@ public class Frame {
 		generalPostThread.start();
 		generalGetThread.start();*/
 		try {
-		Shutdown.shutdown();
-		Shutdown.stopshutdown();
+			int i=1;
+			ShutdownHook damin = new ShutdownHook();
+			damin.AttachShutdownHook();
+			while(true) {
+				System.out.println("hi");
+				Thread.sleep(1000);
+				i++;
+				if(i==3) break;
+			}
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
+
 		/*JFrame frame = new JFrame();
 		JPanel panel = new JPanel();
 		JLabel label = new JLabel("22Hours");
