@@ -20,4 +20,5 @@ public class GetSetService {
         String result = (String) vop.get("jdkSerial");
         System.out.println(result);//jdk
     }
+    
 }

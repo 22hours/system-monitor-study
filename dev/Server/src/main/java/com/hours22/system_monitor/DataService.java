@@ -29,4 +29,21 @@ public class DataService {
         PcData data2 = (PcData)valueOperations.get("jjongwuner");
         System.out.println(data2);
     }
+    
+    public void RedisSave_ObjToJson(PcData tpc) {
+        ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
+        
+        valueOperations.set(tpc.get_id(), tpc);
+
+        PcData data2 = (PcData)valueOperations.get(tpc.get_id());
+        System.out.println(data2);
+    }
+    
+    public PcData RedisLoad_JsonToObj(String idx) {
+        ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
+
+        PcData data2 = (PcData)valueOperations.get(idx);
+        System.out.println(data2);
+        return data2;
+    }
 }
