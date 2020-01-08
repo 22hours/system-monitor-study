@@ -14,32 +14,17 @@ import javax.swing.JTextArea;
 import PCClient.Http.PCGet;
 import PCClient.Http.PCPost;
 import PCClient.Module.*;
+import PCClient.Module.Shutdown;
 import PCModel.PC;
 public class Frame {
 
 	public static void main(String[] args) {
-		//PC만의 고유한 주소 얻어와서 id에 넣기
-		/*String id = "1"; // 일단 1이라고 가정
+		String id = GetMACAddress.getLocalMacAddress();
 		PC pc = new PC(id);
 		Thread generalPostThread = new GeneralPostPolling(pc);
 		Thread generalGetThread = new GeneralGetPolling(pc);
 		generalPostThread.start();
-		generalGetThread.start();*/
-		try {
-			int i=1;
-			ShutdownHook damin = new ShutdownHook();
-			damin.AttachShutdownHook();
-			while(true) {
-				System.out.println("hi");
-				Thread.sleep(1000);
-				i++;
-				if(i==3) break;
-			}
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
-
+		generalGetThread.start();
 		/*JFrame frame = new JFrame();
 		JPanel panel = new JPanel();
 		JLabel label = new JLabel("22Hours");

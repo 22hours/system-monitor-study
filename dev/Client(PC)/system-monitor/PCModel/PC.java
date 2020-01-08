@@ -3,6 +3,7 @@ package PCModel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import PCClient.Module.*;
+import sun.org.mozilla.javascript.internal.json.JsonParser.ParseException;
 
 public class PC {
 	private boolean power_status;
@@ -11,7 +12,7 @@ public class PC {
 	private String end_time;
 	private String cpu_data;
 	private String ram_data;
-	
+
 	public PC(String id) {
 		this.id = id;
 		this.power_status = true; // 이 클래스를 instance화 시키면 켜져 있다는 뜻이다.
@@ -20,42 +21,53 @@ public class PC {
 		long time = System.currentTimeMillis();
 		SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		this.start_time = dayTime.format(new Date(time));
-		time = System.currentTimeMillis() + 10800000;
-		dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		time += 10800000;
 		this.end_time = dayTime.format(new Date(time));
 		this.cpu_data = CPU.getCPU().showCPU();
 		this.ram_data = Memory.getMemory().showMemory();
+		
 	}
+
 	public String getId() {
 		return this.id;
 	}
+
 	public boolean getPower_status() {
 		return this.power_status;
 	}
+
 	public void setPower_status(boolean power_status) {
 		this.power_status = power_status;
 	}
+
 	public String getStart_time() {
 		return this.start_time;
 	}
+
 	public void setStart_time(String start_time) {
 		this.start_time = start_time;
 	}
+
 	public String getEnd_time() {
 		return this.end_time;
 	}
+
 	public void setEnd_time(String end_time) {
 		this.end_time = end_time;
 	}
+
 	public String getCpu_data() {
 		return this.cpu_data;
 	}
+
 	public void setCpu_data(String cpu_data) {
 		this.cpu_data = cpu_data;
 	}
+
 	public String getRam_data() {
 		return this.ram_data;
 	}
+
 	public void setRam_data(String ram_data) {
 		this.ram_data = ram_data;
 	}
