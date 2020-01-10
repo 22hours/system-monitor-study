@@ -30,6 +30,7 @@
    - `Pull Request` -> `Code Review`
 4. Milestone : Grouping `Issues`
 5. Branch : `Issue` 별로 생성
+6. Slack으로 공유
 
 # Repo
 - `~/dev` : 개발의 뼈대
