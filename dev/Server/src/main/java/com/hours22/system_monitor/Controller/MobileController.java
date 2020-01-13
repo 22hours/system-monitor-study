@@ -15,9 +15,9 @@ public class MobileController {
 	@Autowired
 	DataService dss;
 	
-	@RequestMapping(value = "/", method = RequestMethod.GET)
+	@RequestMapping(value = "/phone", method = RequestMethod.GET)
 	public void GetTotalPcData(HttpServletResponse response) throws IOException {
-		// 모든 PC의 JSON 데이터 GET
+		System.out.println("Input : <- Total GET method ");
 	}
 
 }
