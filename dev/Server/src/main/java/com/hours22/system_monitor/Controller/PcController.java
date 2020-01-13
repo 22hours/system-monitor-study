@@ -17,7 +17,6 @@ public class PcController {
 	
 	@RequestMapping(value = "/pc", method = RequestMethod.GET)
 	public void GetPcData(HttpServletResponse response) throws IOException {
-		// PC의 JSON 데이터 GET
 		// RedisLoad_JsonToObj();
 		// HttpResponse_ObjToJson();
 		System.out.println("Input : /pc <- GET method ");
