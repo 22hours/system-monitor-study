@@ -6,7 +6,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 public class GetMACAddress {
-	public static String getLocalMacAddress() {
+	public String getLocalMacAddress() {
 		 	String result = "";
 			InetAddress ip;
 			try {
@@ -16,7 +16,6 @@ public class GetMACAddress {
 				byte[] mac = network.getHardwareAddress();
 				StringBuilder sb = new StringBuilder();
 				for (int i = 0; i < mac.length; i++) {
-					System.out.println(mac[i]);
 					sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
 				}
 					result = sb.toString();

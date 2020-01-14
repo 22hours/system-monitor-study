@@ -19,22 +19,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import PCClient.Module.*;
+import PCClient.Module.Shutdown;
 import PCModel.PC;
 
 public class PCGet {
-	private static PCGet instance = null;
-
-	private PCGet() {
-
-	}
-
-	public static PCGet Instance() {
-		if (instance == null) {
-			instance = new PCGet();
-		}
-		return instance;
-	}
-
+	Shutdown shutdown = new Shutdown();
 	public void GetMethod(PC pc) 
 			throws URISyntaxException, ClientProtocolException, IOException{
 		URI uri = new URI("http://172.20.10.10:12345/system_monitor/pc/"+ pc.getId());
@@ -65,15 +54,16 @@ public class PCGet {
 				}
 				if(power_status.equals("false") || end_time.equals(pc.getEnd_time())) {
 					pc.setPower_status(false);
-					Shutdown.stopshutdown(); // 예약이 있을 수도 있으니 취소
-					Shutdown.shutdown("0"); 
+					shutdown.stopshutdown(); // 예약이 있을 수도 있으니 취소
+					shutdown.shutdown("0"); 
 					return;
 				}
 				if(!end_time.equals(pc.getEnd_time())) { //Android 사용자가 연장 신청하면 다를 수 있다.
-					Shutdown.stopshutdown();
+					TimeDifference timeDifference = new TimeDifference();
+					shutdown.stopshutdown();
 					// Android 사용자가 바꿨다면 end_time이 더 커야 되는게 정상.
-					String difference = TimeDifference.calc(pc.getEnd_time(), end_time);
-					Shutdown.shutdown(difference);
+					String difference = timeDifference.calc(pc.getEnd_time(), end_time);
+					shutdown.shutdown(difference);
 					pc.setEnd_time(end_time);
 				}
 			}

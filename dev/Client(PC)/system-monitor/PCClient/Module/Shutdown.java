@@ -8,11 +8,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Shutdown {
-	static Runtime run = Runtime.getRuntime();
-	public static void shutdown(String time) throws IOException {
+	Runtime run = Runtime.getRuntime();
+	public void shutdown(String time) throws IOException {
 		run.exec("shutdown -s -t "+ time);
 	}
-	public static void stopshutdown() throws IOException{
+	public void stopshutdown() throws IOException{
 		run.exec("shutdown -a");
 	}
 }

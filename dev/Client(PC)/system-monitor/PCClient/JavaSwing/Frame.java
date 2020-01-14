@@ -19,7 +19,8 @@ import PCModel.PC;
 public class Frame {
 
 	public static void main(String[] args) {
-		String id = GetMACAddress.getLocalMacAddress();
+		GetMACAddress MAC = new GetMACAddress();
+		String id = MAC.getLocalMacAddress();
 		PC pc = new PC(id);
 		Thread generalPostThread = new GeneralPostPolling(pc);
 		Thread generalGetThread = new GeneralGetPolling(pc);

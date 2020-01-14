@@ -22,23 +22,11 @@ import PCClient.Module.*;
 import PCModel.PC;
 
 public class PCPost {
-	private static PCPost instance = null;
-
-	private PCPost() {
-
-	}
-
-	public static PCPost Instance() {
-		if (instance == null) {
-			instance = new PCPost();
-		}
-		return instance;
-	}
-
+	Shutdown shutdown = new Shutdown();
 	public void PostMethod(PC pc) throws URISyntaxException, ClientProtocolException, IOException {
 		URI uri = new URI("http://172.20.10.10:12345/system_monitor/");
 		System.out.println(uri);
-
+		TimeDifference timeDifference = new TimeDifference();
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		HttpPost postRequest = new HttpPost(uri);
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -46,8 +34,8 @@ public class PCPost {
 		params.add(new BasicNameValuePair("power_status", "true"));
 		params.add(new BasicNameValuePair("start_time", pc.getStart_time()));
 		params.add(new BasicNameValuePair("end_time", pc.getEnd_time()));
-		String difference = TimeDifference.calc(pc.getStart_time(), pc.getEnd_time());
-		Shutdown.shutdown(difference); // 처음에 예약 설정
+		String difference = timeDifference.calc(pc.getStart_time(), pc.getEnd_time());
+		shutdown.shutdown(difference); // 처음에 예약 설정
 		try {
 			UrlEncodedFormEntity ent = new UrlEncodedFormEntity(params, "UTF-8");
 			postRequest.setEntity(ent);
@@ -101,9 +89,10 @@ public class PCPost {
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("id", pc.getId()));
 		params.add(new BasicNameValuePair("end_time", pc.getEnd_time()));
-		Shutdown.stopshutdown();
-		String difference = TimeDifference.calc(pc.getStart_time(), pc.getEnd_time());
-		Shutdown.shutdown(difference); 
+		shutdown.stopshutdown();
+		TimeDifference timeDifference = new TimeDifference();
+		String difference = timeDifference.calc(pc.getStart_time(), pc.getEnd_time());
+		shutdown.shutdown(difference);
 		try {
 			UrlEncodedFormEntity ent = new UrlEncodedFormEntity(params, "UTF-8");
 			postRequest.setEntity(ent);

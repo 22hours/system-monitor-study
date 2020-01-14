@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class TimeDifference {
-	public static String calc(String original,String extension) {
+	public String calc(String original,String extension) {
 		try {
 			SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 			Date originalDate = dayTime.parse(original);

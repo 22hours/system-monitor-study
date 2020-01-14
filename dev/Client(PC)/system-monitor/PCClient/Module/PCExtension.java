@@ -8,7 +8,7 @@ import PCModel.PC;
 import PCClient.Http.PCPost;
 
 public class PCExtension {
-	public static void Extension(PC pc, long hours) {
+	public void Extension(PC pc, long hours) {
 		hours = hours*3600*1000;
 		try {
 			SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -20,7 +20,8 @@ public class PCExtension {
 			e.printStackTrace();
 		}
 		try {
-			PCPost.Instance().Extension(pc);
+			PCPost pcPost = new PCPost();
+			pcPost.Extension(pc);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
