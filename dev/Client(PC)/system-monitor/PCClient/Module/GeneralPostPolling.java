@@ -13,8 +13,7 @@ public class GeneralPostPolling extends Thread{
 	public void run() {
 		try {
 			while (true) {
-				PCPost pcPost = new PCPost();
-				pcPost.GeneralPollingPost(pc);
+				PCPost.getInstance().GeneralPollingPost(pc);
 				Thread.sleep(30000);
 			}
 		} catch (Exception e) {

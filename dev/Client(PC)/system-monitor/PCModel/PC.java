@@ -6,7 +6,7 @@ import PCClient.Module.*;
 import sun.org.mozilla.javascript.internal.json.JsonParser.ParseException;
 
 public class PC {
-	private boolean power_status;
+	private String power_status;
 	private String id;
 	private String start_time;
 	private String end_time;
@@ -15,7 +15,7 @@ public class PC {
 
 	public PC(String id) {
 		this.id = id;
-		this.power_status = true; // 이 클래스를 instance화 시키면 켜져 있다는 뜻이다.
+		this.power_status = "true"; // 이 클래스를 instance화 시키면 켜져 있다는 뜻이다.
 		// 60,000 = 1분, 600,000 = 10분
 		// default 값을 3시간이라고 가정 = 3,600,000 * 3 = 10,800,000
 		long time = System.currentTimeMillis();
@@ -32,11 +32,11 @@ public class PC {
 		return this.id;
 	}
 
-	public boolean getPower_status() {
+	public String getPower_status() {
 		return this.power_status;
 	}
 
-	public void setPower_status(boolean power_status) {
+	public void setPower_status(String power_status) {
 		this.power_status = power_status;
 	}
 

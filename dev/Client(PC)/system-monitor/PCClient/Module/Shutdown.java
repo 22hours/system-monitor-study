@@ -8,6 +8,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Shutdown {
+	private Shutdown() {
+		
+	}
+	private static Shutdown instance;
+	public static Shutdown getInstance() {
+		if(instance == null) {
+			instance = new Shutdown();
+		}
+		return instance;
+	}
 	Runtime run = Runtime.getRuntime();
 	public void shutdown(String time) throws IOException {
 		run.exec("shutdown -s -t "+ time);

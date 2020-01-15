@@ -20,8 +20,7 @@ public class PCExtension {
 			e.printStackTrace();
 		}
 		try {
-			PCPost pcPost = new PCPost();
-			pcPost.Extension(pc);
+			PCPost.getInstance().Extension(pc);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -13,8 +13,7 @@ public class GeneralGetPolling extends Thread{
 	public void run() {
 		try {
 			while (true) {
-				PCGet pcGet = new PCGet();
-				pcGet.GetMethod(pc);
+				PCGet.getInstance().GetMethod(pc);
 				Thread.sleep(30000);
 			}
 		} catch (Exception e) {
