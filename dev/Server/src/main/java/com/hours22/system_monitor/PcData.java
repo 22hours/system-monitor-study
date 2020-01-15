@@ -15,6 +15,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @ToString
 public class PcData implements Serializable {
+	@JsonProperty("class_id")
+	private String class_id;
 	@JsonProperty("power_status")
 	private String power_status;
 	@JsonProperty("id")
@@ -40,6 +42,7 @@ public class PcData implements Serializable {
 		this.start_time = "00:00";
 		this.end_time = "23:59";
 	}
+	public String get_class_id() {return this.class_id;} 
 	public String get_power_status() {return this.power_status;} 
 	public String get_id() {return this.id;}
 	public String get_name() {return this.name;}
@@ -48,6 +51,7 @@ public class PcData implements Serializable {
 	public String get_start_time() {return this.start_time;}
 	public String get_end_time() {return this.end_time;}
 	
+	public void set_class_id(String cid) { this.class_id = cid;}
 	public void set_power_status(String opt) { this.power_status = opt;}
 	public void set_id(String tid) {this.id = tid;}
 	public void set_name(String tname) {this.name = tname;}
