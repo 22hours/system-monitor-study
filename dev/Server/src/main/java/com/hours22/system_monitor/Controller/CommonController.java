@@ -39,11 +39,11 @@ public class CommonController {
 	}
 
 	@RequestMapping(value = "/pc/{id}", method = RequestMethod.GET)
-	public void GetPcInstanceData(HttpServletResponse response,  @PathVariable Long id) throws IOException {
+	public void GetPcInstanceData(HttpServletResponse response,  @PathVariable String id) throws IOException {
 		System.out.println("Input : /pc/"+ id +" <- GET method ");
 		
 		// RedisLoad_JsonToObj();
-		PcData pc = dss.RedisLoad_JsonToObj(id.toString());
+		PcData pc = dss.RedisLoad_JsonToObj(id);
 		
 		// HttpResponse_ObjToJson();
 		String json = ojm.writeValueAsString(pc);
