@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:background="@color/GrayBack">
+    <androidx.cardview.widget.CardView
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/cv"
+        card_view:cardCornerRadius="10dp"
+        card_view:cardElevation="2sp"
+        card_view:cardBackgroundColor="@color/White"
+        card_view:cardUseCompatPadding="true">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="119dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="3dp"
+                    android:layout_width="3dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/pcOn"></LinearLayout>
+
+                <LinearLayout
+                    android:layout_marginTop="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="109dp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+
+                                    <LinearLayout
+                                        android:layout_width="297dp"
+                                        android:layout_height="match_parent"
+                                        android:orientation="vertical">
+
+                                        <TextView
+                                            android:layout_width="156dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginLeft="5dp"
+                                            android:text="PC_ID"
+                                            android:textSize="8dp"></TextView>
+
+                                        <TextView
+                                            android:id="@+id/pc_id"
+                                            android:layout_width="155dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginLeft="5dp"
+                                            android:text="34-E1-2D-3C-81-E7"
+                                            android:textColor="@color/Black"
+                                            android:textStyle="bold"></TextView>
+                                    </LinearLayout>
+                                    <LinearLayout
+                                        android:orientation="horizontal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent">
+                                        <ImageView
+                                            android:layout_marginLeft="5dp"
+                                            android:layout_marginTop="13dp"
+                                            android:layout_width="15dp"
+                                            android:layout_height="15dp"
+                                            android:src="@drawable/setting"></ImageView>
+                                        <TextView
+                                            android:layout_marginLeft="5dp"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="15dp"
+                                            android:text="Setting"
+                                            android:textSize="8dp">
+
+                                        </TextView>
+
+                                    </LinearLayout>
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_marginTop="3dp"
+                                    android:layout_marginLeft="5dp"
+                                    android:layout_marginRight="5dp"
+                                    android:layout_width="match_parent"
+                                    android:background="@color/GrayBack"
+                                    android:layout_height="3dp">
+
+                                </LinearLayout>
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="34dp"
+                                    android:orientation="horizontal">
+
+                                    <LinearLayout
+                                        android:layout_width="184dp"
+                                        android:layout_height="match_parent"
+                                        android:orientation="vertical">
+
+                                        <TextView
+                                            android:id="@+id/textView14"
+                                            android:layout_width="156dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginLeft="5dp"
+                                            android:layout_marginTop="3dp"
+                                            android:layout_weight="1"
+                                            android:text="PC_NAME"
+                                            android:textSize="6dp"></TextView>
+
+                                        <TextView
+                                            android:id="@+id/pc_name"
+                                            android:layout_width="155dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginLeft="5dp"
+                                            android:layout_weight="1"
+                                            android:text="winterlood"
+                                            android:textColor="@color/Black"></TextView>
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="184dp"
+                                        android:layout_height="match_parent"
+                                        android:orientation="vertical">
+
+                                        <TextView
+                                            android:id="@+id/textView15"
+                                            android:layout_width="156dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginLeft="5dp"
+                                            android:layout_marginTop="3dp"
+                                            android:layout_weight="1"
+                                            android:text="PC_STATUS"
+                                            android:textSize="6dp"></TextView>
+
+                                        <TextView
+                                            android:id="@+id/pc_status"
+                                            android:layout_width="155dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginLeft="5dp"
+                                            android:layout_weight="1"
+                                            android:text="Now ON"
+                                            android:textColor="@color/Black"></TextView>
+                                    </LinearLayout>
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="40dp"
+
+                                    android:orientation="horizontal">
+
+                                    <LinearLayout
+                                        android:orientation="vertical"
+                                        android:layout_width="184dp"
+                                        android:layout_height="match_parent">
+
+                                        <TextView
+                                            android:id="@+id/textView16"
+                                            android:layout_width="156dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginLeft="5dp"
+                                            android:layout_marginTop="7dp"
+                                            android:layout_weight="1"
+                                            android:text="PC_START_TIME"
+                                            android:textSize="6dp"></TextView>
+
+                                        <TextView
+                                            android:id="@+id/pc_start_time"
+                                            android:layout_width="155dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginLeft="5dp"
+                                            android:layout_weight="1"
+                                            android:text="2020-01-15 18:42"
+                                            android:textColor="@color/Black"></TextView>
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:orientation="vertical"
+                                        android:layout_width="184dp"
+                                        android:layout_height="match_parent">
+
+                                        <TextView
+                                            android:id="@+id/textView17"
+                                            android:layout_width="156dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginLeft="5dp"
+                                            android:layout_marginTop="7dp"
+                                            android:layout_weight="1"
+                                            android:text="PC_END_TIME"
+                                            android:textSize="6dp"></TextView>
+
+                                        <TextView
+                                            android:id="@+id/pc_end_time"
+                                            android:layout_width="155dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginLeft="5dp"
+                                            android:layout_weight="1"
+                                            android:text="2020-01-15 21:42"
+                                            android:textColor="@color/Black"></TextView>
+                                    </LinearLayout>
+                                </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</layout>
+
