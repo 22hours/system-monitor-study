@@ -10,48 +10,63 @@ import com.example.a22housexam2.Networking.Model.GitHubResponseModel
 import com.example.a22housexam2.Networking.NetworkingInterface.GitHubApi
 import com.example.a22housexam2.R
 import com.example.a22housexam2.databinding.MainViewBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.main_view.*
+import android.view.MenuItem
+import androidx.annotation.NonNull
+import androidx.databinding.adapters.TextViewBindingAdapter.setText
+import android.R.attr.fragment
+import com.example.a22housexam2.Fragment.HomeFragment
+import com.example.a22housexam2.Fragment.MenuFragment
+import com.example.a22housexam2.Fragment.SettingFragment
+import com.example.a22housexam2.Networking.NetworkingInterface.PcRequest
+import com.example.a22housexam2.Networking.Service.PcRequestManager
+import com.example.a22housexam2.ViewAdapter.ViewItem.PcInfo_FullItem
+import kotlinx.android.synthetic.main.main_view_page.*
+
 
 class MainViewActivity  : AppCompatActivity() {
-
-    private lateinit var binding : MainViewBinding
-
-    val TAG : String = "MainViewActivity"
-    lateinit var compositeDisposable: CompositeDisposable
-
-    @SuppressLint("CheckResult")
+    val homeFrag  = HomeFragment()
+    val menuFrag = MenuFragment()
+    val settingFragment = SettingFragment()
+    val requestManager : PcRequestManager = PcRequestManager()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this,R.layout.main_view)
-        binding.resultView.setText("기존 TExt")
-        testButton.setOnClickListener {
-            Log.d(TAG,"Button Clicked!")
-            println("Button Clicked")
-            compositeDisposable = CompositeDisposable()
+        setContentView(R.layout.main_view_page)
+        val bottomNavigationView =
+            findViewById<BottomNavigationView>(R.id.message)
+        bottomNavigationView.setOnNavigationItemSelectedListener(
+            object : BottomNavigationView.OnNavigationItemSelectedListener {
+                override fun onNavigationItemSelected(@NonNull item: MenuItem): Boolean {
+                    // 어떤 메뉴 아이템이 터치되었는지 확인합니다.
+                    when (item.itemId) {
+                        R.id.home -> {
+                            supportFragmentManager.beginTransaction()
+                                .replace(R.id.container,homeFrag)
+                                .commit()
+                            return true
+                        }
+                        R.id.menu -> {
+                            supportFragmentManager.beginTransaction()
+                                .replace(R.id.container,menuFrag)
+                                .commit()
+                            return true
+                        }
+                        R.id.setting -> {
+                            supportFragmentManager.beginTransaction()
+                                .replace(R.id.container,settingFragment)
+                                .commit()
+                            return true
+                        }
+                    }
+                    return false
+                }
+            })
 
-            compositeDisposable.addAll(GitHubApi.getRepoList(binding.researchIdText.text.toString())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.newThread())
-                .subscribe({ response: GitHubResponseModel ->
-                    Toast.makeText(this, "Success!", Toast.LENGTH_LONG)
-                    Log.d(TAG,response.items[0].id.toString())
-                    Log.d(TAG,response.items[0].login)
-                    Log.d(TAG,response.items[0].html_url)
-                    binding.resultView.setText(response.items[0].html_url)
-                     //resultView.text = response.items[0].home_url
-                }, { error: Throwable ->
-                    Log.d(TAG, error.localizedMessage)
-                    Toast.makeText(this, "Error ${error.localizedMessage}", Toast.LENGTH_LONG)
-                        .show()
-                })
-            )
-        }
-    }
-    override fun onDestroy() {
-        super.onDestroy()
-        compositeDisposable.dispose()
+
+
     }
 }
