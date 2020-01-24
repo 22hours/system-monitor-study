@@ -1,19 +1,11 @@
-package com.hours22.system_monitor;
+package com.hours22.system_monitor_ver11.vo;
 
 import java.io.Serializable;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-
-@ToString
 public class PcData implements Serializable {
 	@JsonProperty("class_id")
 	private String class_id;

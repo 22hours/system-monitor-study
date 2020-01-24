@@ -1,4 +1,4 @@
-package com.hours22.system_monitor;
+package com.hours22.system_monitor_ver11.db;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -14,13 +14,16 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Service;
 
+import com.hours22.system_monitor_ver11.vo.PcData;
+
 @Service
 public class DataService {
+	
     @Autowired
-    RedisTemplate<String, Object> redisTemplate;
+    private RedisTemplate<Object, Object> redisTemplate;
 
     public void test() {
-        ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
+        ValueOperations<Object, Object> valueOperations = redisTemplate.opsForValue();
         PcData data = new PcData();
         data.set_id("123");
         data.set_name("jjongwuner PC");
@@ -31,7 +34,7 @@ public class DataService {
     }
     
     public void RedisSave_ObjToJson(PcData tpc) {
-        ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
+        ValueOperations<Object, Object> valueOperations = redisTemplate.opsForValue();
         
         valueOperations.set(tpc.get_id(), tpc);
 
@@ -40,7 +43,7 @@ public class DataService {
     }
     
     public PcData RedisLoad_JsonToObj(String idx) {
-        ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
+        ValueOperations<Object, Object> valueOperations = redisTemplate.opsForValue();
 
         PcData data2 = (PcData)valueOperations.get(idx);
         System.out.println(data2);
