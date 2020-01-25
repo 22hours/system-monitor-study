@@ -44,8 +44,8 @@ public class DataService {
     public void test() {
         ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
         PcData data = new PcData();
-        data.set_id("123");
-        data.set_name("jjongwuner PC");
+        data.setId("123");
+        data.setName("jjongwuner PC");
         valueOperations.set("jjongwuner", data);
 
         PcData data2 = (PcData)valueOperations.get("jjongwuner");
@@ -82,9 +82,9 @@ public class DataService {
     public void RedisSave_ObjToJson(PcData tpc) {
         ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
         
-        valueOperations.set(tpc.get_id(), tpc);
+        valueOperations.set(tpc.getId(), tpc);
 
-        PcData data2 = (PcData)valueOperations.get(tpc.get_id());
+        PcData data2 = (PcData)valueOperations.get(tpc.getId());
         System.out.println(data2);
     }
     
