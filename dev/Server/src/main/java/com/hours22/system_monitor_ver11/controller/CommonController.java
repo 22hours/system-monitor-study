@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hours22.system_monitor_ver11.db.DataService;
@@ -32,10 +33,10 @@ public class CommonController {
 	}
 	
 	@RequestMapping(value = "/testpage", method = RequestMethod.GET)
-	public void GetTestPage(HttpServletResponse response) throws IOException {
-		response.getWriter().print("Test Page");
+	public @ResponseBody String GetTestPage(HttpServletResponse response) throws IOException {
 		dss.test();
 		System.out.println("Input : /testpage <- GET method ");
+		return "Test Page";
 	}
 
 	@RequestMapping(value = "/pc/{id}", method = RequestMethod.GET)
