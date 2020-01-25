@@ -24,11 +24,15 @@ public class PcController {
 	DataService dss;
 	
 	@RequestMapping(value = "/pc", method = RequestMethod.GET)
-	public @ResponseBody Map<String, String> GetPcData(HttpServletResponse response) throws IOException {
+	public void GetPcData(HttpServletResponse response) throws IOException {
 		// RedisLoad_JsonToObj();
 		// HttpResponse_ObjToJson();
 		System.out.println("Input : /pc <- GET method ");
-		return dss.test2();
+		String json = ojm.writeValueAsString(dss.test2());
+		json = json.replaceAll("\\\\", "");
+		
+		System.out.println(json);
+		response.getWriter().print(json);
 	}
 
 }

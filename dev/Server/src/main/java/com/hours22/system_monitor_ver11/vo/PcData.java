@@ -7,48 +7,48 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PcData implements Serializable {
-	@JsonProperty("class_id")
-	private String class_id;
-	@JsonProperty("power_status")
-	private String power_status;
+	@JsonProperty("classId")
+	private String classId;
+	@JsonProperty("powerStatus")
+	private String powerStatus;
 	@JsonProperty("id")
 	private String id;
 	@JsonProperty("name")
 	private String name;
-	@JsonProperty("cpu_data")
-	private String cpu_data;
-	@JsonProperty("ram_data")
-	private String ram_data;
-	@JsonProperty("start_time")
-	private String start_time;
-	@JsonProperty("end_time")
-	private String end_time;
+	@JsonProperty("cpuData")
+	private String cpuData;
+	@JsonProperty("ramData")
+	private String ramData;
+	@JsonProperty("startTime")
+	private String startTime;
+	@JsonProperty("endTime")
+	private String endTime;
 	
 	public PcData() {}
 	public PcData(String tid) {
 		this.id = tid;
-		this.power_status = "OFF";
+		this.powerStatus = "OFF";
 		this.name = "Not Name";
-		this.cpu_data = "0";
-		this.ram_data = "0";
-		this.start_time = "00:00";
-		this.end_time = "23:59";
+		this.cpuData = "0";
+		this.ramData = "0";
+		this.startTime = "00:00";
+		this.endTime = "23:59";
 	}
-	public String get_class_id() {return this.class_id;} 
-	public String get_power_status() {return this.power_status;} 
-	public String get_id() {return this.id;}
-	public String get_name() {return this.name;}
-	public String get_cpu_data() {return this.cpu_data;}
-	public String get_ram_data() {return this.ram_data;}
-	public String get_start_time() {return this.start_time;}
-	public String get_end_time() {return this.end_time;}
+	public String getClassId() {return this.classId;} 
+	public String getPowerStatus() {return this.powerStatus;} 
+	public String getId() {return this.id;}
+	public String getName() {return this.name;}
+	public String getCpuData() {return this.cpuData;}
+	public String getRamData() {return this.ramData;}
+	public String getStartTime() {return this.startTime;}
+	public String getEndTime() {return this.endTime;}
 	
-	public void set_class_id(String cid) { this.class_id = cid;}
-	public void set_power_status(String opt) { this.power_status = opt;}
-	public void set_id(String tid) {this.id = tid;}
-	public void set_name(String tname) {this.name = tname;}
-	public void set_cpu_data(String cdata) {this.cpu_data = cdata;}
-	public void set_ram_data(String rdata) {this.ram_data = rdata;}
-	public void set_start_time(String tstart) {this.ram_data = tstart;}
-	public void set_end_time(String tend) {this.ram_data = tend;}
+	public void setClassId(String cid) { this.classId = cid;}
+	public void setPowerStatus(String opt) { this.powerStatus = opt;}
+	public void setId(String tid) {this.id = tid;}
+	public void setName(String tname) {this.name = tname;}
+	public void setCpuData(String cdata) {this.cpuData = cdata;}
+	public void setRamData(String rdata) {this.ramData = rdata;}
+	public void setStartTime(String tstart) {this.ramData = tstart;}
+	public void setEndTime(String tend) {this.ramData = tend;}
 }
