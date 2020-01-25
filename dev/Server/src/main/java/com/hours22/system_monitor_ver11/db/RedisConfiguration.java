@@ -1,4 +1,4 @@
-package com.hours22.system_monitor;
+package com.hours22.system_monitor_ver11.db;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,6 +8,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Repository;
+
+import com.hours22.system_monitor_ver11.vo.PcData;
 
 @Repository
 @Configuration
