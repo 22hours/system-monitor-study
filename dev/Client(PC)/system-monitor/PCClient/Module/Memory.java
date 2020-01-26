@@ -17,18 +17,11 @@ public class Memory {
 			try {
 				double TotalSpace = (double)osBean.getTotalPhysicalMemorySize()/1024/1024/1024;
 				double FreeSpace = (double)osBean.getFreePhysicalMemorySize()/1024/1024/1024;
-				int Usage = (int)(TotalSpace-FreeSpace);
-				String temp = Integer.toString(Usage);
-				/*String memoryUsage = "Memory Total Space : ";
-				memoryUsage += String.format("%.2f", TotalSpace);
-				memoryUsage += "%\nMemory Usage : ";
+				String memoryUsage = "";
 				memoryUsage += String.format("%.2f", TotalSpace-FreeSpace);
-				memoryUsage += "%\nMemory Free Space : ";
-				memoryUsage += String.format("%.2f", FreeSpace);
-				memoryUsage += "%\n";
+				memoryUsage += "%";
 				Thread.sleep(1000);
-				return Usage;*/
-				return temp;
+				return memoryUsage;
 			}
 			catch(Exception e) {
 				e.printStackTrace();

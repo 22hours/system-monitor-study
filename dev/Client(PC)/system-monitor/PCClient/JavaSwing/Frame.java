@@ -4,6 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -13,18 +16,26 @@ import javax.swing.JTextArea;
 import PCClient.Http.PCGet;
 import PCClient.Http.PCPost;
 import PCClient.Module.*;
-
+import PCClient.Module.Shutdown;
+import PCModel.PC;
 public class Frame {
 
 	public static void main(String[] args) {
-		try{
-			PCGet.Instance().GetMethod();
-			//PCPost.Instance().PostMethod();
-			//Shutdown.shutdown();
-		}
-		catch(Exception e) {
+		GetMACAddress MAC = new GetMACAddress();
+		String id = MAC.getLocalMacAddress();
+		PC pc = new PC(id);
+		ShutdownHook s = new ShutdownHook(pc);
+		s.AttachShutdownHook();
+		try {
+			PCPost.getInstance().PostMethod(pc);
+		} catch (URISyntaxException | IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		Thread generalPostThread = new GeneralPostPolling(pc);
+		Thread generalGetThread = new GeneralGetPolling(pc);
+		generalPostThread.start();
+		generalGetThread.start();
 		/*JFrame frame = new JFrame();
 		JPanel panel = new JPanel();
 		JLabel label = new JLabel("22Hours");
