@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hours22.system_monitor_ver11.db.DataService;
+import com.hours22.system_monitor_ver11.db.LettuceController;
 import com.hours22.system_monitor_ver11.vo.PcData;
 
 @Controller
@@ -19,11 +20,38 @@ public class MobileController {
 	ObjectMapper ojm;
 	
 	@Autowired
+	LettuceController lc;
+	
+	@Autowired
 	DataService dss;
 	
-	@RequestMapping(value = "/phone", method = RequestMethod.GET)
-	public void GetTotalPcData(HttpServletResponse response) throws IOException {
-		System.out.println("Input : /pc All Data <- GET method ");
-		System.out.println("Input : <- Total GET method ");
+	@RequestMapping(value = "/mobile/pc", method = RequestMethod.GET)
+	public void GetPcData(HttpServletResponse response) throws IOException {
+		// RedisLoad_JsonToObj();
+		// HttpResponse_ObjToJson();
+		System.out.println("Input : /mobile/pc <- GET method ");
+		//String json = ojm.writeValueAsString(dss.GetAllPcDataRedis());
+		
+		String json = ojm.writerWithDefaultPrettyPrinter().writeValueAsString(dss.GetAllPcDataRedis());
+
+		json = json.replaceAll("\\\\r\\\\n", "");
+		json = json.replaceAll("\\\\", "");
+		System.out.println(json);
+		response.getWriter().print(json);
+	}
+	
+	@RequestMapping(value = "/mobile/pc/{id}", method = RequestMethod.GET)
+	public void GetPcRamCpuData(HttpServletResponse response, @PathVariable String id) throws IOException {
+		// RedisLoad_JsonToObj();
+		// HttpResponse_ObjToJson();
+		System.out.println("Input : /mobile/pc/"+id+" <- GET method ");
+		//String json = ojm.writeValueAsString(dss.GetAllPcDataRedis());
+		
+		String json = ojm.writerWithDefaultPrettyPrinter().writeValueAsString(lc.getConnectionHget(id));
+
+		json = json.replaceAll("\\\\r\\\\n", "");
+		json = json.replaceAll("\\\\", "");
+		System.out.println(json);
+		response.getWriter().print(json);
 	}
 }

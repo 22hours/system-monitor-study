@@ -22,17 +22,5 @@ public class PcController {
 	
 	@Autowired
 	DataService dss;
-	
-	@RequestMapping(value = "/pc", method = RequestMethod.GET)
-	public void GetPcData(HttpServletResponse response) throws IOException {
-		// RedisLoad_JsonToObj();
-		// HttpResponse_ObjToJson();
-		System.out.println("Input : /pc <- GET method ");
-		String json = ojm.writeValueAsString(dss.test2());
-		json = json.replaceAll("\\\\", "");
-		
-		System.out.println(json);
-		response.getWriter().print(json);
-	}
 
 }
