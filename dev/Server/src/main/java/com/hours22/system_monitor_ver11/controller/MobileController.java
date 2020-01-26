@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +38,8 @@ public class MobileController extends HttpServlet{
 	
 	@Autowired
 	DataService dss;
+	
+	Timer timer;
 	
 	@RequestMapping(value = "/mobile/pc", method = RequestMethod.GET)
 	public void GetPcData(HttpServletResponse response) throws IOException {
@@ -71,9 +74,15 @@ public class MobileController extends HttpServlet{
 	@RequestMapping(value = "/mobile/pc/{id}/power/{endTime}", method = RequestMethod.POST)
 	public void PostPcPowerOff(HttpServletRequest request, HttpServletResponse response, @PathVariable String id, @PathVariable String endTime) throws IOException, InterruptedException, ParseException {
 		final AsyncContext asyncContext = request.startAsync(request, response);
-
+		asyncContext.setTimeout(900000000);
 		
-		Timer timer = new Timer();
+		if(timer != null) {
+			System.out.println("기존 종료시간이 변경되었습니다!");
+			timer.cancel();
+			timer = null;
+		}
+		timer = new Timer();
+		
 		TimerTask task = new TimerTask() {
 			@Override
 			public void run() {
@@ -83,6 +92,7 @@ public class MobileController extends HttpServlet{
 				jsonObject.put("id", id);
 				jsonObject.put("powerStatus", "OFF");
 				System.out.println("response : " + jsonObject.toString());
+				timer = null;
 				
 				try {
 					response.getWriter().print(jsonObject.toString());

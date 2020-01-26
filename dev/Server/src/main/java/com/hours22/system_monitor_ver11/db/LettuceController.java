@@ -72,8 +72,8 @@ public class LettuceController {
         return "all";
     }
     
-    @GetMapping(path="/connections/start")
-    public @ResponseBody String getConnection() {
+    //@GetMapping(path="/connections/start")
+    public void getConnection() {
         // This returns a JSON or XML with the users
     	String conn1 = "redis://localhost:6379/0 ";
     	RedisURI redisUri = new RedisURI("localhost", 6379, 5, TimeUnit.SECONDS);
@@ -82,20 +82,17 @@ public class LettuceController {
     		redisClient = RedisClient.create(redisUri);
     	} catch(Exception e) {
     		System.out.println(e);
-    		return "Connection Exception Events";
     	}
     	 connection = redisClient.connect();
     	 syncCmd = connection.sync();
     	 asyncCmd = connection.async();
- 		System.out.println("Connection Success!");
+ 		System.out.println("Redis Connection Success!");
  		try {
  			String ret = syncCmd.ping();
  			System.out.println("6379]ping->"+ret);
  		}catch(Exception e){
  			System.out.println(e);
  		}
-    	
- 		return "Success Open";
     }
     
     //@GetMapping(path="/connections/hset")
@@ -190,13 +187,13 @@ public class LettuceController {
     }
     
     
-    @GetMapping(path="/connections/end")
-    public @ResponseBody String getConnectionExit() {
+    //@GetMapping(path="/connections/end")
+    public void getConnectionExit() {
         // This returns a JSON or XML with the users
     	
  		connection.close();
  		redisClient.shutdown();
- 		System.out.println("Connection Exit!");
- 		return "Success Exit";
+ 		System.out.println("Redis Connection Exit!");
+ 		//return "Success Exit";
     }
 }
