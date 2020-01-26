@@ -98,26 +98,26 @@ public class LettuceController {
  		return "Success Open";
     }
     
-    @GetMapping(path="/connections/hset")
-    public @ResponseBody String getConnectionHset() {
+    //@GetMapping(path="/connections/hset")
+    public Map<String,String> getConnectionHset(String key, String endTime) {
         // This returns a JSON or XML with the users
-    	String key = "user-3";
+        JSONObject jsonObject = new JSONObject();
     	try {
     		// syncCmd.del(key);
     		// return: 신규 필드이면 true, 이미 있는 필드이면 false, false라고 실패한 것이 아님.
-    		Boolean bool1 = syncCmd.hset(key, "email", "charlie@redisgate.com");
-    		System.out.println("hset "+key+" email charlie@redisgate.com -> "+bool1);
-    		Boolean bool2 = syncCmd.hset(key, "language", "english");
-    		System.out.println("hset "+key+" language english -> "+bool2);
-    		Boolean bool3 = syncCmd.hset(key, "gender", "m");
-    		System.out.println("hset "+key+" gender m -> "+bool3);
-    		Boolean bool4 = syncCmd.hset(key, "gender", "f");
-    		System.out.println("hset "+key+" gender f -> "+bool4);
+    		Boolean bool1 = syncCmd.hset(key, "powerStatus", "OFF");
+    		System.out.println("hset "+key+" powerStatus -> "+"OFF" + bool1);
+    		jsonObject.put("powerStatus", "OFF");
+    		
+    		Boolean bool2 = syncCmd.hset(key, "endTime", endTime);
+    		System.out.println("hset "+key+" endTime -> "+endTime + bool2);
+    		jsonObject.put("endTime", endTime);
+    		
     	} catch (Exception e) {
     		System.out.println(e);
-    		return "Connection Exception Events";
+    		return jsonObject;
     	}
- 		return "Success Hset";
+ 		return jsonObject;
     }
     
     @GetMapping(path="/connections/hset2")
