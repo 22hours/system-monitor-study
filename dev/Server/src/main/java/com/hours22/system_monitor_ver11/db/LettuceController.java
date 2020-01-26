@@ -96,7 +96,7 @@ public class LettuceController {
     }
     
     //@GetMapping(path="/connections/hset")
-    public Map<String,String> getConnectionHset(String key, String endTime) {
+    public Map<String,String> getConnectionHsetPower(String key, String endTime) {
         // This returns a JSON or XML with the users
         JSONObject jsonObject = new JSONObject();
     	try {
@@ -117,22 +117,19 @@ public class LettuceController {
  		return jsonObject;
     }
     
-    @GetMapping(path="/connections/hset2")
-    public @ResponseBody String getConnectionHset2() {
+    //@GetMapping(path="/connections/hset2")
+    public void getConnectionHsetData(String key, Map<String, String> map) {
         // This returns a JSON or XML with the users
-    	String key = "user-3";
     	try {
     		// syncCmd.del(key);
     		// return: 신규 필드이면 true, 이미 있는 필드이면 false, false라고 실패한 것이 아님.
-    		Boolean bool2 = syncCmd.hset(key, "language", "KOR-R");
-    		System.out.println("hset "+key+" language english -> "+bool2);
-    		Boolean bool3 = syncCmd.hset(key, "gender", "AAA");
-    		System.out.println("hset "+key+" gender m -> "+bool3);
+    		Boolean bool2 = syncCmd.hset(key, "cpuData", map.get("cpuData"));
+    		System.out.println("hset "+key+" cpuData -> "+bool2);
+    		Boolean bool3 = syncCmd.hset(key, "ramData", map.get("ramData"));
+    		System.out.println("hset "+key+" ramData -> "+bool3);
     	} catch (Exception e) {
     		System.out.println(e);
-    		return "Connection Exception Events";
     	}
- 		return "Success Hset";
     }
     
     //@GetMapping(path="/connections/hget/{keyMap}")

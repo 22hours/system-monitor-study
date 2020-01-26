@@ -56,7 +56,7 @@ public class MobileController extends HttpServlet{
 		response.getWriter().print(json);
 	}
 	
-	@RequestMapping(value = "/mobile/pc/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/mobile/pc/{id}/data", method = RequestMethod.GET)
 	public void GetPcRamCpuData(HttpServletResponse response, @PathVariable String id) throws IOException {
 		// RedisLoad_JsonToObj();
 		// HttpResponse_ObjToJson();

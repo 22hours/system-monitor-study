@@ -18,6 +18,7 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -39,6 +40,19 @@ public class PcController {
 	
 	Timer timer;
 	String EndTime;
+	
+	@RequestMapping(value = "/pc/{id}/data", method = RequestMethod.POST)
+	public void PostPcData(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map, @PathVariable String id) throws IOException {
+		// RedisLoad_JsonToObj();
+		// HttpResponse_ObjToJson();
+		System.out.println("Input : /mobile/pc <- POST method ");
+		//String json = ojm.writeValueAsString(dss.GetAllPcDataRedis());
+		lc.getConnection();
+		lc.getConnectionHsetData(id, map);
+		lc.getConnectionExit();
+		System.out.println(map.toString());
+	}
+	
 	
 	@RequestMapping(value = "/pc/{id}/power/{endTime}", method = RequestMethod.POST)
 	public void PostPcPowerOff(HttpServletRequest request, HttpServletResponse response, @PathVariable String id, @PathVariable String endTime) throws IOException, InterruptedException, ParseException {
