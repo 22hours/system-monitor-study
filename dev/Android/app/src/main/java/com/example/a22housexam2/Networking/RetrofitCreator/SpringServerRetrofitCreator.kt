@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class SpringServerRetrofitCreator{
     companion object{
-        val API_BASE_URL = "http://203.229.204.25/"
+        val API_BASE_URL = "http://13.125.225.221/"
 
         private fun defaultRetrofit(): Retrofit {
             return Retrofit.Builder()

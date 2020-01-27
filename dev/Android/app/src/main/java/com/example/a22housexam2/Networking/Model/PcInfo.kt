@@ -3,24 +3,27 @@ package com.example.a22housexam2.Networking.Model
 import com.google.gson.annotations.SerializedName
 
 class PcInfo {
+    @SerializedName("classId")
+    var classId : String = ""
+
+    @SerializedName("powerStatus")
+    var powerStatus : String? = ""
+
     @SerializedName("id")
     var id : String? = ""
 
     @SerializedName("name")
     var name : String? =""
 
-    @SerializedName("power_status")
-    var power_status : String? = ""
+    @SerializedName("cpuData")
+    var cpuData : String? = ""
 
-    @SerializedName("cpu_data")
-    var cpu_data : String? = ""
+    @SerializedName("ramData")
+    var ramData : String? = ""
 
-    @SerializedName("ram_data")
-    var ram_data : String? = ""
+    @SerializedName("startTime")
+    var startTime : String? = ""
 
-    @SerializedName("start_time")
-    var start_time : String? = ""
-
-    @SerializedName("end_time")
-    var end_time : String? = ""
+    @SerializedName("endTime")
+    var endTime : String? = ""
 }

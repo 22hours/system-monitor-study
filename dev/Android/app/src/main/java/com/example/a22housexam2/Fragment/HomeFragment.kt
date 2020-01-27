@@ -9,65 +9,83 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.a22housexam2.Networking.Model.PcInfo
-import com.example.a22housexam2.Networking.Service.PcRequestManager
-import com.example.a22housexam2.Presenter.PcTotalInfoPresenter.pcInfoCardViewList
+import com.example.a22housexam2.ConstantInterface
+import com.example.a22housexam2.DataManager.PcListManager.pcInfoCardViewList
+import com.example.a22housexam2.DataManager.RoomListManager.RoomCardViewList
+import com.example.a22housexam2.DataManager.RoomListManager.addPcItem
+import com.example.a22housexam2.DataManager.RoomListManager.attachRoomObserver
+import com.example.a22housexam2.DataManager.RoomListManager.dettachRoomObserver
 import com.example.a22housexam2.R
 import com.example.a22housexam2.ViewAdapter.PcRecyclerAdapter
-import com.example.a22housexam2.ViewAdapter.RecyclerAdapter
+import com.example.a22housexam2.ViewAdapter.RoomRecyclerAdapter
 import com.example.a22housexam2.ViewAdapter.ViewItem.PcInfo_FullItem
-import com.example.a22housexam2.ViewAdapter.ViewItem.PcInfo_SmallItem
-import com.example.a22housexam2.ViewAdapter.ViewItem.Recycler_item
 import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.main_view.*
 
 
-
-class HomeFragment : Fragment(){
+class HomeFragment : Fragment(), ConstantInterface.View_HomeFragment{
+    private var TAG = "Home Fragment"
     private var llm = LinearLayoutManager(context)
     private lateinit var recyclerView : RecyclerView
-    private lateinit var adapter : PcRecyclerAdapter
+    private lateinit var adapter : RoomRecyclerAdapter
+
+    override fun notifyChanged() {
+        Log.e(TAG, "Notify Changed")
+        adapter = RoomRecyclerAdapter(activity, RoomCardViewList)
+        recyclerView.layoutManager = LinearLayoutManager(activity)
+        recyclerView.adapter = adapter
+    }
+
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_home, container, false) as ViewGroup
-        val requestManager = PcRequestManager()
 
+        attachRoomObserver(this)
        // list.clear()
+
         recyclerView = rootView.findViewById(R.id.recycler_view) as RecyclerView
         recyclerView.setHasFixedSize(true)
-        adapter = PcRecyclerAdapter(activity, pcInfoCardViewList)
+        adapter = RoomRecyclerAdapter(activity, RoomCardViewList)
         recyclerView.layoutManager = LinearLayoutManager(activity)
+
+        Log.e(TAG, "OnCreateView!")
+
         recyclerView.adapter = adapter
+        var button1 = rootView.findViewById<Button>(R.id.btButton)
+        var button2 = rootView.findViewById<Button>(R.id.btButton2)
 
-        Log.e("Frag", "MainFragment")
-
-//        recyclerView = (RecyclerView) rootView.
-//        recycler_view.adapter = RecyclerAdapter(activity.applicationContext,items)
-//        recycler_view.setHasFixedSize(true)
-//        recycler_view.layoutManager= llm
-//
-//        var PcInfo_SmallItem = PcInfo_SmallItem(
-//            pcinfo.id,
-//            pcinfo.name,
-//            pcinfo.power_status,
-//            pcinfo.start_time,
-//            pcinfo.end_time)
-//
-//        list.add(PcInfo_SmallItem)
-
-
-//        return inflater.inflate(R.layout.fragment_home, container, false)
-
-        var bindingTestButton = rootView.findViewById<Button>(R.id.bindingTest)
-        bindingTestButton.setOnClickListener {
-            var PcInfo_SmallItem = PcInfo_SmallItem(
-                "바인딩실험",
-            "바인딩실험이름",
-                "바인딩전원",
-                "바인딩 시작시간",
-                "바인딩 끝시간"
+        button2.setOnClickListener{
+            var testItem = PcInfo_FullItem(
+                "405",
+                "test2",
+                "이정환",
+                "on",
+                "10",
+                "10",
+                "10:10:10",
+                "10:10:10"
             )
-            pcInfoCardViewList.add(PcInfo_SmallItem)
+            addPcItem(testItem)
+        }
+        button1.setOnClickListener{
+            var testItem = PcInfo_FullItem(
+                "404",
+                "test1",
+                "이정환",
+                "on",
+                "10",
+                "10",
+                "10:10:10",
+                "10:10:10"
+            )
+            addPcItem(testItem)
         }
         return rootView
+    }
+
+    override fun onDestroy() {
+        dettachRoomObserver(this)
+        super.onDestroy()
     }
 }

@@ -1,165 +1,68 @@
 package com.example.a22housexam2.Networking.Service
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.util.Log
 import android.widget.Toast
-import com.example.a22housexam2.Networking.Model.PcInfo
 import com.example.a22housexam2.Networking.NetworkingInterface.PcRequest
-import com.example.a22housexam2.Presenter.PcTotalInfoPresenter.pcInfoCardViewList
+import com.example.a22housexam2.DataManager.PcListManager.pcInfoCardViewList
 import com.example.a22housexam2.ViewAdapter.ViewItem.PcInfo_FullItem
-import com.example.a22housexam2.ViewAdapter.ViewItem.PcInfo_SmallItem
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import com.example.a22housexam2.App
+import com.example.a22housexam2.Networking.Model.TotalPcInfo
 
-class PcRequestManager {
+
+object PcRequestManager {
     lateinit var compositeDisposable: CompositeDisposable
+    var context = App.applicationContext()
+
+    fun isNetworkConnected(context: Context): Boolean{
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork : NetworkInfo? = cm.activeNetworkInfo
+        val isConnected = activeNetwork != null && activeNetwork.isConnected
+        return isConnected
+    }
 
     public fun requestPc() {
         Log.d("Pc","Start!")
-        var _response : PcInfo = PcInfo()
         compositeDisposable = CompositeDisposable()
-
         compositeDisposable.add(PcRequest.getPc1Info()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.newThread())
-            .subscribe({ response: PcInfo ->
+            .subscribe({ response: TotalPcInfo ->
                 Log.d("Pc","Success!")
-                Log.d("Pc",response.id)
-                if(response.name == null || response.name == "null"){
-                    response.name = "none"
+                for ( item in response.pcs){
+                    var listItem : PcInfo_FullItem = PcInfo_FullItem(
+                        item.classId,
+                        item.id,
+                        item.name,
+                        item.powerStatus,
+                        item.cpuData,
+                        item.ramData,
+                        item.startTime,
+                        item.endTime
+                    )
+                    Log.d("PC Request",item.classId)
+                    Log.d("PC Request", item.id)
+                    Log.d("PC Request", item.name)
+                    Log.d("PC Request", item.powerStatus)
+                    Log.d("PC Request", item.ramData)
+                    Log.d("PC Request", item.cpuData)
+                    Log.d("PC Request", item.startTime)
+                    Log.d("PC Request", item.endTime)
+                    pcInfoCardViewList.add(listItem)
                 }
-                Log.d("Pc",response.name)
-                Log.d("Pc",response.cpu_data)
-                Log.d("Pc",response.ram_data)
-                Log.d("Pc",response.start_time)
-                Log.d("Pc",response.end_time)
-                Log.d("Pc",response.power_status)
+                Toast.makeText(context,"Card 추가 완료!",Toast.LENGTH_LONG);
 
-                _response.id = response.id
-                _response.name = response.name
-                _response.power_status = response.power_status
-                _response.cpu_data = response.cpu_data
-                _response.ram_data = response.ram_data
-                _response.start_time = response.start_time
-                _response.end_time = response.end_time
-
-                Log.d("Pc response",_response.name)
-                Log.d("Pc response",_response.cpu_data)
-                Log.d("Pc response",_response.ram_data)
-                Log.d("Pc response",_response.start_time)
-                Log.d("Pc response",_response.end_time)
-                Log.d("Pc response",_response.power_status)
-
-
-
-                var listItem = PcInfo_SmallItem(
-                    response.id,
-                    response.name,
-                    response.power_status,
-                    response.start_time,
-                    response.end_time
-                )
-                pcInfoCardViewList.add(listItem)
             }, { error: Throwable ->
                 Log.d("Pc", error.localizedMessage)
+                Toast.makeText(context,"Network Error",Toast.LENGTH_LONG);
             }))
         //Thread.sleep(2000)
-
-        //<editor-fold desc="PC Request 2">
-
-        compositeDisposable.add(PcRequest.getPc2Info()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.newThread())
-            .subscribe({ response: PcInfo ->
-                Log.d("Pc","Success!")
-                Log.d("Pc",response.id)
-                if(response.name == null || response.name == "null"){
-                    response.name = "none"
-                }
-                Log.d("Pc",response.name)
-                Log.d("Pc",response.cpu_data)
-                Log.d("Pc",response.ram_data)
-                Log.d("Pc",response.start_time)
-                Log.d("Pc",response.end_time)
-                Log.d("Pc",response.power_status)
-
-                _response.id = response.id
-                _response.name = response.name
-                _response.power_status = response.power_status
-                _response.cpu_data = response.cpu_data
-                _response.ram_data = response.ram_data
-                _response.start_time = response.start_time
-                _response.end_time = response.end_time
-
-                Log.d("Pc response",_response.name)
-                Log.d("Pc response",_response.cpu_data)
-                Log.d("Pc response",_response.ram_data)
-                Log.d("Pc response",_response.start_time)
-                Log.d("Pc response",_response.end_time)
-                Log.d("Pc response",_response.power_status)
-
-
-
-                var listItem = PcInfo_SmallItem(
-                    response.id,
-                    response.name,
-                    response.power_status,
-                    response.start_time,
-                    response.end_time
-                )
-                pcInfoCardViewList.add(listItem)
-            }, { error: Throwable ->
-                Log.d("Pc", error.localizedMessage)
-            }))
-        //</editor-fold>
-
-
-        //<editor-fold desc="PC Request 3">
-        compositeDisposable.add(PcRequest.getPc3Info()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.newThread())
-            .subscribe({ response: PcInfo ->
-                Log.d("Pc","Success!")
-                Log.d("Pc",response.id)
-                if(response.name == null || response.name == "null"){
-                    response.name = "none"
-                }
-                Log.d("Pc",response.name)
-                Log.d("Pc",response.cpu_data)
-                Log.d("Pc",response.ram_data)
-                Log.d("Pc",response.start_time)
-                Log.d("Pc",response.end_time)
-                Log.d("Pc",response.power_status)
-
-                _response.id = response.id
-                _response.name = response.name
-                _response.power_status = response.power_status
-                _response.cpu_data = response.cpu_data
-                _response.ram_data = response.ram_data
-                _response.start_time = response.start_time
-                _response.end_time = response.end_time
-
-                Log.d("Pc response",_response.name)
-                Log.d("Pc response",_response.cpu_data)
-                Log.d("Pc response",_response.ram_data)
-                Log.d("Pc response",_response.start_time)
-                Log.d("Pc response",_response.end_time)
-                Log.d("Pc response",_response.power_status)
-
-
-
-                var listItem = PcInfo_SmallItem(
-                    response.id,
-                    response.name,
-                    response.power_status,
-                    response.start_time,
-                    response.end_time
-                )
-                pcInfoCardViewList.add(listItem)
-            }, { error: Throwable ->
-                Log.d("Pc", error.localizedMessage)
-            }))
-        //</editor-fold>
+        Log.d("Pc response", "End")
 
     }
 }

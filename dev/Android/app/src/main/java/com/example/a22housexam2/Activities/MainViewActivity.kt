@@ -19,6 +19,7 @@ import android.view.MenuItem
 import androidx.annotation.NonNull
 import androidx.databinding.adapters.TextViewBindingAdapter.setText
 import android.R.attr.fragment
+import androidx.fragment.app.Fragment
 import com.example.a22housexam2.Fragment.HomeFragment
 import com.example.a22housexam2.Fragment.MenuFragment
 import com.example.a22housexam2.Fragment.SettingFragment
@@ -32,7 +33,6 @@ class MainViewActivity  : AppCompatActivity() {
     val homeFrag  = HomeFragment()
     val menuFrag = MenuFragment()
     val settingFragment = SettingFragment()
-    val requestManager : PcRequestManager = PcRequestManager()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_view_page)
@@ -65,8 +65,6 @@ class MainViewActivity  : AppCompatActivity() {
                     return false
                 }
             })
-
-
-
     }
+
 }

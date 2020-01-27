@@ -7,7 +7,7 @@ import retrofit2.http.GET
 
 class SpringServerRequestTotal{
     interface SpringServerRequestTotalImpl{
-        @GET("/total")
+        @GET("/pc")
         fun getPcTotalInfo() : Observable<TotalPcInfo>
     }
 
