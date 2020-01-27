@@ -41,6 +41,26 @@ public class PCGet {
 		HttpEntity entity = response.getEntity();
 		String content = EntityUtils.toString(entity);
 		try {
+			JsonElement jsonElement = JsonParser.parseString(content);
+			JsonObject jsonObject = jsonElement.getAsJsonObject();
+			String id = jsonObject.get("id").getAsString();
+			String message = jsonObject.get("message").getAsString();
+			if(!message.equals(null)) {
+				System.out.println(message);
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	/*public void GetMethod(PC pc) 
+			throws URISyntaxException, ClientProtocolException, IOException{
+		URI uri = new URI("http://203.229.204.25:80/pc/5");
+		HttpClient httpClient = HttpClientBuilder.create().build();
+		HttpResponse response = httpClient.execute(new HttpGet(uri));
+		HttpEntity entity = response.getEntity();
+		String content = EntityUtils.toString(entity);
+		try {
 			
 			JsonElement jsonElement = JsonParser.parseString(content);
 			JsonObject jsonObject = jsonElement.getAsJsonObject();
@@ -85,5 +105,5 @@ public class PCGet {
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 }

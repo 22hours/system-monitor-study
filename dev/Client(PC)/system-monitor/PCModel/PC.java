@@ -19,7 +19,7 @@ public class PC {
 		// 60,000 = 1분, 600,000 = 10분
 		// default 값을 3시간이라고 가정 = 3,600,000 * 3 = 10,800,000
 		long time = System.currentTimeMillis();
-		SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd-HH-mm");
 		this.start_time = dayTime.format(new Date(time));
 		time += 10800000;
 		this.end_time = dayTime.format(new Date(time));

@@ -6,7 +6,7 @@ import java.util.Date;
 public class TimeDifference {
 	public String calc(String original,String extension) {
 		try {
-			SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd-HH-mm");
 			Date originalDate = dayTime.parse(original);
 			long originalTime = originalDate.getTime();
 			Date extensionDate = dayTime.parse(extension);
