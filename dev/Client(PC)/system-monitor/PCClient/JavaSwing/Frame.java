@@ -26,16 +26,12 @@ public class Frame {
 		PC pc = new PC(id);
 		/*ShutdownHook s = new ShutdownHook(pc);
 		s.AttachShutdownHook();*/
-		try {
-			PCPost.getInstance().PostMethod(pc);
-		} catch (URISyntaxException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		/*Thread generalPostThread = new GeneralPostPolling(pc);
-		Thread generalGetThread = new GeneralGetPolling(pc);
-		generalPostThread.start();
-		generalGetThread.start();*/
+		Thread PostLongThread = new PostLongPolling(pc);
+		Thread PostGeneralThread = new PostGeneralPolling(pc);
+		Thread GetLongThread = new GetLongPolling(pc);
+		PostLongThread.start();
+		GetLongThread.start();
+		PostGeneralThread.start();
 		/*JFrame frame = new JFrame();
 		JPanel panel = new JPanel();
 		JLabel label = new JLabel("22Hours");
