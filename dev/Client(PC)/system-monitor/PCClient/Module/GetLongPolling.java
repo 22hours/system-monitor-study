@@ -12,6 +12,7 @@ public class GetLongPolling extends Thread{
 	
 	public void run() {
 		try {
+			int i = 30;
 			while (true) {
 				PCGet.getInstance().GetMethod(pc);
 			}

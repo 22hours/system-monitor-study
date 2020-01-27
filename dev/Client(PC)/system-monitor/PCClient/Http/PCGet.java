@@ -35,7 +35,7 @@ public class PCGet {
 	}
 	public void GetMethod(PC pc) 
 			throws URISyntaxException, ClientProtocolException, IOException{
-		URI uri = new URI("http://203.229.204.25:80/pc/5");
+		URI uri = new URI("http://203.229.204.25:80/pc/" + pc.getRemainTime());
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		HttpResponse response = httpClient.execute(new HttpGet(uri));
 		HttpEntity entity = response.getEntity();
@@ -44,9 +44,21 @@ public class PCGet {
 			JsonElement jsonElement = JsonParser.parseString(content);
 			JsonObject jsonObject = jsonElement.getAsJsonObject();
 			String id = jsonObject.get("id").getAsString();
-			String message = jsonObject.get("message").getAsString();
-			if(!message.equals(null)) {
+			String message = jsonObject.get("msg").getAsString();
+			if(jsonObject.get("msg").isJsonNull()) { // PC가 연장 신청 했을 때 혹은 다른 경우
+				pc.setRemainTime("30");
+			}
+			else { // 메시지가 왔을 때 처리
 				System.out.println(message);
+				if(pc.getRemainTime().equals("30")) {
+					pc.setRemainTime("10");
+				}
+				else if(pc.getRemainTime().equals("10")) {
+					pc.setRemainTime("2");
+				}
+				else if(pc.getRemainTime().equals("2")) {
+					pc.setRemainTime("0");
+				}
 			}
 		}
 		catch(Exception e) {

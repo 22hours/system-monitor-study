@@ -12,6 +12,7 @@ public class PC {
 	private String end_time;
 	private String cpu_data;
 	private String ram_data;
+	private String remainTime;
 
 	public PC(String id) {
 		this.id = id;
@@ -25,7 +26,7 @@ public class PC {
 		this.end_time = dayTime.format(new Date(time));
 		this.cpu_data = CPU.getCPU().showCPU();
 		this.ram_data = Memory.getMemory().showMemory();
-		
+		this.remainTime = "30";
 	}
 
 	public String getId() {
@@ -70,5 +71,11 @@ public class PC {
 
 	public void setRam_data(String ram_data) {
 		this.ram_data = ram_data;
+	}
+	public String getRemainTime() {
+		return this.remainTime;
+	}
+	public void setRemainTime(String r) {
+		this.remainTime = r;
 	}
 }

@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -90,12 +92,16 @@ public class PCPost {
 				JsonElement jsonElement = JsonParser.parseString(content);
 				JsonObject jsonObject = jsonElement.getAsJsonObject();
 				String id = jsonObject.get("id").getAsString();
-				if(!id.equals(pc.getId())) {
+				String status = jsonObject.get("powerStatus").getAsString();
+				/*if(!id.equals(pc.getId())) {
 					System.out.println("잘못된 정보 수신!");
 				}
 				else {
 					System.out.println("컴퓨터를 종료 합니다.");
 					PCShutdown(pc);
+				}*/
+				if(status.equals("off")) { 
+					Shutdown.getInstance().shutdown("300"); // 나중에 0으로 고쳐야 함.
 				}
 			}
 			catch(Exception e) {
@@ -131,9 +137,12 @@ public class PCPost {
 		}
 	}
 
-	/*public void Extension(PC pc) throws URISyntaxException, ClientProtocolException, IOException {
-		URI uri = new URI("http://203.229.204.25:80/pc/" + pc.getId());
-
+	public void Extension(PC pc, String extensionTime) throws URISyntaxException, ClientProtocolException, IOException {
+		URI uri = new URI("http://13.125.225.221/pc/" + pc.getId());
+		SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd-HH-mm");
+		long tempTime = Integer.parseInt(extensionTime);
+		tempTime *= 3600000;
+		pc.setEnd_time(dayTime.format(new Date(tempTime)));
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		HttpPost postRequest = new HttpPost(uri);
 		JsonObject json = new JsonObject();
@@ -142,10 +151,10 @@ public class PCPost {
 		System.out.println("=====POST======");
 		System.out.println("id = 5");
 		System.out.println("end_time = " + pc.getEnd_time());
-		Shutdown.getInstance().stopshutdown();
+/*		Shutdown.getInstance().stopshutdown();
 		TimeDifference timeDifference = new TimeDifference();
 		String difference = timeDifference.calc(pc.getStart_time(), pc.getEnd_time());
-		Shutdown.getInstance().shutdown(difference);
+		Shutdown.getInstance().shutdown(difference);*/
 		postRequest.setEntity(new StringEntity(json.toString(), "UTF8"));
 		postRequest.addHeader("Content-type", "application/json");
 		try {
@@ -155,9 +164,9 @@ public class PCPost {
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		}
-	}*/ // 회의 후에 결정하기
+	}
 	
-	public void PCShutdown(PC pc) throws URISyntaxException, ClientProtocolException, IOException {
+	/*public void PCShutdown(PC pc) throws URISyntaxException, ClientProtocolException, IOException {
 		// 프로그램이 꺼지기 전에 post로 보내주기
 		URI uri = new URI("http://13.125.225.221/pc/"+pc.getId());
 		HttpClient httpClient = HttpClientBuilder.create().build();
@@ -180,5 +189,5 @@ public class PCPost {
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 }

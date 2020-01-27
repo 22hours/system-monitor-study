@@ -14,7 +14,7 @@ public class PostGeneralPolling extends Thread{
 		try {
 			while (true) {
 				PCPost.getInstance().GeneralPollingPost(pc);
-				Thread.sleep(3000);
+				Thread.sleep(300000); // 5Ка
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
