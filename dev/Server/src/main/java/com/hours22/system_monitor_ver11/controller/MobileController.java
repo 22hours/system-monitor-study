@@ -48,11 +48,14 @@ public class MobileController extends HttpServlet{
 		System.out.println("Input : /mobile/pc <- GET method ");
 		//String json = ojm.writeValueAsString(dss.GetAllPcDataRedis());
 		
+		lc.getConnection();
 		String json = ojm.writerWithDefaultPrettyPrinter().writeValueAsString(dss.GetAllPcDataRedis());
 
 		json = json.replaceAll("\\\\r\\\\n", "");
 		json = json.replaceAll("\\\\", "");
 		System.out.println(json);
+		
+		lc.getConnectionExit();
 		response.getWriter().print(json);
 	}
 	
@@ -60,6 +63,8 @@ public class MobileController extends HttpServlet{
 	public void GetPcRamCpuData(HttpServletResponse response, @PathVariable String id) throws IOException {
 		// RedisLoad_JsonToObj();
 		// HttpResponse_ObjToJson();
+		
+		lc.getConnection();
 		System.out.println("Input : /mobile/pc/"+id+" <- GET method ");
 		//String json = ojm.writeValueAsString(dss.GetAllPcDataRedis());
 		
@@ -69,6 +74,7 @@ public class MobileController extends HttpServlet{
 		json = json.replaceAll("\\\\", "");
 		System.out.println(json);
 		response.getWriter().print(json);
+		lc.getConnectionExit();
 	}
 	
 	@RequestMapping(value = "/mobile/pc/{id}/power/{endTime}", method = RequestMethod.POST)
