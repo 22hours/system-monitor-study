@@ -33,7 +33,7 @@
 <!--        <activity android:name=".OneFrag"></activity>-->
 <!--        <activity android:name=".TwoFrag"></activity>-->
 <!--        <activity android:name=".ThreeFrag"></activity>-->
-        <activity android:name=".Activities.RoomInfoActivity" android:theme="@style/Theme.AppCompat.Dialog"></activity>
+        <activity android:name=".Activities.RoomInfoActivity" ></activity>
     </application>
 
 </manifest>

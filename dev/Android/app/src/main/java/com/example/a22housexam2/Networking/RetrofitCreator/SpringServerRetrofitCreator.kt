@@ -10,10 +10,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 class SpringServerRetrofitCreator{
     companion object{
         val API_BASE_URL = "http://13.125.225.221/"
+        val TEST_API_BASE_URL ="https://97c73bd3-b9e4-44ab-958b-2a9874d8c28b.mock.pstmn.io/"
 
         private fun defaultRetrofit(): Retrofit {
             return Retrofit.Builder()
-                .baseUrl(API_BASE_URL)
+                .baseUrl(TEST_API_BASE_URL) // 현재 MOCK SERVER 적용중
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(createOKHttpClient())

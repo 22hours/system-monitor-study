@@ -42,10 +42,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:text="404"
+                        android:text="D404"
                         android:textAlignment="center"
                         android:textColor="@color/White"
-                        android:textSize="35dp"
+                        android:textSize="25dp"
                         android:textStyle="bold"
                         card_view:fontFamily="sans-serif-smallcaps">
 

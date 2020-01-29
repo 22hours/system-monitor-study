@@ -12,6 +12,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import com.example.a22housexam2.App
+import com.example.a22housexam2.DataManager.RoomListManager.addPcItem
 import com.example.a22housexam2.Networking.Model.TotalPcInfo
 
 
@@ -35,30 +36,37 @@ object PcRequestManager {
             .subscribe({ response: TotalPcInfo ->
                 Log.d("Pc","Success!")
                 for ( item in response.pcs){
-                    var listItem : PcInfo_FullItem = PcInfo_FullItem(
-                        item.classId,
-                        item.id,
-                        item.name,
-                        item.powerStatus,
-                        item.cpuData,
-                        item.ramData,
-                        item.startTime,
-                        item.endTime
-                    )
-                    Log.d("PC Request",item.classId)
-                    Log.d("PC Request", item.id)
-                    Log.d("PC Request", item.name)
-                    Log.d("PC Request", item.powerStatus)
-                    Log.d("PC Request", item.ramData)
-                    Log.d("PC Request", item.cpuData)
-                    Log.d("PC Request", item.startTime)
-                    Log.d("PC Request", item.endTime)
-                    pcInfoCardViewList.add(listItem)
+                    try {
+                        var listItem: PcInfo_FullItem = PcInfo_FullItem(
+                            item.classId,
+                            item.id,
+                            item.name,
+                            item.powerStatus,
+                            item.cpuData,
+                            item.ramData,
+                            item.startTime,
+                            item.endTime
+                        )
+                        Log.d("PC Request", item.classId)
+                        Log.d("PC Request", item.id)
+                        Log.d("PC Request", item.name)
+                        Log.d("PC Request", item.powerStatus)
+                        Log.d("PC Request", item.ramData)
+                        Log.d("PC Request", item.cpuData)
+                        Log.d("PC Request", item.startTime)
+                        Log.d("PC Request", item.endTime)
+                        addPcItem(listItem)
+                    }
+                    catch (e : Exception){
+                        Log.d("PC Request"," Item is NULL")
+                        continue
+                    }
                 }
                 Toast.makeText(context,"Card 추가 완료!",Toast.LENGTH_LONG);
 
             }, { error: Throwable ->
-                Log.d("Pc", error.localizedMessage)
+                Log.d("PC REQUEST", error.localizedMessage)
+                Log.d("PC REQUEST", "=============================== GET ERROR =================================")
                 Toast.makeText(context,"Network Error",Toast.LENGTH_LONG);
             }))
         //Thread.sleep(2000)

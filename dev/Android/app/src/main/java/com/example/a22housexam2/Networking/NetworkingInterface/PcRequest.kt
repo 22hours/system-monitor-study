@@ -10,7 +10,7 @@ import retrofit2.http.Query
 
 class PcRequest{
     interface PcRequestImpl1{
-        @GET("pc")
+        @GET("mobile/pc")
         fun getPc1Info() : Observable<TotalPcInfo>
     }
 

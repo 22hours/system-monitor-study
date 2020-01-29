@@ -7,6 +7,8 @@
     <color name="Black">#000000</color>
     <color name="GoodBlue">#A9001CFA</color>
     <color name="themeColor">#0066FF</color>
+    <color name="textThemeColor">#0356D3</color>
+
     <color name="pcOn">#00CDFF</color>
     <color name="pcOff">#B2B6BB</color>
 
