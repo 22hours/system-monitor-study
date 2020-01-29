@@ -1,6 +1,7 @@
 package com.example.a22housexam2.ViewAdapter.ViewItem
 
 data class PcInfo_FullItem(
+    var classId : String? = "",
     val id : String? = "",
     val name : String?= "",
     val power_status : String?= "",

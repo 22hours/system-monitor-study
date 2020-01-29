@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:background="@color/GrayBack">
+    <androidx.cardview.widget.CardView
+        android:foregroundGravity="center"
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/rcv"
+        card_view:cardCornerRadius="10dp"
+        card_view:cardElevation="2sp"
+        card_view:cardBackgroundColor="@color/White"
+        card_view:cardUseCompatPadding="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="135dp"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:background="@drawable/shape"
+                    android:layout_width="76dp"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="25dp"
+                        android:text="class"
+                        android:textAlignment="center"
+                        android:textColor="@color/White"
+                        android:textStyle="bold"
+                        card_view:fontFamily="sans-serif-smallcaps"></TextView>
+                    <TextView
+                        android:id="@+id/classId"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="D404"
+                        android:textAlignment="center"
+                        android:textColor="@color/White"
+                        android:textSize="25dp"
+                        android:textStyle="bold"
+                        card_view:fontFamily="sans-serif-smallcaps">
+
+                    </TextView>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:orientation="vertical"
+
+                        android:layout_width="match_parent"
+                        android:layout_height="42dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="25dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginTop="15dp"
+                            android:layout_marginRight="5dp"
+                            android:text="Class Information"
+                            android:textAlignment="center"
+                            android:textColor="@color/Black"
+                            card_view:fontFamily="sans-serif-condensed-medium"></TextView>
+                        <LinearLayout
+                            android:background="@color/GrayBack"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"></LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="5dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="98dp"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="Total"
+                                android:textAlignment="center"
+                                android:textColor="@color/TextGray"
+                                card_view:fontFamily="sans-serif-condensed-medium"></TextView>
+
+                            <ImageView
+                                android:layout_width="28dp"
+                                android:layout_height="25dp"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="5dp"
+                                android:src="@drawable/total_pc"></ImageView>
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="3"
+                                android:textAlignment="center"
+                                android:textColor="@color/TextGray"
+                                android:textSize="20dp"
+                                card_view:fontFamily="sans-serif-condensed-medium"></TextView>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="98dp"
+                            android:orientation="vertical"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="On"
+                                android:textAlignment="center"
+                                android:textColor="@color/TextGray"
+                                card_view:fontFamily="sans-serif-condensed-medium"></TextView>
+
+                            <ImageView
+                                android:layout_width="28dp"
+                                android:layout_height="25dp"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="5dp"
+                                android:src="@drawable/on_pc"></ImageView>
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="3"
+                                android:textAlignment="center"
+                                android:textColor="@color/TextGray"
+                                android:textSize="20dp"
+                                card_view:fontFamily="sans-serif-condensed-medium"></TextView>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="98dp"
+                            android:orientation="vertical"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="Off"
+                                android:textAlignment="center"
+                                android:textColor="@color/TextGray"
+                                card_view:fontFamily="sans-serif-condensed-medium"></TextView>
+
+                            <ImageView
+                                android:layout_width="28dp"
+                                android:layout_height="25dp"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="5dp"
+                                android:src="@drawable/off_pc"></ImageView>
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="3"
+                                android:textAlignment="center"
+                                android:textColor="@color/TextGray"
+                                android:textSize="20dp"
+                                card_view:fontFamily="sans-serif-condensed-medium"></TextView>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</layout>
+
