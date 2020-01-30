@@ -16,7 +16,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hours22.system_monitor_ver11.db.DataService;
+import com.hours22.system_monitor_ver11.db.LettuceController;
 import com.hours22.system_monitor_ver11.vo.PcData;
+
+import io.lettuce.core.output.KeyValueStreamingChannel;
 
 @Controller
 public class CommonController {
@@ -25,6 +28,9 @@ public class CommonController {
 	
 	@Autowired
 	DataService dss;
+	
+	@Autowired
+	LettuceController lc;
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public void GetIndex(HttpServletResponse response) throws IOException {
@@ -38,31 +44,29 @@ public class CommonController {
 		System.out.println("Input : /testpage <- GET method ");
 		return "Test Page";
 	}
-
+    
 	@RequestMapping(value = "/pc/{id}", method = RequestMethod.GET)
-	public void GetPcInstanceData(HttpServletResponse response,  @PathVariable String id) throws IOException {
+	public @ResponseBody String GetPcInstanceData(HttpServletResponse response,  @PathVariable String id) throws IOException {
 		System.out.println("Input : /pc/"+ id +" <- GET method ");
 		
-		// RedisLoad_JsonToObj();
-		PcData pc = dss.RedisLoad_JsonToObj(id);
+		lc.getConnection();
+		String res = lc.getConnectionHgetall(id);
+		lc.getConnectionExit();
 		
-		// HttpResponse_ObjToJson();
-		String json = ojm.writeValueAsString(pc);
-		System.out.println(json);
-
-		response.getWriter().print(json);
+		return res;
 	}
 	
 	@RequestMapping(value = "/pc/{id}", method = RequestMethod.POST)
-	public void PostPcInstanceData(HttpServletRequest request,  @RequestBody Map<String, String> map) throws IOException {
+	public void PostPcInstanceData(HttpServletRequest request,  @RequestBody Map<String, String> map, @PathVariable String id) throws IOException {
 		String json = ojm.writeValueAsString(map);
 		System.out.println("Input : "+ json +" <- POST method ");
 		
 		
-		// HttpRequest_JsonToObj();
-		PcData pc = ojm.readValue(json, PcData.class);
-			//System.out.println(pc.get_name());
-		dss.RedisSave_ObjToJson(pc);
+		lc.getConnection();
+		lc.getConnectionHsetAllData(id, map);
+		lc.getConnectionExit();
+		
+		
 	}
 }
 

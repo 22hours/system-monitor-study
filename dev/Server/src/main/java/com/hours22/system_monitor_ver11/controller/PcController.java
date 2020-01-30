@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -70,20 +71,22 @@ public class PcController {
 			@Override
 			public void run() {
 				
-				JSONObject jsonObject = new JSONObject();
+				Date nowTime = new Date();
+				SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 				
-				System.out.println("PC 전원을 끕니다.");
-				jsonObject.put("id", id);
-				jsonObject.put("powerStatus", "OFF");
-				System.out.println("response : " + jsonObject.toString());
+				System.out.println("PC 전원을 끕니다. [종료시각 : " + transFormat.format(nowTime)+"]");
 				timer = null;
 				
+				asyncContext.complete();
 			}
 		};
 		
 		lc.getConnection();
-		String jsonString = lc.getConnectionHgetall(id);
-		
+		String jsonStringForAndroid = lc.getConnectionHgetall(id); 
+		System.out.println(jsonStringForAndroid);
+		// to send android!
+		// 어플이 먼저켜지고나서, 어플에서 long polling으로 업데이트.
+
 		
 		Date now = new Date();
 		String form = EndTime = endTime;
@@ -93,8 +96,13 @@ public class PcController {
 		form = seq[0] + "-" + seq[1] + "-" + seq[2] +" "+seq[3] +":"+seq[4];
 		System.out.println("종료예약 설정 [시간 : "+form+"]");
 		
+		Map<String, String> jsonObject = new HashMap<String, String>();
+		jsonObject.put("id", id);
+		jsonObject.put("powerStatus", "OFF");
+		jsonObject.put("endTime", endTime);
+		String jsonString = ojm.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject);
 		response.getWriter().print(jsonString);
-		asyncContext.complete();
+		
 		Date to = transFormat.parse(form);
 		timer.schedule(task, to);
 		

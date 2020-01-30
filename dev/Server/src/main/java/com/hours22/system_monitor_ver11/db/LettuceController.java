@@ -127,6 +127,36 @@ public class LettuceController {
     		System.out.println("hset "+key+" cpuData -> "+bool2);
     		Boolean bool3 = syncCmd.hset(key, "ramData", map.get("ramData"));
     		System.out.println("hset "+key+" ramData -> "+bool3);
+    		Boolean bool4 = syncCmd.hset(key, "startTime", map.get("startTime"));
+    		System.out.println("hset "+key+" startTime -> "+bool2);
+    		Boolean bool5 = syncCmd.hset(key, "endTime", map.get("endTime"));
+    		System.out.println("hset "+key+" endTime -> "+bool3);
+    	} catch (Exception e) {
+    		System.out.println(e);
+    	}
+    }
+    
+    public void getConnectionHsetAllData(String key, Map<String, String> map) {
+        // This returns a JSON or XML with the users
+    	try {
+    		// syncCmd.del(key);
+    		// return: 신규 필드이면 true, 이미 있는 필드이면 false, false라고 실패한 것이 아님.
+    		Boolean bool1 = syncCmd.hset(key, "id", map.get("id"));
+    		System.out.println("hset "+key+" cpuData -> "+bool1);
+    		Boolean bool2 = syncCmd.hset(key, "cpuData", map.get("cpuData"));
+    		System.out.println("hset "+key+" cpuData -> "+bool2);
+    		Boolean bool3 = syncCmd.hset(key, "ramData", map.get("ramData"));
+    		System.out.println("hset "+key+" ramData -> "+bool3);
+    		Boolean bool4 = syncCmd.hset(key, "startTime", map.get("startTime"));
+    		System.out.println("hset "+key+" startTime -> "+bool4);
+    		Boolean bool5 = syncCmd.hset(key, "endTime", map.get("endTime"));
+    		System.out.println("hset "+key+" endTime -> "+bool5);
+    		Boolean bool6 = syncCmd.hset(key, "powerStatus", map.get("powerStatus"));
+    		System.out.println("hset "+key+" powerStatus -> "+bool6);
+    		Boolean bool7 = syncCmd.hset(key, "name", map.get("name"));
+    		System.out.println("hset "+key+" name -> "+bool7);
+    		Boolean bool8 = syncCmd.hset(key, "classId", map.get("classId"));
+    		System.out.println("hset "+key+" classId -> "+bool8);
     	} catch (Exception e) {
     		System.out.println(e);
     	}
@@ -160,7 +190,7 @@ public class LettuceController {
  		return jsonObject;
     }
     
-    //@GetMapping(path="/connections/hgetall")
+    //@GetMapping(path="/pc/{key}")
     public String getConnectionHgetall(String key) {
     	String res = null;
     	try {
