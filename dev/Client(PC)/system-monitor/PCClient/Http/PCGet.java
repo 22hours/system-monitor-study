@@ -35,11 +35,13 @@ public class PCGet {
 	}
 	public void GetMethod(PC pc) 
 			throws URISyntaxException, ClientProtocolException, IOException{
-		URI uri = new URI("http://203.229.204.25:80/pc/" + pc.getRemainTime());
+		URI uri = new URI("http://13.125.225.221/pc/" + "damin" + "/message/" + pc.getRemainTime());
+		System.out.println(uri);
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		HttpResponse response = httpClient.execute(new HttpGet(uri));
 		HttpEntity entity = response.getEntity();
 		String content = EntityUtils.toString(entity);
+		System.out.println(content);
 		try {
 			JsonElement jsonElement = JsonParser.parseString(content);
 			JsonObject jsonObject = jsonElement.getAsJsonObject();

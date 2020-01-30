@@ -42,10 +42,11 @@ public class PCPost {
 		return instance;
 	}
 	public void PostMethod(PC pc) throws URISyntaxException, ClientProtocolException, IOException {
-		URI uri = new URI("http://13.125.225.221/pc/"+pc.getId());
+		URI uri = new URI("http://13.125.225.221/pc/"+"damin"+"/power/2020-01-30-17-50");
 		TimeDifference timeDifference = new TimeDifference();
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		HttpPost postRequest = new HttpPost(uri);
+		System.out.println(uri);
 		/*List<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("id", pc.getId()));
 		params.add(new BasicNameValuePair("power_status", pc.getPower_status()));
@@ -59,14 +60,12 @@ public class PCPost {
 		postRequest.setHeader("Content-type","application/json");
 		System.out.println(postingString);
 		*/
-		String cpuData = pc.getCpu_data();
-		String ramData = pc.getRam_data();
 		JsonObject json = new JsonObject();
 		json.addProperty("classId", "1");
-		json.addProperty("id", pc.getId());
+		json.addProperty("id", "damin");
 		json.addProperty("name", "Favian");
-		json.addProperty("cpuData", cpuData);
-		json.addProperty("ramData", ramData);
+		json.addProperty("cpuData", pc.getCpu_data());
+		json.addProperty("ramData", pc.getRam_data());
 		json.addProperty("powerStatus", pc.getPower_status());
 		json.addProperty("startTime", pc.getStart_time());
 		json.addProperty("endTime", pc.getEnd_time());
@@ -78,16 +77,18 @@ public class PCPost {
 		System.out.println("=====POST======");
 		System.out.println("classId = 1");
 		System.out.println("name = Favian");
-		System.out.println("id = "+ pc.getId());
+		System.out.println("id = "+ "damin");
 		System.out.println("powerStatus = " + pc.getPower_status());
 		System.out.println("endTime = "+pc.getEnd_time());
-		System.out.println("cpuData = "+ cpuData);
+		System.out.println("cpuData = "+ pc.getCpu_data());
 		System.out.println("startTime = " + pc.getStart_time());
-		System.out.println("ramData = "+ramData);
+		System.out.println("ramData = "+ pc.getRam_data());
 		try {
 			HttpResponse response = httpClient.execute(postRequest);
 			HttpEntity entity = response.getEntity();
 			String content = EntityUtils.toString(entity);
+			System.out.println("=====Response=====");
+			System.out.println(content);
 			try {
 				JsonElement jsonElement = JsonParser.parseString(content);
 				JsonObject jsonObject = jsonElement.getAsJsonObject();
@@ -100,7 +101,7 @@ public class PCPost {
 					System.out.println("컴퓨터를 종료 합니다.");
 					PCShutdown(pc);
 				}*/
-				if(status.equals("off")) { 
+				if(status.equals("OFF")) { 
 					Shutdown.getInstance().shutdown("300"); // 나중에 0으로 고쳐야 함.
 				}
 			}
@@ -113,17 +114,17 @@ public class PCPost {
 	}
 
 	public void GeneralPollingPost(PC pc) throws URISyntaxException, ClientProtocolException, IOException {
-		URI uri = new URI("http://13.125.225.221/pc/"+pc.getId());
+		URI uri = new URI("http://13.125.225.221/pc/"+"damin"+"/data");
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		HttpPost postRequest = new HttpPost(uri);
 		pc.setCpu_data(CPU.getCPU().showCPU());
 		pc.setRam_data(Memory.getMemory().showMemory());
 		JsonObject json = new JsonObject();
-		json.addProperty("id", pc.getId());
+		json.addProperty("id", "damin");
 		json.addProperty("cpu_data", pc.getCpu_data());
 		json.addProperty("ram_data", pc.getRam_data());
 		System.out.println("=====POST======");
-		System.out.println("id = " + pc.getId());
+		System.out.println("id = " + "damin");
 		System.out.println("cpu_data = " + pc.getCpu_data());
 		System.out.println("ram_data = "+pc.getRam_data());
 		postRequest.setEntity(new StringEntity(json.toString(), "UTF8"));

@@ -24,12 +24,24 @@ public class Frame {
 		GetMACAddress MAC = new GetMACAddress();
 		String id = MAC.getLocalMacAddress();
 		PC pc = new PC(id);
+		/*try {
+			PCGet.getInstance().GetMethod(pc);;
+		} catch (URISyntaxException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
 		/*ShutdownHook s = new ShutdownHook(pc);
 		s.AttachShutdownHook();*/
 		Thread PostLongThread = new PostLongPolling(pc);
 		Thread PostGeneralThread = new PostGeneralPolling(pc);
 		Thread GetLongThread = new GetLongPolling(pc);
 		PostLongThread.start();
+		try {
+			Thread.sleep(15000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		GetLongThread.start();
 		PostGeneralThread.start();
 		/*JFrame frame = new JFrame();

@@ -16,7 +16,7 @@ public class PC {
 
 	public PC(String id) {
 		this.id = id;
-		this.power_status = "true"; // 이 클래스를 instance화 시키면 켜져 있다는 뜻이다.
+		this.power_status = "on"; // 이 클래스를 instance화 시키면 켜져 있다는 뜻이다.
 		// 60,000 = 1분, 600,000 = 10분
 		// default 값을 3시간이라고 가정 = 3,600,000 * 3 = 10,800,000
 		long time = System.currentTimeMillis();
