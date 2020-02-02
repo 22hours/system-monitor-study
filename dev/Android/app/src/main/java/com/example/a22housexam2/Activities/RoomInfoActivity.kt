@@ -3,6 +3,7 @@ package com.example.a22housexam2.Activities
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toolbar
@@ -17,6 +18,7 @@ import com.example.a22housexam2.DataManager.RoomListManager.attachRoomInfoObserv
 import com.example.a22housexam2.DataManager.RoomListManager.dettachRoomObserver
 import com.example.a22housexam2.Networking.Service.PcRequestManager.context
 import com.example.a22housexam2.R
+import com.example.a22housexam2.Service.NetworkService.isNowTotal
 import com.example.a22housexam2.ViewAdapter.PcRecyclerAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_room_info.*
@@ -46,12 +48,12 @@ class RoomInfoActivity : AppCompatActivity(), ConstantInterface.View_RoomInfoAct
         recyclerView = findViewById(R.id.recycler_view)
         recyclerView.setHasFixedSize(true)
 
-
-        var toolBar : androidx.appcompat.widget.Toolbar = findViewById(R.id.app_toolbar)
-        setSupportActionBar(toolBar)
-        supportActionBar!!.setDisplayShowTitleEnabled(false)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         classId.text = intent.getStringExtra("classId")
+
+        var backButton = findViewById<ImageButton>(R.id.backButton)
+        backButton.setOnClickListener {
+            onBackPressed()
+        }
 
         attachRoomInfoObserver(this)
         notifyChanged()
@@ -65,6 +67,11 @@ class RoomInfoActivity : AppCompatActivity(), ConstantInterface.View_RoomInfoAct
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {
+        isNowTotal = true
+        super.onBackPressed()
     }
 
 

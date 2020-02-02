@@ -2,55 +2,69 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <LinearLayout
-        android:background="@drawable/back_blue_radius2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <LinearLayout
+            android:background="@drawable/white_bottom_shape"
+            android:elevation="5dp"
             android:layout_width="match_parent"
-            android:layout_height="98dp"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textView6"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="15dp"
-                android:text="Rooms"
-                android:textColor="@color/GrayBack"
-                android:textSize="30sp"
-                android:textStyle="bold"
-                app:fontFamily="sans-serif-black" />
             <LinearLayout
                 android:orientation="horizontal"
+                android:layout_marginTop="25dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <Button
-                    android:id="@+id/btButton"
-                    android:layout_width="200dp"
-                    android:layout_height="36dp"
-                    android:text="404"></Button>
-                <Button
-                    android:id="@+id/btButton2"
-                    android:layout_width="200dp"
-                    android:layout_height="36dp"
-                    android:text="405"></Button>
+                android:layout_height="50dp">
+
+                <TextView
+                    android:id="@+id/textView6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Class"
+                    android:textColor="@color/Black"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    app:fontFamily="@font/cafe24" />
+
+                <View
+                    android:layout_width="188dp"
+                    android:layout_height="wrap_content"></View>
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:id="@+id/checkFlagText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Realtime Checking"
+                        ></TextView>
+
+                    <Switch
+                        android:trackTint="@color/themeColor"
+                        android:checked="true"
+                        android:layout_width="117dp"
+                        android:layout_height="match_parent"></Switch>
+                </LinearLayout>
+
             </LinearLayout>
 
 
         </LinearLayout>
 
         <LinearLayout
+            android:layout_marginTop="15dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/rounded"
             android:orientation="vertical">
 
             <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="459dp"
                 android:scrollbarAlwaysDrawVerticalTrack="true"
                 android:scrollbars="vertical">
 

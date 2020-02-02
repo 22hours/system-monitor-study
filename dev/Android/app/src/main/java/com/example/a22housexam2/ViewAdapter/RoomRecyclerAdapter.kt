@@ -21,6 +21,7 @@ import com.example.a22housexam2.ViewAdapter.ViewItem.PcInfo_FullItem
 import androidx.core.content.ContextCompat.startActivity
 import android.R.id
 import com.example.a22housexam2.Activities.RoomInfoActivity
+import com.example.a22housexam2.Service.NetworkService.isNowTotal
 
 
 class RoomRecyclerAdapter : RecyclerView.Adapter<RoomRecyclerAdapter.ViewHolder>{
@@ -47,6 +48,7 @@ class RoomRecyclerAdapter : RecyclerView.Adapter<RoomRecyclerAdapter.ViewHolder>
             var intent : Intent
             intent = Intent(context,RoomInfoActivity::class.java)
             intent.putExtra("classId",item.classId)
+            isNowTotal = false;
             context?.startActivity(intent)
         }
     }

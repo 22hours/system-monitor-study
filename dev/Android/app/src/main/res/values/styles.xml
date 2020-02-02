@@ -11,6 +11,7 @@
         <item name="android:windowBackground">
             @drawable/splash_bg2
         </item>
+        <item name="android:statusBarColor">@color/themeColor</item>
     </style>
     <style name="Theme.Transparent" parent="android:Theme">
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -22,5 +23,4 @@
         <item name="android:backgroundDimEnabled">true</item>
         <item name="android:windowFullscreen">true</item>
     </style>
-
 </resources>
