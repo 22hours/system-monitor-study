@@ -10,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class SpringServerRetrofitCreator{
     companion object{
         val API_BASE_URL = "http://13.125.225.221/"
-        val TEST_API_BASE_URL ="https://97c73bd3-b9e4-44ab-958b-2a9874d8c28b.mock.pstmn.io/"
+        val TEST_API_BASE_URL ="http://10.0.2.2:3000/"
 
         private fun defaultRetrofit(): Retrofit {
             return Retrofit.Builder()

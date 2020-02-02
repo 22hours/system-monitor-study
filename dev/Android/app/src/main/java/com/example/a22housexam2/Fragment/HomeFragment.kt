@@ -1,5 +1,6 @@
 package com.example.a22housexam2.Fragment
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,19 +16,32 @@ import com.example.a22housexam2.DataManager.RoomListManager.RoomCardViewList
 import com.example.a22housexam2.DataManager.RoomListManager.addPcItem
 import com.example.a22housexam2.DataManager.RoomListManager.attachRoomObserver
 import com.example.a22housexam2.DataManager.RoomListManager.dettachRoomObserver
+import com.example.a22housexam2.Networking.NetworkingInterface.PcRequest
+import com.example.a22housexam2.Networking.Service.PcRequestManager
 import com.example.a22housexam2.R
+import com.example.a22housexam2.Service.NetworkService.isNowTotal
 import com.example.a22housexam2.ViewAdapter.PcRecyclerAdapter
 import com.example.a22housexam2.ViewAdapter.RoomRecyclerAdapter
 import com.example.a22housexam2.ViewAdapter.ViewItem.PcInfo_FullItem
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.main_view.*
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
 
-class HomeFragment : Fragment(), ConstantInterface.View_HomeFragment{
+class HomeFragment : Fragment(), ConstantInterface.View_HomeFragment, CoroutineScope{
     private var TAG = "Home Fragment"
     private var llm = LinearLayoutManager(context)
     private lateinit var recyclerView : RecyclerView
     private lateinit var adapter : RoomRecyclerAdapter
+
+    //coroutine
+    private lateinit var myJob : Job
+    private var handler = CoroutineExceptionHandler{
+        coroutineContext, throwable -> Log.e("Exception", ":" + throwable)
+    }
+    override val coroutineContext: CoroutineContext
+        get() = myJob + Dispatchers.Main
 
     override fun notifyChanged() {
         Log.e(TAG, "Notify Changed")
@@ -36,11 +50,14 @@ class HomeFragment : Fragment(), ConstantInterface.View_HomeFragment{
         recyclerView.adapter = adapter
     }
 
-
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        myJob = Job()
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_home, container, false) as ViewGroup
-
+        isNowTotal = true
         attachRoomObserver(this)
        // list.clear()
 
@@ -52,34 +69,17 @@ class HomeFragment : Fragment(), ConstantInterface.View_HomeFragment{
         Log.e(TAG, "OnCreateView!")
 
         recyclerView.adapter = adapter
-        var button1 = rootView.findViewById<Button>(R.id.btButton)
-        var button2 = rootView.findViewById<Button>(R.id.btButton2)
 
-        button2.setOnClickListener{
-            var testItem = PcInfo_FullItem(
-                "405",
-                "test2",
-                "이정환",
-                "on",
-                "10",
-                "10",
-                "10:10:10",
-                "10:10:10"
-            )
-            addPcItem(testItem)
-        }
-        button1.setOnClickListener{
-            var testItem = PcInfo_FullItem(
-                "404",
-                "test1",
-                "이정환",
-                "on",
-                "10",
-                "10",
-                "10:10:10",
-                "10:10:10"
-            )
-            addPcItem(testItem)
+        launch(handler){
+            while(true) {
+                checkFlagText.setTextColor(Color.RED)
+                print(Thread.currentThread().name)
+                Log.d("코루틴 연습", "코루틴 메세지입니다 #########")
+                Log.d("코루틴 연습", isNowTotal.toString())
+                delay(5000L)
+                PcRequestManager.requestPc()
+                checkFlagText.setTextColor(Color.GRAY)
+            }
         }
         return rootView
     }
@@ -87,5 +87,6 @@ class HomeFragment : Fragment(), ConstantInterface.View_HomeFragment{
     override fun onDestroy() {
         dettachRoomObserver(this)
         super.onDestroy()
+        myJob.cancel()
     }
 }

@@ -20,6 +20,7 @@
         app:itemBackground="@drawable/border"
         app:itemIconTint="@android:color/darker_gray"
         app:itemTextColor="@android:color/darker_gray"
+        android:foregroundTint="@color/themeColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

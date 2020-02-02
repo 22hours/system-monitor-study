@@ -1,5 +1,6 @@
 package com.example.a22housexam2.Networking.Service
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
@@ -13,9 +14,11 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import com.example.a22housexam2.App
 import com.example.a22housexam2.DataManager.RoomListManager.addPcItem
+import com.example.a22housexam2.DataManager.RoomListManager.addPcItemTest
 import com.example.a22housexam2.Networking.Model.TotalPcInfo
 
 
+@SuppressLint("StaticFieldLeak")
 object PcRequestManager {
     lateinit var compositeDisposable: CompositeDisposable
     var context = App.applicationContext()
@@ -55,7 +58,7 @@ object PcRequestManager {
                         Log.d("PC Request", item.cpuData)
                         Log.d("PC Request", item.startTime)
                         Log.d("PC Request", item.endTime)
-                        addPcItem(listItem)
+                        addPcItemTest(listItem)
                     }
                     catch (e : Exception){
                         Log.d("PC Request"," Item is NULL")

@@ -17,26 +17,39 @@ import kotlinx.android.synthetic.main.activity_pc_info.*
 import kotlinx.android.synthetic.main.bottom_sheet.*
 import kotlinx.android.synthetic.main.main_content.*
 import androidx.databinding.adapters.TextViewBindingAdapter.setText
+import com.example.a22housexam2.ConstantInterface
+import com.example.a22housexam2.DataManager.RoomListManager.RoomHashMapTest
+import com.example.a22housexam2.DataManager.RoomListManager.attachPcInfoObserver
+import com.example.a22housexam2.DataManager.RoomListManager.dettachPcInfoObserver
 import kotlinx.android.synthetic.main.activity_pc_info2.*
 
 
-class PcInfoActivity : AppCompatActivity() {
+class PcInfoActivity : AppCompatActivity() , ConstantInterface.View_PcInfoActivity{
+    private var nowPcId = ""
+    private var nowClassId = ""
+    override fun notifyChanged() {
+        var item = RoomHashMapTest[this.nowClassId]!![this.nowPcId]
+        pc_id.text  = item!!.id
+        pc_name.text = item!!.name
+        pc_start_time.text = item!!.start_time
+        pc_end_time.text = item!!.end_time
+        pc_cpu_data_int.text = item!!.cpu_data + "%"
+        pc_ram_data_int.text = item!!.ram_data+ "%"
+    }
+
+    override fun getPcId(): String {
+        return this.nowPcId
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
-
         setContentView(R.layout.activity_pc_info2)
-
         val intent = intent
-
-        pc_id.text = intent.getStringExtra("pc_id")
-        pc_name.text = intent.getStringExtra("pc_name")
-        pc_start_time.text = intent.getStringExtra("pc_start_time")
-        pc_end_time.text = intent.getStringExtra("pc_end_time")
-        pc_cpu_data_int.text = intent.getStringExtra("pc_cpu_data") + "%"
-        pc_ram_data_int.text = intent.getStringExtra("pc_ram_data") + "%"
-        var cpuData : String = intent.getStringExtra("pc_cpu_data")
-        var ramData : String = intent.getStringExtra("pc_ram_data")
+        nowClassId = intent.getStringExtra("pc_classId")!!
+        nowPcId = intent.getStringExtra("pc_id")!!
+        attachPcInfoObserver(this)
+        notifyChanged()
         //pc_cpu_data_progressbar.setProgress(cpuData.toInt())
         //pc_ram_data_progressbar.setProgress(ramData.toInt())
 //        pc_cpu_data_progressbar.progress = intent.getStringExtra("pc_cpu_data") as Int
@@ -78,7 +91,7 @@ class PcInfoActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+        dettachPcInfoObserver()
         super.onBackPressed()
     }
-
 }

@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.a22housexam2.App
 import com.example.a22housexam2.Networking.Service.PcRequestManager
 import com.example.a22housexam2.Presenter.InternetCheckPresenter
+import com.example.a22housexam2.Utility.Utils
 
 class LoadingActivity : AppCompatActivity(), ViewInterface.LoadView {
     lateinit var internetPresenter : InternetCheckPresenter
@@ -43,6 +44,7 @@ class LoadingActivity : AppCompatActivity(), ViewInterface.LoadView {
 
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
+        Utils.setStatusBarColor(this, Utils.StatusBarColorType.WHITE_STATUS_BAR);
         this.internetPresenter = InternetCheckPresenter(this)
         checkInternet()
     }
@@ -52,7 +54,6 @@ class LoadingActivity : AppCompatActivity(), ViewInterface.LoadView {
     }
 
     fun startLoading(){
-
         PcRequestManager.requestPc()
         var handler = Handler()
         handler.postDelayed(Runnable {

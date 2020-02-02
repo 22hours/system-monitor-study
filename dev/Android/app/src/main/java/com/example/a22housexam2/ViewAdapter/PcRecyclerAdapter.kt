@@ -64,6 +64,7 @@ class PcRecyclerAdapter : RecyclerView.Adapter<PcRecyclerAdapter.ViewHolder>{
         holder.cv.setOnClickListener{
                var intent : Intent
                intent = Intent(context,PcInfoActivity::class.java)
+               intent.putExtra("pc_classId",item.classId)
                intent.putExtra("pc_id",item.id)
                intent.putExtra("pc_name",item.name)
                intent.putExtra("pc_power_status",item.power_status)

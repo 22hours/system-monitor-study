@@ -25,6 +25,7 @@ import com.example.a22housexam2.Fragment.MenuFragment
 import com.example.a22housexam2.Fragment.SettingFragment
 import com.example.a22housexam2.Networking.NetworkingInterface.PcRequest
 import com.example.a22housexam2.Networking.Service.PcRequestManager
+import com.example.a22housexam2.Utility.Utils
 import com.example.a22housexam2.ViewAdapter.ViewItem.PcInfo_FullItem
 import kotlinx.android.synthetic.main.main_view_page.*
 
