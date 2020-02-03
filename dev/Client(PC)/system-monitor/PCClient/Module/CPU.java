@@ -17,7 +17,6 @@ public class CPU { // 하나의 클래스만 존재해도 된다 생각해서 Singleton으로 만들�
 		try {
 			String cpuUsage = "";
 			cpuUsage += String.format("%.2f", osBean.getSystemCpuLoad() * 100);
-			cpuUsage += "%";
 			Thread.sleep(1000);
 			return cpuUsage;
 		}

@@ -19,7 +19,6 @@ public class Memory {
 				double FreeSpace = (double)osBean.getFreePhysicalMemorySize()/1024/1024/1024;
 				String memoryUsage = "";
 				memoryUsage += String.format("%.2f", TotalSpace-FreeSpace);
-				memoryUsage += "%";
 				Thread.sleep(1000);
 				return memoryUsage;
 			}
