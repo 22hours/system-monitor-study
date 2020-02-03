@@ -41,7 +41,7 @@ public class PCGet {
 		HttpResponse response = httpClient.execute(new HttpGet(uri));
 		HttpEntity entity = response.getEntity();
 		String content = EntityUtils.toString(entity);
-		System.out.println(content);
+		System.out.println("Get Long-Polling Response = " + content);
 		try {
 			JsonElement jsonElement = JsonParser.parseString(content);
 			JsonObject jsonObject = jsonElement.getAsJsonObject();
@@ -60,6 +60,9 @@ public class PCGet {
 				}
 				else if(pc.getRemainTime().equals("2")) {
 					pc.setRemainTime("0");
+				}
+				else if(pc.getRemainTime().equals("0")) {
+					pc.setRemainTime("-1");
 				}
 			}
 		}
