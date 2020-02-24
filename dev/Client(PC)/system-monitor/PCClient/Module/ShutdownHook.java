@@ -13,18 +13,16 @@ public class ShutdownHook {
 	}
 	public void AttachShutdownHook() {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
-			//@Override
-			/*public void run() {
+			@Override
+			public void run() {
 				try {
-					pc.setPower_status("false");
-					//PCPost.getInstance().PCShutdown(pc);
-					Shutdown.getInstance().stopshutdown();
-					Shutdown.getInstance().shutdown("600");
+					pc.setPower_status("OFF");
+					PCPost.getInstance().PCShutdown(pc);
 				} catch (URISyntaxException | IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			}*/
+			}
 		});
 		System.out.println("Shut Down Hook Attached...");
 	}

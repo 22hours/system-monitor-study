@@ -20,7 +20,7 @@ public class Shutdown {
 	}
 	Runtime run = Runtime.getRuntime();
 	public void shutdown(String time) throws IOException {
-		run.exec("shutdown -s -t "+ time);
+		run.exec("shutdown -s -f -t "+ time);
 	}
 	public void stopshutdown() throws IOException{
 		run.exec("shutdown -a");
