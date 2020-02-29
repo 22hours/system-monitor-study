@@ -46,13 +46,19 @@ public class MobileController extends HttpServlet{
 		// RedisLoad_JsonToObj();
 		// HttpResponse_ObjToJson();
 		System.out.println("Input : /mobile/pc <- GET method ");
-		//String json = ojm.writeValueAsString(dss.GetAllPcDataRedis());
 		
 		lc.getConnection();
-		String json = ojm.writerWithDefaultPrettyPrinter().writeValueAsString(dss.GetAllPcDataRedis());
+		String json = ojm.writeValueAsString(dss.GetAllPcDataRedis());
+		
+		json = dss.PrettyPrinter(json);
+		//String json = ojm.writerWithDefaultPrettyPrinter().writeValueAsString(dss.GetAllPcDataRedis());
 
-		json = json.replaceAll("\\\\r\\\\n", "");
-		json = json.replaceAll("\\\\", "");
+		//json = json.replaceAll("\\\\r\\\\n", "");
+		//json = json.replaceAll("\\\\", "");
+		
+		//json = json.replaceAll("\\r\\n", "");
+		//json = json.replaceAll("\\", "");
+		
 		System.out.println(json);
 		
 		lc.getConnectionExit();
@@ -70,8 +76,9 @@ public class MobileController extends HttpServlet{
 		
 		String json = ojm.writerWithDefaultPrettyPrinter().writeValueAsString(lc.getConnectionHget(id));
 
-		json = json.replaceAll("\\\\r\\\\n", "");
-		json = json.replaceAll("\\\\", "");
+		//json = json.replaceAll("\\r\\n", "");
+		//json = json.replaceAll("\\", "");
+		
 		System.out.println(json);
 		response.getWriter().print(json);
 		lc.getConnectionExit();

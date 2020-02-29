@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.hours22'
-version = '1.2-SNAPSHOT'
+version = '1.2.5-SNAPSHOT'
 sourceCompatibility = '1.8'
 
 repositories {

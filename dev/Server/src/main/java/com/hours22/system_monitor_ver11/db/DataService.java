@@ -49,6 +49,16 @@ public class DataService {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
+    public String PrettyPrinter(String s) {
+    	s = s.replaceAll("\\\\r\\\\n", "");
+    	System.out.println("erase \\\\r\\\\n");
+    	s = s.replaceAll("\\\\\"", "\"");
+    	System.out.println("erase \\\"");
+    	s = s.replaceAll("\\\\n", ""); //   <--- FOR ubuntu
+    	System.out.println("erase \\n");//  <--- FOR ubuntu
+    	return s;
+    }
+    
     public void test() {
         ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
         PcData data = new PcData();
