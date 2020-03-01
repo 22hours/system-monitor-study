@@ -60,18 +60,21 @@ public class CommonController {
 				"O pc 언제꺼 ??? db에 반영 됌.<br>"  + 
 				"- observer pattern 적용 필요\r\n" + 
 				"- 비동기 처리 필요");
+		System.out.println("---------------------------------------------------------------------");
 		System.out.println("Input : / <- GET method [Client Ip : "+ cic.getClientIp(req) +" ] at " + transFormat.format(new Date()));
 	}
 	
 	@RequestMapping(value = "/testpage", method = RequestMethod.GET)
 	public @ResponseBody String GetTestPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		dss.test();
+		System.out.println("---------------------------------------------------------------------");
 		System.out.println("Input : /testpage <- GET method [Client Ip : " +cic.getClientIp(request)+" ] at " + transFormat.format(new Date()));
 		return "Test Page";
 	}
     
 	@RequestMapping(value = "/pc/{id}", method = RequestMethod.GET)
 	public @ResponseBody String GetPcInstanceData(HttpServletRequest req, HttpServletResponse response,  @PathVariable String id) throws IOException {
+		System.out.println("---------------------------------------------------------------------");
 		System.out.println("Input : /pc/"+ id +" <- GET method [Client Ip : "+ cic.getClientIp(req) + " ] at " + transFormat.format(new Date()));
 		
 		lc.getConnection();
@@ -84,6 +87,7 @@ public class CommonController {
 	@RequestMapping(value = "/pc/{id}", method = RequestMethod.POST)
 	public void PostPcInstanceData(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map, @PathVariable String id) throws IOException {
 		String json = ojm.writeValueAsString(map);
+		System.out.println("---------------------------------------------------------------------");
 		System.out.println("Input : "+ json +" <- POST method [Client : "+ cic.getClientIp(request) + " ] at "+transFormat.format(new Date()));
 		
 		

@@ -12,6 +12,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.servlet.AsyncContext;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -32,6 +33,7 @@ import com.hours22.system_monitor_ver11.db.DataService;
 import com.hours22.system_monitor_ver11.db.LettuceController;
 
 @Controller
+@WebServlet(asyncSupported = true)
 public class PcController {
 	@Autowired
 	ObjectMapper ojm;
@@ -45,7 +47,7 @@ public class PcController {
 	@Autowired
 	ClientInfoController cic;
 	
-	Timer timer;
+	Timer OffTimer, MsgTimer;
 	Date now = new Date();
 	SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	
@@ -55,6 +57,7 @@ public class PcController {
 		
 		// RedisLoad_JsonToObj();
 		// HttpResponse_ObjToJson();
+		System.out.println("---------------------------------------------------------------------");
 		System.out.println("Input : /pc/"+id+"/data <- POST method [Client Ip : " +cic.getClientIp(request)+"] at "+transFormat.format(new Date()) );
 		//String json = ojm.writeValueAsString(dss.GetAllPcDataRedis());
 		lc.getConnection();
@@ -72,22 +75,27 @@ public class PcController {
 		final AsyncContext asyncContext = request.startAsync(request, response);
 		asyncContext.setTimeout(900000000);
 		
-		if(timer != null) {
-			System.out.println("기존 종료시간이 변경되었습니다!");
-			timer.cancel();
-			timer = null;
+
+		System.out.println("---------------------------------------------------------------------");
+		System.out.println("Input : /pc/"+id+"/power/"+endTime+" <- POST method(언제꺼?) [Client Ip : " +cic.getClientIp(request)+" ] at "+transFormat.format(new Date()));
+		
+		if(OffTimer != null) {
+			System.out.println("[언제꺼?] 기존 작업을 취소하고, 새로 진행합니다.");
+			OffTimer.cancel();
+			OffTimer = null;
 		}
-		timer = new Timer();
+		OffTimer = new Timer();
 		
 		TimerTask task = new TimerTask() {
 			@Override
 			public void run() {
-				
+
+				System.out.println("---------------------------------------------------------------------");
 				Date nowTime = new Date();
 				SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 				
 				System.out.println("PC 전원을 끕니다. [종료시각 : " + transFormat.format(nowTime)+"]");
-				timer = null;
+				OffTimer = null;
 				
 				Map<String, String> jsonObjectExit = new HashMap<String, String>();
 				jsonObjectExit.put("id", id);
@@ -128,10 +136,9 @@ public class PcController {
 		System.out.println("hget 디버깅 결과 : " + jsonString);
 		
 		Date to = transFormat.parse(form);
-		timer.schedule(task, to);
-		
-		System.out.println("Input : /pc/"+id+"/power/"+endTime+" <- POST method(언제꺼?) [Client Ip : " +cic.getClientIp(request)+" ] at "+transFormat.format(new Date()));
 		lc.getConnectionExit();
+		
+		OffTimer.schedule(task, to);
 	}
 
 	@RequestMapping(value = "/pc/{id}/message/{min}", method = RequestMethod.GET)
@@ -140,11 +147,15 @@ public class PcController {
 		response.setContentType("application/json;charset=UTF-8"); 
 		asyncContext.setTimeout(900000000);
 		
-		if(timer != null) {
-			timer.cancel();
-			timer = null;
+		System.out.println("---------------------------------------------------------------------");
+		System.out.println("Input : /pc/"+id+"/msg/"+min+" <- GET method [Client Ip : "+ cic.getClientIp(request)+" ] at "+transFormat.format(new Date()));
+		
+		if(MsgTimer != null) {
+			System.out.println("[messaging] 기존 작업을 취소하고, 새로 진행합니다.");
+			MsgTimer.cancel();
+			MsgTimer = null;
 		}
-		timer = new Timer();
+		MsgTimer = new Timer();
 		
 		
 		TimerTask warningTask = new TimerTask() {
@@ -152,7 +163,8 @@ public class PcController {
 			public void run() {
 				
 				JSONObject jsonObject = new JSONObject();
-				
+
+				System.out.println("---------------------------------------------------------------------");
 				System.out.println("[종료"+ min +"분전 알림 메세지!]");
 				jsonObject.put("id", id);
 				if(min == "2") {
@@ -179,6 +191,8 @@ public class PcController {
 		EndTime = lc.getConnectionHgetField(id, "endTime");
 		lc.getConnectionExit();
 		
+		System.out.println("일단 redis에서 불러온 값 : "+ EndTime);
+		
 		String form = EndTime;
 		SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		String [] seq = form.split("-");
@@ -190,8 +204,6 @@ public class PcController {
 		cal.setTime(to);
 		cal.add(Calendar.MINUTE, -beforeMin);
 		
-		timer.schedule(warningTask, cal.getTime());
-		
-		System.out.println("Input : /pc/"+id+"/msg/"+min+" <- GET method [Client Ip : "+ cic.getClientIp(request)+" ] at "+transFormat.format(new Date()));
+		MsgTimer.schedule(warningTask, cal.getTime());
 	}
 }

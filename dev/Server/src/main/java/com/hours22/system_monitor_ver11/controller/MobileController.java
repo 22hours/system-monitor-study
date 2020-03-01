@@ -47,14 +47,14 @@ public class MobileController extends HttpServlet{
 	@Autowired
 	ClientInfoController cic;
 	
-	Timer timer;
-	String EndTime;
+	Timer OffTimer, MsgTimer;
 	SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	
 	@RequestMapping(value = "/mobile/pc", method = RequestMethod.GET)
 	public void GetPcData(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		// RedisLoad_JsonToObj();
 		// HttpResponse_ObjToJson();
+		System.out.println("---------------------------------------------------------------------");
 		System.out.println("Input : /mobile/pc <- GET method [Client Ip : "+ cic.getClientIp(request)+"] at "+transFormat.format(new Date()) );
 		
 		lc.getConnection();
@@ -73,6 +73,7 @@ public class MobileController extends HttpServlet{
 		// HttpResponse_ObjToJson();
 		
 		lc.getConnection();
+		System.out.println("---------------------------------------------------------------------");
 		System.out.println("Input : /mobile/pc/"+id+"/data <- GET method [Client Ip : "+ cic.getClientIp(request) +" ] at " + transFormat.format(new Date()));
 		
 		String json = ojm.writeValueAsString(dss.GetAllPcDataRedis());
@@ -90,13 +91,16 @@ public class MobileController extends HttpServlet{
 		
 		final AsyncContext asyncContext = request.startAsync(request, response);
 		asyncContext.setTimeout(900000000);
+		System.out.println("---------------------------------------------------------------------");
+		System.out.println("Input : /mobile/pc/"+id+"/power/"+endTime+" <- POST method [Client Ip : "+cic.getClientIp(request) +" ] at "+transFormat.format(new Date()));
 		
-		if(timer != null) {
+		if(OffTimer != null) {
+			
 			System.out.println("기존 종료시간이 변경되었습니다!");
-			timer.cancel();
-			timer = null;
+			OffTimer.cancel();
+			OffTimer = null;
 		}
-		timer = new Timer();
+		OffTimer = new Timer();
 		
 		TimerTask task = new TimerTask() {
 			@Override
@@ -104,9 +108,9 @@ public class MobileController extends HttpServlet{
 				
 				Date nowTime = new Date();
 				SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-				
+				System.out.println("---------------------------------------------------------------------");
 				System.out.println("PC 전원을 끕니다. [종료시각 : " + transFormat.format(nowTime)+"]");
-				timer = null;
+				OffTimer = null;
 				
 				Map<String, String> jsonObjectExit = new HashMap<String, String>();
 				jsonObjectExit.put("id", id);
@@ -127,7 +131,7 @@ public class MobileController extends HttpServlet{
 
 		
 		Date now = new Date();
-		String form = EndTime = endTime;
+		String form = endTime;
 		SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		System.out.println("PC가 켜졌습니다!" + transFormat.format(now));
 		String [] seq = form.split("-");
@@ -147,9 +151,8 @@ public class MobileController extends HttpServlet{
 		System.out.println("hget 디버깅 결과 : " + jsonString);
 		
 		Date to = transFormat.parse(form);
-		timer.schedule(task, to);
+		OffTimer.schedule(task, to);
 		
-		System.out.println("Input : /mobile/pc/"+id+"/power/"+endTime+" <- POST method [Client Ip : "+cic.getClientIp(request) +" ] at "+transFormat.format(new Date()));
 		lc.getConnectionExit();
 	}
 }
