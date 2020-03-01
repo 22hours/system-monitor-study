@@ -6,6 +6,8 @@ import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.swing.JOptionPane;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -35,13 +37,13 @@ public class PCGet {
 	}
 	public void GetMethod(PC pc) 
 			throws URISyntaxException, ClientProtocolException, IOException{
-		URI uri = new URI("http://13.125.225.221/pc/" + "damin" + "/message/" + pc.getRemainTime());
+		URI uri = new URI("http://13.125.225.221/pc/damin/message/" + pc.getRemainTime());
 		System.out.println(uri);
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		HttpResponse response = httpClient.execute(new HttpGet(uri));
 		HttpEntity entity = response.getEntity();
 		String content = EntityUtils.toString(entity);
-		System.out.println(content);
+		System.out.println("Get Long-Polling Response = " + content);
 		try {
 			JsonElement jsonElement = JsonParser.parseString(content);
 			JsonObject jsonObject = jsonElement.getAsJsonObject();
@@ -51,15 +53,22 @@ public class PCGet {
 				pc.setRemainTime("30");
 			}
 			else { // 메시지가 왔을 때 처리
-				System.out.println(message);
+				Thread alarmThread = new AlarmThread(message);
+				alarmThread.start();
 				if(pc.getRemainTime().equals("30")) {
 					pc.setRemainTime("10");
 				}
 				else if(pc.getRemainTime().equals("10")) {
 					pc.setRemainTime("2");
 				}
+				else if(pc.getRemainTime().equals("5")) {
+					pc.setRemainTime("2");
+				}
 				else if(pc.getRemainTime().equals("2")) {
-					pc.setRemainTime("0");
+					pc.setRemainTime("1");
+				}
+				else if(pc.getRemainTime().equals("1")) {
+					pc.setRemainTime("-1");
 				}
 			}
 		}
