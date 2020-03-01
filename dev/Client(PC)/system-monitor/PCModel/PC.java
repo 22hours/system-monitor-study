@@ -26,7 +26,7 @@ public class PC {
 		this.end_time = dayTime.format(new Date(time));
 		this.cpu_data = CPU.getCPU().showCPU();
 		this.ram_data = Memory.getMemory().showMemory();
-		this.remainTime = "2";
+		this.remainTime = "5";
 	}
 
 	public String getId() {

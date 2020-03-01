@@ -42,7 +42,7 @@ public class PCPost {
 		return instance;
 	}
 	public void PostMethod(PC pc) throws URISyntaxException, ClientProtocolException, IOException {
-		URI uri = new URI("http://13.125.225.221/pc/"+"damin");
+		URI uri = new URI("http://13.125.225.221/pc/damin/power/2020-03-01-21-10");
 		System.out.println("uri = " + "http://13.125.225.221/pc/"+"damin");
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		HttpPost postRequest = new HttpPost(uri);

@@ -35,7 +35,7 @@ public class PCGet {
 	}
 	public void GetMethod(PC pc) 
 			throws URISyntaxException, ClientProtocolException, IOException{
-		URI uri = new URI("http://13.125.225.221/pc/" + "damin" + "/message/" + pc.getRemainTime());
+		URI uri = new URI("http://13.125.225.221/pc/damin/message/" + pc.getRemainTime());
 		System.out.println(uri);
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		HttpResponse response = httpClient.execute(new HttpGet(uri));
@@ -58,10 +58,13 @@ public class PCGet {
 				else if(pc.getRemainTime().equals("10")) {
 					pc.setRemainTime("2");
 				}
-				else if(pc.getRemainTime().equals("2")) {
-					pc.setRemainTime("0");
+				else if(pc.getRemainTime().equals("5")) {
+					pc.setRemainTime("2");
 				}
-				else if(pc.getRemainTime().equals("0")) {
+				else if(pc.getRemainTime().equals("2")) {
+					pc.setRemainTime("1");
+				}
+				else if(pc.getRemainTime().equals("1")) {
 					pc.setRemainTime("-1");
 				}
 			}
