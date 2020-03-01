@@ -6,6 +6,8 @@ import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.swing.JOptionPane;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -51,7 +53,8 @@ public class PCGet {
 				pc.setRemainTime("30");
 			}
 			else { // 메시지가 왔을 때 처리
-				System.out.println(message);
+				Thread alarmThread = new AlarmThread(message);
+				alarmThread.start();
 				if(pc.getRemainTime().equals("30")) {
 					pc.setRemainTime("10");
 				}

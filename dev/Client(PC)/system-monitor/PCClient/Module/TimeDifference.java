@@ -3,7 +3,22 @@ package PCClient.Module;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.swing.JOptionPane;
+
 public class TimeDifference {
+	private static TimeDifference instance;
+	
+	private TimeDifference() {
+		
+	}
+	
+	public static TimeDifference getInstance() {
+		if(instance==null)
+		{
+			instance = new TimeDifference();
+		}
+		return instance;
+	}
 	public String calc(String original,String extension) {
 		try {
 			SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd-HH-mm");
@@ -13,11 +28,13 @@ public class TimeDifference {
 			long extensionTime = extensionDate.getTime();
 			long difference = (extensionTime - originalTime) / 1000;
 			if(difference<0) {
-				System.out.println("잘못된 정보 수신!");
 				return null;
 			}
-			String time = String.valueOf(difference);
-			return time;
+			String hour = String.valueOf(difference/3600);
+			difference%=3600;
+			String minute = String.valueOf(difference/60);
+			difference%=60;
+			return hour+"시 " + minute + "분  남았습니다.";
 		} catch (java.text.ParseException e) {
 			e.printStackTrace();
 		}
