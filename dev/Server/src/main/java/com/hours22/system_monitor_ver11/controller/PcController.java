@@ -12,11 +12,14 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.servlet.AsyncContext;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,10 +28,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hours22.system_monitor_ver11.client.ClientInfoController;
 import com.hours22.system_monitor_ver11.db.DataService;
 import com.hours22.system_monitor_ver11.db.LettuceController;
 
 @Controller
+@WebServlet(asyncSupported = true)
 public class PcController {
 	@Autowired
 	ObjectMapper ojm;
@@ -39,45 +44,61 @@ public class PcController {
 	@Autowired
 	LettuceController lc;
 	
-	Timer timer;
-	String EndTime;
+	@Autowired
+	ClientInfoController cic;
+	
+	Date now = new Date();
+	SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	
 	@RequestMapping(value = "/pc/{id}/data", method = RequestMethod.POST)
 	public void PostPcData(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map, @PathVariable String id) throws IOException {
-		// RedisLoad_JsonToObj();
-		// HttpResponse_ObjToJson();
-		System.out.println("Input : /mobile/pc <- POST method ");
-		//String json = ojm.writeValueAsString(dss.GetAllPcDataRedis());
+		response.setCharacterEncoding("UTF-8");
+		
+
+		System.out.println("--------------------------------------------------------------------------------------------");
+		System.out.println("Input : /pc/"+id+"/data <- POST method [Client Ip : " +cic.getClientIp(request)+"] at "+transFormat.format(new Date()) );
 		lc.getConnection();
-		lc.getConnectionHsetData(id, map);
+		lc.getConnectionHset(id, map);
 		lc.getConnectionExit();
 		System.out.println(map.toString());
+		
+		response.getWriter().print("Success /pc/"+id+"/data <- POST method !!");
 	}
 	
-	
+	@Async("threadPoolPcOffExecutor")
 	@RequestMapping(value = "/pc/{id}/power/{endTime}", method = RequestMethod.POST)
 	public void PostPcPowerOff(HttpServletRequest request, HttpServletResponse response, @PathVariable String id, @PathVariable String endTime) throws IOException, InterruptedException, ParseException {
-		final AsyncContext asyncContext = request.startAsync(request, response);
-		asyncContext.setTimeout(900000000);
+		response.setContentType("application/json;charset=UTF-8"); 
+
+		System.out.println("--------------------------------------------------------------------------------------------");
+		System.out.println("Input : /pc/"+id+"/power/"+endTime+" <- POST method(Ïñ∏Ï†úÍ∫º?) [Client Ip : " +cic.getClientIp(request)+" ] at "+transFormat.format(new Date()));
 		
-		if(timer != null) {
-			System.out.println("±‚¡∏ ¡æ∑·Ω√∞£¿Ã ∫Ø∞Êµ«æ˙Ω¿¥œ¥Ÿ!");
-			timer.cancel();
-			timer = null;
-		}
-		timer = new Timer();
+		Timer OffTimer = new Timer();
 		
 		TimerTask task = new TimerTask() {
 			@Override
 			public void run() {
-				
+
+				System.out.println("--------------------------------------------------------------------------------------------");
 				Date nowTime = new Date();
 				SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 				
-				System.out.println("PC ¿¸ø¯¿ª ≤¸¥œ¥Ÿ. [¡æ∑·Ω√∞¢ : " + transFormat.format(nowTime)+"]");
-				timer = null;
+				System.out.println("PC Ï†ÑÏõêÏùÑ ÎÅïÎãàÎã§. [Ï¢ÖÎ£åÏãúÍ∞Å : " + transFormat.format(nowTime)+"]");
+				//OffTimer = null;
 				
-				asyncContext.complete();
+				Map<String, String> jsonObjectExit = new HashMap<String, String>();
+				jsonObjectExit.put("id", id);
+				jsonObjectExit.put("powerStatus", "OFF");
+				lc.getConnection();
+				lc.getConnectionHset(id, jsonObjectExit);
+				lc.getConnectionExit();
+				try {
+					response.getWriter().print(jsonObjectExit);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
 			}
 		};
 		
@@ -85,58 +106,61 @@ public class PcController {
 		String jsonStringForAndroid = lc.getConnectionHgetall(id); 
 		System.out.println(jsonStringForAndroid);
 		// to send android!
-		// æÓ«√¿Ã ∏’¿˙ƒ—¡ˆ∞Ì≥™º≠, æÓ«√ø°º≠ long polling¿∏∑Œ æ˜µ•¿Ã∆Æ.
+		// Ïñ¥ÌîåÏù¥ Î®ºÏ†ÄÏºúÏßÄÍ≥†ÎÇòÏÑú, Ïñ¥ÌîåÏóêÏÑú long pollingÏúºÎ°ú ÏóÖÎç∞Ïù¥Ìä∏.
 
 		
 		Date now = new Date();
-		String form = EndTime = endTime;
+		String form = endTime;
 		SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		System.out.println("PC∞° ƒ—¡≥Ω¿¥œ¥Ÿ!" + transFormat.format(now));
+		System.out.println("PCÍ∞Ä ÏºúÏ°åÏäµÎãàÎã§!" + transFormat.format(now));
 		String [] seq = form.split("-");
 		form = seq[0] + "-" + seq[1] + "-" + seq[2] +" "+seq[3] +":"+seq[4];
-		System.out.println("¡æ∑·øπæ‡ º≥¡§ [Ω√∞£ : "+form+"]");
+		System.out.println("Ï¢ÖÎ£åÏòàÏïΩ ÏÑ§Ï†ï [ÏãúÍ∞Ñ : "+form+"]");
 		
 		Map<String, String> jsonObject = new HashMap<String, String>();
 		jsonObject.put("id", id);
 		jsonObject.put("powerStatus", "OFF");
 		jsonObject.put("endTime", endTime);
 		String jsonString = ojm.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject);
-		response.getWriter().print(jsonString);
+		
+		//lc.getConnectionHsetAllData(id, jsonObject);
+		lc.getConnectionHset(id,  jsonObject);
+		
+		// response
+		//response.getWriter().print(jsonString);
+		//response.getWriter().print("{aaaa}");
+		System.out.println("hget ÎîîÎ≤ÑÍπÖ Í≤∞Í≥º : " + jsonString);
 		
 		Date to = transFormat.parse(form);
-		timer.schedule(task, to);
-		
-		System.out.println("Input : /mobile/pc/"+id+"/power <- POST method ");
 		lc.getConnectionExit();
+		
+		OffTimer.schedule(task, to);
 	}
 
-	
+	@Async("threadPoolPcMsgExecutor")
 	@RequestMapping(value = "/pc/{id}/message/{min}", method = RequestMethod.GET)
 	public void GetWarningMsg(HttpServletRequest request, HttpServletResponse response, @PathVariable String id, @PathVariable String min) throws IOException, InterruptedException, ParseException {
-		final AsyncContext asyncContext = request.startAsync(request, response);
 		response.setContentType("application/json;charset=UTF-8"); 
-		asyncContext.setTimeout(900000000);
 		
-		if(timer != null) {
-			timer.cancel();
-			timer = null;
-		}
-		timer = new Timer();
+		System.out.println("--------------------------------------------------------------------------------------------");
+		System.out.println("Input : /pc/"+id+"/msg/"+min+" <- GET method [Client Ip : "+ cic.getClientIp(request)+" ] at "+transFormat.format(new Date()));
 		
+		Timer MsgTimer = new Timer();
 		
 		TimerTask warningTask = new TimerTask() {
 			@Override
 			public void run() {
 				
 				JSONObject jsonObject = new JSONObject();
-				
-				System.out.println("PC ¿¸ø¯¿ª ≤¸¥œ¥Ÿ.");
+
+				System.out.println("--------------------------------------------------------------------------------------------");
+				System.out.println("[Ï¢ÖÎ£å"+ min +"Î∂ÑÏ†Ñ ÏïåÎ¶º Î©îÏÑ∏ÏßÄ!]");
 				jsonObject.put("id", id);
 				if(min == "2") {
-					jsonObject.put("msg", "¿·Ω√ »ƒ PC∞° ¡æ∑·µ… øπ¡§¿‘¥œ¥Ÿ. ø¿¥√ «œ∑Áµµ ∞Ìª˝∏π¿∏ºÃΩ¿¥œ¥Ÿ. ");
+					jsonObject.put("msg", "Ïû†Ïãú ÌõÑ PCÍ∞Ä Ï¢ÖÎ£åÎê† ÏòàÏ†ïÏûÖÎãàÎã§. Ïò§Îäò ÌïòÎ£®ÎèÑ Í≥†ÏÉùÎßéÏúºÏÖ®ÏäµÎãàÎã§. ");
 				}
 				else {
-					jsonObject.put("msg", "PC ¡æ∑· "+min+"∫–¿¸¿‘¥œ¥Ÿ! ø¨¿ÂΩ≈√ª¿ª «œ∞≈≥™, ¿⁄∑·¡§∏Æ∏¶ º≠µ—∑Ø¡÷ººø‰!");
+					jsonObject.put("msg", "PC Ï¢ÖÎ£å "+min+"Î∂ÑÏ†ÑÏûÖÎãàÎã§! Ïó∞Ïû•Ïã†Ï≤≠ÏùÑ ÌïòÍ±∞ÎÇò, ÏûêÎ£åÏ†ïÎ¶¨Î•º ÏÑúÎëòÎü¨Ï£ºÏÑ∏Ïöî!");
 				}
 				System.out.println("response : " + jsonObject.toString());
 				try {
@@ -145,11 +169,18 @@ public class PcController {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				asyncContext.complete();
 			}
 		};
 		
-		System.out.println("[system-monitor æÀ∏≤∫ø ∏ﬁºº¡ˆ !"+min+"¿¸ æÀ∂˜!");
+		System.out.println("[system-monitor ÏïåÎ¶ºÎ¥á Î©îÏÑ∏ÏßÄ !"+min+"Î∂ÑÏ†Ñ ÏïåÎûå!");
+		
+		String EndTime;
+		lc.getConnection();
+		EndTime = lc.getConnectionHgetField(id, "endTime");
+		lc.getConnectionExit();
+		
+		System.out.println("ÏùºÎã® redisÏóêÏÑú Î∂àÎü¨Ïò® Í∞í : "+ EndTime);
+		
 		String form = EndTime;
 		SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		String [] seq = form.split("-");
@@ -161,8 +192,6 @@ public class PcController {
 		cal.setTime(to);
 		cal.add(Calendar.MINUTE, -beforeMin);
 		
-		timer.schedule(warningTask, cal.getTime());
-		
-		System.out.println("Input : /mobile/pc/"+id+"/msg <- GET method ");
+		MsgTimer.schedule(warningTask, cal.getTime());
 	}
 }
