@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -16,6 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hours22.system_monitor_ver11.client.ClientInfoController;
 import com.hours22.system_monitor_ver11.db.DataService;
 import com.hours22.system_monitor_ver11.db.LettuceController;
 import com.hours22.system_monitor_ver11.vo.PcData;
@@ -39,20 +44,23 @@ public class MobileController extends HttpServlet{
 	@Autowired
 	DataService dss;
 	
-	Timer timer;
+	@Autowired
+	ClientInfoController cic;
+	
+	Timer OffTimer, MsgTimer;
+	SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	
 	@RequestMapping(value = "/mobile/pc", method = RequestMethod.GET)
-	public void GetPcData(HttpServletResponse response) throws IOException {
+	public void GetPcData(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		// RedisLoad_JsonToObj();
 		// HttpResponse_ObjToJson();
-		System.out.println("Input : /mobile/pc <- GET method ");
-		//String json = ojm.writeValueAsString(dss.GetAllPcDataRedis());
+		System.out.println("---------------------------------------------------------------------");
+		System.out.println("Input : /mobile/pc <- GET method [Client Ip : "+ cic.getClientIp(request)+"] at "+transFormat.format(new Date()) );
 		
 		lc.getConnection();
-		String json = ojm.writerWithDefaultPrettyPrinter().writeValueAsString(dss.GetAllPcDataRedis());
-
-		json = json.replaceAll("\\\\r\\\\n", "");
-		json = json.replaceAll("\\\\", "");
+		
+		String json = ojm.writeValueAsString(dss.GetAllPcDataRedis());
+		json = dss.PrettyPrinter(json);
 		System.out.println(json);
 		
 		lc.getConnectionExit();
@@ -60,64 +68,91 @@ public class MobileController extends HttpServlet{
 	}
 	
 	@RequestMapping(value = "/mobile/pc/{id}/data", method = RequestMethod.GET)
-	public void GetPcRamCpuData(HttpServletResponse response, @PathVariable String id) throws IOException {
+	public void GetPcRamCpuData(HttpServletRequest request, HttpServletResponse response, @PathVariable String id) throws IOException {
 		// RedisLoad_JsonToObj();
 		// HttpResponse_ObjToJson();
 		
 		lc.getConnection();
-		System.out.println("Input : /mobile/pc/"+id+" <- GET method ");
-		//String json = ojm.writeValueAsString(dss.GetAllPcDataRedis());
+		System.out.println("---------------------------------------------------------------------");
+		System.out.println("Input : /mobile/pc/"+id+"/data <- GET method [Client Ip : "+ cic.getClientIp(request) +" ] at " + transFormat.format(new Date()));
 		
-		String json = ojm.writerWithDefaultPrettyPrinter().writeValueAsString(lc.getConnectionHget(id));
-
-		json = json.replaceAll("\\\\r\\\\n", "");
-		json = json.replaceAll("\\\\", "");
+		String json = ojm.writeValueAsString(dss.GetAllPcDataRedis());
+		json = dss.PrettyPrinter(json);
 		System.out.println(json);
+		
 		response.getWriter().print(json);
 		lc.getConnectionExit();
 	}
 	
 	@RequestMapping(value = "/mobile/pc/{id}/power/{endTime}", method = RequestMethod.POST)
 	public void PostPcPowerOff(HttpServletRequest request, HttpServletResponse response, @PathVariable String id, @PathVariable String endTime) throws IOException, InterruptedException, ParseException {
+		
+		response.setCharacterEncoding("UTF-8");
+		
 		final AsyncContext asyncContext = request.startAsync(request, response);
 		asyncContext.setTimeout(900000000);
+		System.out.println("---------------------------------------------------------------------");
+		System.out.println("Input : /mobile/pc/"+id+"/power/"+endTime+" <- POST method [Client Ip : "+cic.getClientIp(request) +" ] at "+transFormat.format(new Date()));
 		
-		if(timer != null) {
-			System.out.println("±‚¡∏ ¡æ∑·Ω√∞£¿Ã ∫Ø∞Êµ«æ˙Ω¿¥œ¥Ÿ!");
-			timer.cancel();
-			timer = null;
+		if(OffTimer != null) {
+			
+			System.out.println("Í∏∞Ï°¥ Ï¢ÖÎ£åÏãúÍ∞ÑÏù¥ Î≥ÄÍ≤ΩÎêòÏóàÏäµÎãàÎã§!");
+			OffTimer.cancel();
+			OffTimer = null;
 		}
-		timer = new Timer();
+		OffTimer = new Timer();
 		
 		TimerTask task = new TimerTask() {
 			@Override
 			public void run() {
-				JSONObject jsonObject = new JSONObject();
 				
-				System.out.println("PC ¿¸ø¯¿ª ≤¸¥œ¥Ÿ.");
-				jsonObject.put("id", id);
-				jsonObject.put("powerStatus", "OFF");
-				System.out.println("response : " + jsonObject.toString());
-				timer = null;
+				Date nowTime = new Date();
+				SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+				System.out.println("---------------------------------------------------------------------");
+				System.out.println("PC Ï†ÑÏõêÏùÑ ÎÅïÎãàÎã§. [Ï¢ÖÎ£åÏãúÍ∞Å : " + transFormat.format(nowTime)+"]");
+				OffTimer = null;
 				
-				try {
-					response.getWriter().print(jsonObject.toString());
-					asyncContext.complete();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				Map<String, String> jsonObjectExit = new HashMap<String, String>();
+				jsonObjectExit.put("id", id);
+				jsonObjectExit.put("powerStatus", "OFF");
+				lc.getConnection();
+				lc.getConnectionHset(id, jsonObjectExit);
+				lc.getConnectionExit();
+				
+				asyncContext.complete();
 			}
 		};
+		
+		lc.getConnection();
+		String jsonStringForAndroid = lc.getConnectionHgetall(id); 
+		System.out.println(jsonStringForAndroid);
+		// to send android!
+		// Ïñ¥ÌîåÏù¥ Î®ºÏ†ÄÏºúÏßÄÍ≥†ÎÇòÏÑú, Ïñ¥ÌîåÏóêÏÑú long pollingÏúºÎ°ú ÏóÖÎç∞Ïù¥Ìä∏.
+
+		
+		Date now = new Date();
 		String form = endTime;
 		SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		System.out.println("PCÍ∞Ä ÏºúÏ°åÏäµÎãàÎã§!" + transFormat.format(now));
 		String [] seq = form.split("-");
 		form = seq[0] + "-" + seq[1] + "-" + seq[2] +" "+seq[3] +":"+seq[4];
-		System.out.println("¡æ∑·øπæ‡ º≥¡§ [Ω√∞£ : "+form+"]");
+		System.out.println("Ï¢ÖÎ£åÏòàÏïΩ ÏÑ§Ï†ï [ÏãúÍ∞Ñ : "+form+"]");
+		
+		Map<String, String> jsonObject = new HashMap<String, String>();
+		jsonObject.put("id", id);
+		jsonObject.put("powerStatus", "ON");
+		jsonObject.put("endTime", endTime);
+		String jsonString = ojm.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject);
+		
+		//lc.getConnectionHsetAllData(id, jsonObject);
+		lc.getConnectionHset(id,  jsonObject);
+		// response
+		response.getWriter().print(jsonString);
+		System.out.println("hget ÎîîÎ≤ÑÍπÖ Í≤∞Í≥º : " + jsonString);
 		
 		Date to = transFormat.parse(form);
-		timer.schedule(task, to);
+		OffTimer.schedule(task, to);
 		
-		System.out.println("Input : /mobile/pc/"+id+"/power <- POST method ");
+		lc.getConnectionExit();
 	}
 }

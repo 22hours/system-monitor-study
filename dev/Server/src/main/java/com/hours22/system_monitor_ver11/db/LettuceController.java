@@ -54,8 +54,8 @@ public class LettuceController {
 	
 	public static RedisClient redisClient = null;
 	public static StatefulRedisConnection<String, String> connection = null;
-	public static RedisCommands<String, String> syncCmd = null;		// Sync¿ë command
-	public static RedisAsyncCommands<String, String> asyncCmd = null;		// Async¿ë command
+	public static RedisCommands<String, String> syncCmd = null;		// Syncï¿½ï¿½ command
+	public static RedisAsyncCommands<String, String> asyncCmd = null;		// Asyncï¿½ï¿½ command
 
     @GetMapping(path="/add") // Map ONLY GET Requests
     public @ResponseBody String addNewUser (@RequestParam String name
@@ -96,12 +96,13 @@ public class LettuceController {
     }
     
     //@GetMapping(path="/connections/hset")
+    /*
     public Map<String,String> getConnectionHsetPower(String key, String endTime) {
         // This returns a JSON or XML with the users
         JSONObject jsonObject = new JSONObject();
     	try {
     		// syncCmd.del(key);
-    		// return: ½Å±Ô ÇÊµåÀÌ¸é true, ÀÌ¹Ì ÀÖ´Â ÇÊµåÀÌ¸é false, false¶ó°í ½ÇÆÐÇÑ °ÍÀÌ ¾Æ´Ô.
+    		// return: ì‹ ê·œ í•„ë“œì´ë©´ true, ì´ë¯¸ ìžˆëŠ” í•„ë“œì´ë©´ false, falseë¼ê³  ì‹¤íŒ¨í•œ ê²ƒì´ ì•„ë‹˜.
     		Boolean bool1 = syncCmd.hset(key, "powerStatus", "OFF");
     		System.out.println("hset "+key+" powerStatus -> "+"OFF" + bool1);
     		jsonObject.put("powerStatus", "OFF");
@@ -116,13 +117,19 @@ public class LettuceController {
     	}
  		return jsonObject;
     }
-    
+    */
     //@GetMapping(path="/connections/hset2")
+    /*
     public void getConnectionHsetData(String key, Map<String, String> map) {
         // This returns a JSON or XML with the users
     	try {
     		// syncCmd.del(key);
-    		// return: ½Å±Ô ÇÊµåÀÌ¸é true, ÀÌ¹Ì ÀÖ´Â ÇÊµåÀÌ¸é false, false¶ó°í ½ÇÆÐÇÑ °ÍÀÌ ¾Æ´Ô.
+    		// return: ì‹ ê·œ í•„ë“œì´ë©´ true, ì´ë¯¸ ìžˆëŠ” í•„ë“œì´ë©´ false, falseë¼ê³  ì‹¤íŒ¨í•œ ê²ƒì´ ì•„ë‹˜.
+    		
+    		//id
+    		//name
+    		//classId
+    		//powerStatus
     		Boolean bool2 = syncCmd.hset(key, "cpuData", map.get("cpuData"));
     		System.out.println("hset "+key+" cpuData -> "+bool2);
     		Boolean bool3 = syncCmd.hset(key, "ramData", map.get("ramData"));
@@ -135,12 +142,14 @@ public class LettuceController {
     		System.out.println(e);
     	}
     }
-    
+    */
+    /*
     public void getConnectionHsetAllData(String key, Map<String, String> map) {
         // This returns a JSON or XML with the users
     	try {
     		// syncCmd.del(key);
-    		// return: ½Å±Ô ÇÊµåÀÌ¸é true, ÀÌ¹Ì ÀÖ´Â ÇÊµåÀÌ¸é false, false¶ó°í ½ÇÆÐÇÑ °ÍÀÌ ¾Æ´Ô.
+    		// return: ì‹ ê·œ í•„ë“œì´ë©´ true, ì´ë¯¸ ìžˆëŠ” í•„ë“œì´ë©´ false, falseë¼ê³  ì‹¤íŒ¨í•œ ê²ƒì´ ì•„ë‹˜.
+    		System.out.println("**** Hset All Data ****");
     		Boolean bool1 = syncCmd.hset(key, "id", map.get("id"));
     		System.out.println("hset "+key+" cpuData -> "+bool1);
     		Boolean bool2 = syncCmd.hset(key, "cpuData", map.get("cpuData"));
@@ -157,6 +166,84 @@ public class LettuceController {
     		System.out.println("hset "+key+" name -> "+bool7);
     		Boolean bool8 = syncCmd.hset(key, "classId", map.get("classId"));
     		System.out.println("hset "+key+" classId -> "+bool8);
+    		System.out.println("**** Finished Hset ****");
+    	} catch (Exception e) {
+    		System.out.println(e);
+    	}
+    }
+    */
+    public void getConnectionHset(String key, Map<String, String> map) {
+        // This returns a JSON or XML with the users
+    	try {
+    		// syncCmd.del(key);
+    		// return: parameter Mapì— ë¬´ì–¸ê°€ ìžˆìœ¼ë©´ true, ì—†ìœ¼ë©´ false. falseì¸ í•„ë“œëŠ” ê¸°ì¡´ í•„ë“œê°’ì„ ë®ì–´ì“´ë‹¤..
+    		System.out.println("**** Hset All Data [TESTING] ****");
+
+    		// field : id
+    		if(map.get("id") != null) {
+    			syncCmd.hset(key, "id", map.get("id"));
+    			System.out.println("hset " +key+ " id -> true");
+    		} else {
+    			System.out.println("hset " +key+ " id -> false");
+    		}
+    		
+    		// field : cpuData
+    		if(map.get("cpuData") != null) {
+    			syncCmd.hset(key, "cpuData", map.get("cpuData"));
+    			System.out.println("hset "+key+ "cpuData -> true");
+    		} else {
+    			System.out.println("hset "+key+ "cpuData -> false");
+    		}
+    		
+    		// field : ramData
+    		if(map.get("ramData") != null) {
+    			syncCmd.hset(key, "ramData", map.get("ramData"));
+    			System.out.println("hset "+key+ "ramData -> true");
+    		} else {
+    			System.out.println("hset "+key+ "ramData -> false");
+    		}
+    		
+    		// field : startTime
+    		if(map.get("startTime") != null) {
+    			syncCmd.hset(key, "startTime", map.get("startTime"));
+    			System.out.println("hset "+key+ "startTime -> true");
+    		} else {
+    			System.out.println("hset "+key+ "startTime -> false");
+    		}
+    		
+    		// field : endTime
+    		if(map.get("endTime") != null) {
+    			syncCmd.hset(key, "endTime", map.get("endTime"));
+    			System.out.println("hset "+key+ "endTime -> true");
+    		} else {
+    			System.out.println("hset "+key+ "endTime -> false");
+    		}
+    		
+    		// field : powerStatus
+    		if(map.get("powerStatus") != null) {
+    			syncCmd.hset(key, "powerStatus", map.get("powerStatus"));
+    			System.out.println("hset "+key+ "powerStatus -> true");
+    		} else {
+    			System.out.println("hset "+key+ "powerStatus -> false");
+    		}
+    		
+    		// field : name
+    		if(map.get("name") != null) {
+    			syncCmd.hset(key, "name", map.get("name"));
+    			System.out.println("hset "+key+ "name -> true");
+    		} else {
+    			System.out.println("hset "+key+ "name -> false");
+    		}
+    		
+    		// field : classId
+    		if(map.get("classId") != null) {
+    			syncCmd.hset(key, "classId", map.get("classId"));
+    			System.out.println("hset "+key+"classId -> true");
+    		} else {
+    			System.out.println("hset "+key+"classId -> false");
+    		}
+    		
+    		System.out.println("**** Finished Hset ****");
     	} catch (Exception e) {
     		System.out.println(e);
     	}
@@ -167,11 +254,11 @@ public class LettuceController {
         // This returns a JSON or XML with the users
     	String [] value = new String[3];
     	
-    	//ÃÖÁ¾ ¿Ï¼ºµÉ JSONObject ¼±¾ð(ÀüÃ¼)
+    	//ìµœì¢… ì™„ì„±ë  JSONObject ì„ ì–¸(ì „ì²´)
         JSONObject jsonObject = new JSONObject();
        
     	try {
-    		// return: ÇØ´ç ÇÊµå°¡ ¾øÀ¸¸é null
+    		// return: í•´ë‹¹ í•„ë“œê°€ ì—†ìœ¼ë©´ null
     		value[0] = syncCmd.hget(key, "id");
     		System.out.println("hget "+key+" id -> "+value[0]);
     		jsonObject.put("id", value[0]);
@@ -213,6 +300,11 @@ public class LettuceController {
  		return res;
     }
     
+    public String getConnectionHgetField(String key, String field) {
+    	String res = null;
+    	res = syncCmd.hget(key, field);
+    	return res;
+    }
     
     //@GetMapping(path="/connections/end")
     public void getConnectionExit() {
