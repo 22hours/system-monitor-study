@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.annotation.WebServlet;
@@ -19,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -74,7 +78,7 @@ public class PcController {
 		System.out.println("Input : /pc/"+id+"/power/"+endTime+" <- POST method(언제꺼?) [Client Ip : " +cic.getClientIp(request)+" ] at "+transFormat.format(new Date()));
 		
 		Timer OffTimer = new Timer();
-		
+		Thread.sleep(5000);
 		TimerTask task = new TimerTask() {
 			@Override
 			public void run() {
@@ -193,5 +197,9 @@ public class PcController {
 		cal.add(Calendar.MINUTE, -beforeMin);
 		
 		MsgTimer.schedule(warningTask, cal.getTime());
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("msg", "PC 종료 "+min+"분전입니다! 연장신청을 하거나, 자료정리를 서둘러주세요!");
+		jsonObject.put("id", id);
+		//return new AsyncResult<Map<String, String>>(jsonObject);
 	}
 }

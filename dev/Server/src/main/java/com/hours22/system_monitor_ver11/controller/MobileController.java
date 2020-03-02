@@ -34,7 +34,7 @@ import com.hours22.system_monitor_ver11.vo.PcData;
 
 @Controller
 @WebServlet(asyncSupported = true)
-public class MobileController extends HttpServlet{
+public class MobileController{
 	@Autowired
 	ObjectMapper ojm;
 	
@@ -46,7 +46,6 @@ public class MobileController extends HttpServlet{
 	
 	@Autowired
 	ClientInfoController cic;
-	
 	SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	
 	@RequestMapping(value = "/mobile/pc", method = RequestMethod.GET)
