@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hours22.system_monitor_ver11.client.ClientInfoController;
 import com.hours22.system_monitor_ver11.client.ServerTimer;
+
 import com.hours22.system_monitor_ver11.db.DataService;
 import com.hours22.system_monitor_ver11.db.LettuceController;
 
@@ -62,11 +63,13 @@ public class PcController {
 
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : /pc/"+id+"/data <- POST method [Client Ip : " +cic.getClientIp(request)+"] at "+transFormat.format(new Date()) );
+
 		lc.getConnection();
 		lc.getConnectionHset(id, map);
 		lc.getConnectionExit();
 		System.out.println(map.toString());
 		
+
     	Set<Thread> setOfThread = Thread.getAllStackTraces().keySet();
     	for(Thread thread : setOfThread){
     		System.out.println("Active Thread's [ Number : " +thread.getId()+" / Name : "+thread.getName()+" ] ");
@@ -79,11 +82,12 @@ public class PcController {
     		}
     	}
 		
+
 		response.getWriter().print("Success /pc/"+id+"/data <- POST method !!");
 	}
 	
-	
 	@RequestMapping(value = "/pc/{id}/power/{endTime}", method = RequestMethod.POST)
+
 	public @ResponseBody Callable<Map<String, String>> PostPcPowerOff(HttpServletRequest request, HttpServletResponse response, @PathVariable String id, @PathVariable String endTime) throws IOException, InterruptedException, ParseException {
 		
 		response.setContentType("application/json;charset=UTF-8"); 
@@ -113,6 +117,7 @@ public class PcController {
 		ct.setName("PCPowerOffExc-"+id);
 		System.out.println("현재 Thread [ ID : " + ct.getId()+ " / Name : "+ct.getName()+" ] ");   
 		
+
 		
 		lc.getConnection();
 		String jsonStringForAndroid = lc.getConnectionHgetall(id); 
@@ -128,6 +133,7 @@ public class PcController {
 			System.out.println(id+" PC가 켜졌습니다! (변경된 methd)" + transFormat.format(now));
 		else if(opt == 2) 
 			System.out.println(id+" PC의 종료시간이  변경되었습니다." + transFormat.format(now));
+
 		String [] seq = form.split("-");
 		form = seq[0] + "-" + seq[1] + "-" + seq[2] +" "+seq[3] +":"+seq[4];
 		System.out.println("종료예약 설정 [시간 : "+form+"]");
@@ -204,7 +210,6 @@ public class PcController {
             }
         };
 	}
-
 	@RequestMapping(value = "/pc/{id}/message/{min}", method = RequestMethod.GET)
 	public @ResponseBody Callable<Map<String, String>> GetWarningMsg(HttpServletRequest request, HttpServletResponse response, @PathVariable String id, @PathVariable String min) throws IOException, InterruptedException, ParseException {
 		response.setContentType("application/json;charset=UTF-8"); 
@@ -233,6 +238,7 @@ public class PcController {
 		
 
 		
+
 		String EndTime;
 		lc.getConnection();
 		EndTime = lc.getConnectionHgetField(id, "endTime");
@@ -315,5 +321,6 @@ public class PcController {
                 }
             }
         };
+
 	}
 }

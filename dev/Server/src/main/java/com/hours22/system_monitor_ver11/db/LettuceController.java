@@ -190,6 +190,7 @@ public class LettuceController {
     		// field : cpuData
     		if(map.get("cpuData") != null) {
     			syncCmd.hset(key, "cpuData", map.get("cpuData"));
+
     			System.out.println("hset "+key+ " cpuData -> true");
     		} else {
     			System.out.println("hset "+key+ " cpuData -> false");
@@ -209,11 +210,13 @@ public class LettuceController {
     			System.out.println("hset "+key+ " startTime -> true");
     		} else {
     			System.out.println("hset "+key+ " startTime -> false");
+
     		}
     		
     		// field : endTime
     		if(map.get("endTime") != null) {
     			syncCmd.hset(key, "endTime", map.get("endTime"));
+
     			System.out.println("hset "+key+ " endTime -> true");
     		} else {
     			System.out.println("hset "+key+ " endTime -> false");

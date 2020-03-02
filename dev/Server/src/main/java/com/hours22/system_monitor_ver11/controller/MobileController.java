@@ -52,14 +52,17 @@ public class MobileController{
 	
 	@Autowired
 	ClientInfoController cic;
+
 	SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	
 	@RequestMapping(value = "/mobile/pc", method = RequestMethod.GET)
 	public void GetPcData(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
 		response.setContentType("application/json;charset=UTF-8"); 
 		// RedisLoad_JsonToObj();
 		// HttpResponse_ObjToJson();
 		System.out.println("--------------------------------------------------------------------------------------------");
+
 		System.out.println("Input : /mobile/pc <- GET method [Client Ip : "+ cic.getClientIp(request)+"] at "+transFormat.format(new Date()) );
 		
 		lc.getConnection();
@@ -129,11 +132,13 @@ public class MobileController{
 	
 	@RequestMapping(value = "/mobile/pc/{id}/data", method = RequestMethod.GET)
 	public void GetPcRamCpuData(HttpServletRequest request, HttpServletResponse response, @PathVariable String id) throws IOException {
+
 		response.setContentType("application/json;charset=UTF-8"); 
 		// RedisLoad_JsonToObj();
 		// HttpResponse_ObjToJson();
 		
 		lc.getConnection();
+
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : /mobile/pc/"+id+"/data <- GET method [Client Ip : "+ cic.getClientIp(request) +" ] at " + transFormat.format(new Date()));
 		
@@ -149,6 +154,7 @@ public class MobileController{
 	
 	
 	@RequestMapping(value = "/mobile/pc/{id}/power/{endTime}", method = RequestMethod.POST)
+
 	public @ResponseBody Callable<Map<String, String>> PostPcPowerOff(HttpServletRequest request, HttpServletResponse response, @PathVariable String id, @PathVariable String endTime) throws IOException, InterruptedException, ParseException {
 		
 		response.setContentType("application/json;charset=UTF-8"); 
@@ -156,6 +162,7 @@ public class MobileController{
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : /pc/"+id+"/power/"+endTime+" <- POST method(언제꺼? v2.0) [Client Ip : " +cic.getClientIp(request)+" ] at "+transFormat.format(new Date()));
 		System.out.println("현재 Thread ID : " + Thread.currentThread().getId());  
+
 		
 		lc.getConnection();
 		String jsonStringForAndroid = lc.getConnectionHgetall(id); 
@@ -176,10 +183,12 @@ public class MobileController{
     			System.out.println("******"+res+" 스레드를 종료시킵니다.******");
     		}
     	}
+
 		
 		Date now = new Date();
 		String form = endTime;
 		SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
 		System.out.println("Mobile에서 PC종료시간을 새로 설정하였습니다. (변경된 methd)" + transFormat.format(now));
 		String [] seq = form.split("-");
 		form = seq[0] + "-" + seq[1] + "-" + seq[2] +" "+seq[3] +":"+seq[4];
@@ -187,12 +196,15 @@ public class MobileController{
 		
 		Map<String, String> jsonObject = new HashMap<String, String>();
 		jsonObject.put("id", id);
+
 		jsonObject.put("powerStatus", "OFF");
+
 		jsonObject.put("endTime", endTime);
 		String jsonString = ojm.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject);
 		
 		//lc.getConnectionHsetAllData(id, jsonObject);
 		lc.getConnectionHset(id,  jsonObject);
+
 		
 		// response
 		System.out.println("hget 디버깅 결과 : " + jsonString);
@@ -252,9 +264,9 @@ public class MobileController{
 					lc.getConnectionHset(id, jsonObjectExit);
 					lc.getConnectionExit();
 	
-	                return jsonObjectExit;
-                }
-            }
-        };
+	        return jsonObjectExit;
+         }
+      }
+    };
 	}
 }
