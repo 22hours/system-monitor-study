@@ -2,6 +2,7 @@ package com.hours22.system_monitor_ver11.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import javax.servlet.AsyncContext;
@@ -69,5 +70,25 @@ public class AsyncTestController {
                 return "Callable result " + msg;
             }
         };
+    }
+    @RequestMapping(value = "/threads/{thName}", method = RequestMethod.GET)
+    public void GetThreadIdTest(@PathVariable String thName) {
+    	Set<Thread> setOfThread = Thread.getAllStackTraces().keySet();
+
+		System.out.println("----------------------------------------------------------------------------------------------------");
+		System.out.println("Input : /async/callable/threads/"+thName);
+		System.out.println("GetThreadIdTesting.....");
+		System.out.println("현재 Thread ID : " + Thread.currentThread().getId());  
+    	//Iterate over set to find yours
+    	
+    	for(Thread thread : setOfThread){
+    		System.out.println("Active Thread's [ Number : " +thread.getId()+" / Name : "+thread.getName()+" ] ");
+    	    
+    		String res = thread.getName();
+    		if(res.equals(thName)) {
+    			thread.interrupt();
+    			System.out.println("******"+res+" 스레드를 종료시킵니다.******");
+    		}
+    	}
     }
 }

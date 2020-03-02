@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Executor;
@@ -58,7 +59,6 @@ public class PcController {
 	@RequestMapping(value = "/pc/{id}/data", method = RequestMethod.POST)
 	public void PostPcData(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map, @PathVariable String id) throws IOException {
 		response.setCharacterEncoding("UTF-8");
-		
 
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : /pc/"+id+"/data <- POST method [Client Ip : " +cic.getClientIp(request)+"] at "+transFormat.format(new Date()) );
@@ -66,6 +66,18 @@ public class PcController {
 		lc.getConnectionHset(id, map);
 		lc.getConnectionExit();
 		System.out.println(map.toString());
+		
+    	Set<Thread> setOfThread = Thread.getAllStackTraces().keySet();
+    	for(Thread thread : setOfThread){
+    		System.out.println("Active Thread's [ Number : " +thread.getId()+" / Name : "+thread.getName()+" ] ");
+    	    
+    		String res = thread.getName();
+    		if(res.equals("Mobile-GetNewPc")) {
+    			thread.setName("Mobile-GetNewPc-"+id);
+    			thread.interrupt();
+    			System.out.println("******"+res+" 스레드를 종료시킵니다.******");
+    		}
+    	}
 		
 		response.getWriter().print("Success /pc/"+id+"/data <- POST method !!");
 	}
@@ -77,7 +89,29 @@ public class PcController {
 		response.setContentType("application/json;charset=UTF-8"); 
 
 		System.out.println("--------------------------------------------------------------------------------------------");
-		System.out.println("Input : /pc/"+id+"/power/"+endTime+" <- POST method(언제꺼? v2.0) [Client Ip : " +cic.getClientIp(request)+" ] at "+transFormat.format(new Date()));
+		System.out.println("Input : /pc/"+id+"/power/"+endTime+" <- POST method(언제꺼? or 연장신청 v2.0) [Client Ip : " +cic.getClientIp(request)+" ] at "+transFormat.format(new Date()));
+
+		int opt = 1;
+		// 연장신청인지 언제꺼인지 판단
+		// thread.name으로 찾고 있으면 interrupt(연장신청) opt == 2 
+		//      ...         없으면 (언제꺼) opt == 1
+    	Set<Thread> setOfThread = Thread.getAllStackTraces().keySet();
+    	for(Thread thread : setOfThread){
+    		System.out.println("Active Thread's [ Number : " +thread.getId()+" / Name : "+thread.getName()+" ] ");
+    	    
+    		String res = thread.getName();
+    		if(res.equals("PCPowerOffExc-Return-"+id)) {
+    			thread.interrupt();
+    			System.out.println("******"+res+" 스레드를 종료시킵니다.******");
+    			opt = 2;
+    		}
+    	}
+		
+		
+		
+		Thread ct = Thread.currentThread();
+		ct.setName("PCPowerOffExc-"+id);
+		System.out.println("현재 Thread [ ID : " + ct.getId()+ " / Name : "+ct.getName()+" ] ");   
 		
 		
 		lc.getConnection();
@@ -90,7 +124,10 @@ public class PcController {
 		Date now = new Date();
 		String form = endTime;
 		SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		System.out.println("PC가 켜졌습니다! (변경된 methd)" + transFormat.format(now));
+		if(opt == 1) 
+			System.out.println(id+" PC가 켜졌습니다! (변경된 methd)" + transFormat.format(now));
+		else if(opt == 2) 
+			System.out.println(id+" PC의 종료시간이  변경되었습니다." + transFormat.format(now));
 		String [] seq = form.split("-");
 		form = seq[0] + "-" + seq[1] + "-" + seq[2] +" "+seq[3] +":"+seq[4];
 		System.out.println("종료예약 설정 [시간 : "+form+"]");
@@ -113,7 +150,11 @@ public class PcController {
 		return new Callable<Map<String, String>>() {
             @Override
             public Map<String, String> call() throws Exception {
-            	
+            	System.out.println("================================");
+            	System.out.println("PCPowerOffExc Return 영역");
+        		Thread.currentThread().setName("PCPowerOffExc-Return-"+id);
+            	System.out.println("Thread ID : " + Thread.currentThread().getId());
+            	System.out.println("Thread Name : " + Thread.currentThread().getName());
             	
             	long MSG = ServerTimer.GetTime(endTime);
             	System.out.println(MSG / 1000 + "초 동안 Thread.sleep();");
@@ -124,39 +165,42 @@ public class PcController {
                 long timeToSleep = MSG;
                 long start, end, slept;
                 boolean interrupted = false;
-
-                while(timeToSleep > 0){
-                    start=System.currentTimeMillis();
+                
+                Date nnow = new Date();
+              
+                while(to.getTime() - nnow.getTime() > 0) {
                     try{
-                        Thread.sleep(timeToSleep);
+                        // do stuff
+                    	nnow = new Date();
+                    	//Thread.currentThread().interrupt();
+                    	Thread.sleep(2000);
+                    }catch(InterruptedException e){
+                    	System.out.println(Thread.currentThread().getName() +" Thread가 중지되었습니다.");
+                    	interrupted = true;
                         break;
                     }
-                    catch(InterruptedException e){
-                        //work out how much more time to sleep for
-                        end=System.currentTimeMillis();
-                        slept=end-start;
-                        timeToSleep-=slept;
-                        interrupted=true;
-                        System.out.println("Thread Interrupt ! at " + transFormat.format(new Date()));
-                    }
                 }
-                if(interrupted){
-                    //restore interruption before exit
-                    Thread.currentThread().interrupt();
-                }
-                
-                // end
-                System.out.println("-----------------------------------------------------------------------------------------------");
-				System.out.println("PC 전원을 끕니다. [종료시각 : " + transFormat.format(new Date())+"]");
-				Map<String, String> jsonObjectExit = new HashMap<String, String>();
-				jsonObjectExit.put("id", id);
-				jsonObjectExit.put("endTime", endTime);
-				jsonObjectExit.put("powerStatus", "OFF");
-				lc.getConnection();
-				lc.getConnectionHset(id, jsonObjectExit);
-				lc.getConnectionExit();
 
-                return jsonObjectExit;
+                // end
+                if(interrupted) {
+					Map<String, String> jsonObjectExit = new HashMap<String, String>();
+					jsonObjectExit.put("id", id);
+					jsonObjectExit.put("powerStatus", "ON");
+					return jsonObjectExit;
+                }
+                else {
+	                System.out.println("-----------------------------------------------------------------------------------------------");
+					System.out.println("PC 전원을 끕니다. [종료시각 : " + transFormat.format(new Date())+"]");
+					Map<String, String> jsonObjectExit = new HashMap<String, String>();
+					jsonObjectExit.put("id", id);
+					jsonObjectExit.put("endTime", endTime);
+					jsonObjectExit.put("powerStatus", "OFF");
+					lc.getConnection();
+					lc.getConnectionHset(id, jsonObjectExit);
+					lc.getConnectionExit();
+	
+	                return jsonObjectExit;
+                }
             }
         };
 	}
@@ -167,7 +211,27 @@ public class PcController {
 		
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : /pc/"+id+"/msg/"+min+" <- GET method [Client Ip : "+ cic.getClientIp(request)+" ] at "+transFormat.format(new Date()));
+		
+		
+    	Set<Thread> setOfThread = Thread.getAllStackTraces().keySet();
+    	for(Thread thread : setOfThread){
+    		System.out.println("Active Thread's [ Number : " +thread.getId()+" / Name : "+thread.getName()+" ] ");
+    	    
+    		String res = thread.getName();
+    		if(res.equals("PCPowerOffMsg-Return-"+id)) {
+    			thread.interrupt();
+    			System.out.println("******"+res+" 스레드를 종료시킵니다.******");
+    		}
+    	}
+		
+		
+		
+		Thread ct = Thread.currentThread();
+		ct.setName("PCPowerOffMsg-"+id);
+		System.out.println("현재 Thread [ ID : " + ct.getId()+" / Name : "+ct.getName()+" ] ");  
 		System.out.println("[system-monitor 알림봇 메세지 !"+min+"분전 알람!");
+		
+
 		
 		String EndTime;
 		lc.getConnection();
@@ -188,7 +252,8 @@ public class PcController {
 		cal.setTime(to);
 		cal.add(Calendar.MINUTE, -beforeMin);
 		
-		long endTime = cal.getTime().getTime() - now.getTime();
+		Date goal = cal.getTime();
+		long endTime = goal.getTime() - now.getTime();
 		
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("msg", "PC 종료 "+min+"분전입니다! 연장신청을 하거나, 자료정리를 서둘러주세요!");
@@ -198,7 +263,11 @@ public class PcController {
 		return new Callable<Map<String, String>>() {
             @Override
             public Map<String, String> call() throws Exception {
-            	
+            	System.out.println("================================");
+            	System.out.println("PCPowerOffMsg Return 영역");
+        		Thread.currentThread().setName("PCPowerOffMsg-Return-"+id);
+            	System.out.println("Thread ID : " + Thread.currentThread().getId());
+            	System.out.println("Thread Name : " + Thread.currentThread().getName());
             	
             	long MSG = endTime;
             	System.out.println(MSG / 1000 + "초 동안 Thread.sleep();");
@@ -209,37 +278,41 @@ public class PcController {
                 long timeToSleep = MSG;
                 long start, end, slept;
                 boolean interrupted = false;
-
-                while(timeToSleep > 0){
-                    start=System.currentTimeMillis();
+                
+                Date nnow = new Date();
+              
+                while(to.getTime() - nnow.getTime() > 0) {
                     try{
-                        Thread.sleep(timeToSleep);
+                        // do stuff
+                    	nnow = new Date();
+                    	//Thread.currentThread().interrupt();
+                    	Thread.sleep(2000);
+                    }catch(InterruptedException e){
+                    	System.out.println(Thread.currentThread().getName() +" Thread가 중지되었습니다.");
+                    	interrupted = true;
                         break;
                     }
-                    catch(InterruptedException e){
-                        //work out how much more time to sleep for
-                        end=System.currentTimeMillis();
-                        slept=end-start;
-                        timeToSleep-=slept;
-                        interrupted=true;
-                        System.out.println("Thread Interrupt ! at " + transFormat.format(new Date()));
-                    }
                 }
-                if(interrupted){
-                    //restore interruption before exit
-                    Thread.currentThread().interrupt();
-                }
-                
-                // end
-				JSONObject jsonObject = new JSONObject();
 
-				System.out.println("--------------------------------------------------------------------------------------------");
-				System.out.println("[종료"+ min +"분전 알림 메세지!]");
-				jsonObject.put("id", id);
-				jsonObject.put("msg", "PC 종료 "+min+"분전입니다! 연장신청을 하거나, 자료정리를 서둘러주세요!");
-				
-				System.out.println("response : " + jsonObject.toString());
-                return jsonObject;
+                // end
+                if(interrupted) {
+					Map<String, String> jsonObjectExit = new HashMap<String, String>();
+					jsonObjectExit.put("id", id);
+					jsonObjectExit.put("msg", "null");
+					return jsonObjectExit;
+                }
+                else {
+                // end
+					JSONObject jsonObject = new JSONObject();
+	
+					System.out.println("--------------------------------------------------------------------------------------------");
+					System.out.println("[종료"+ min +"분전 알림 메세지! PC : "+ id +" ]  at " + transFormat.format(new Date()));
+					jsonObject.put("id", id);
+					jsonObject.put("msg", "PC 종료 "+min+"분전입니다! 연장신청을 하거나, 자료정리를 서둘러주세요!");
+					
+					System.out.println("response : " + jsonObject.toString());
+	                return jsonObject;
+                }
             }
         };
 	}
