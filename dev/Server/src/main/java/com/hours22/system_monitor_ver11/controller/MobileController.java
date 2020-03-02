@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Callable;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.annotation.WebServlet;
@@ -24,10 +25,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hours22.system_monitor_ver11.client.ClientInfoController;
+import com.hours22.system_monitor_ver11.client.ServerTimer;
 import com.hours22.system_monitor_ver11.db.DataService;
 import com.hours22.system_monitor_ver11.db.LettuceController;
 import com.hours22.system_monitor_ver11.vo.PcData;
@@ -84,36 +87,15 @@ public class MobileController{
 		lc.getConnectionExit();
 	}
 	
-	@Async("threadPoolMobileOffExecutor")
+
 	@RequestMapping(value = "/mobile/pc/{id}/power/{endTime}", method = RequestMethod.POST)
-	public void PostPcPowerOff(HttpServletRequest request, HttpServletResponse response, @PathVariable String id, @PathVariable String endTime) throws IOException, InterruptedException, ParseException {
+	public @ResponseBody Callable<Map<String, String>> PostPcPowerOff(HttpServletRequest request, HttpServletResponse response, @PathVariable String id, @PathVariable String endTime) throws IOException, InterruptedException, ParseException {
 		
 		response.setContentType("application/json;charset=UTF-8"); 
-	
+
 		System.out.println("--------------------------------------------------------------------------------------------");
-		System.out.println("Input : /mobile/pc/"+id+"/power/"+endTime+" <- POST method [Client Ip : "+cic.getClientIp(request) +" ] at "+transFormat.format(new Date()));
+		System.out.println("Input : /pc/"+id+"/power/"+endTime+" <- POST method(언제꺼? v2.0) [Client Ip : " +cic.getClientIp(request)+" ] at "+transFormat.format(new Date()));
 		
-		
-		Timer OffTimer = new Timer();
-		
-		TimerTask task = new TimerTask() {
-			@Override
-			public void run() {
-				
-				Date nowTime = new Date();
-				SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-				System.out.println("--------------------------------------------------------------------------------------------");
-				System.out.println("PC 전원을 끕니다. [종료시각 : " + transFormat.format(nowTime)+"]");
-				
-				Map<String, String> jsonObjectExit = new HashMap<String, String>();
-				jsonObjectExit.put("id", id);
-				jsonObjectExit.put("powerStatus", "OFF");
-				lc.getConnection();
-				lc.getConnectionHset(id, jsonObjectExit);
-				lc.getConnectionExit();
-				
-			}
-		};
 		
 		lc.getConnection();
 		String jsonStringForAndroid = lc.getConnectionHgetall(id); 
@@ -125,25 +107,74 @@ public class MobileController{
 		Date now = new Date();
 		String form = endTime;
 		SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		System.out.println("PC가 켜졌습니다!" + transFormat.format(now));
+		System.out.println("PC가 켜졌습니다! (변경된 methd)" + transFormat.format(now));
 		String [] seq = form.split("-");
 		form = seq[0] + "-" + seq[1] + "-" + seq[2] +" "+seq[3] +":"+seq[4];
 		System.out.println("종료예약 설정 [시간 : "+form+"]");
 		
 		Map<String, String> jsonObject = new HashMap<String, String>();
 		jsonObject.put("id", id);
-		jsonObject.put("powerStatus", "ON");
+		jsonObject.put("powerStatus", "OFF");
 		jsonObject.put("endTime", endTime);
 		String jsonString = ojm.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject);
 		
+		//lc.getConnectionHsetAllData(id, jsonObject);
 		lc.getConnectionHset(id,  jsonObject);
+		
 		// response
-		response.getWriter().print(jsonString);
 		System.out.println("hget 디버깅 결과 : " + jsonString);
 		
 		Date to = transFormat.parse(form);
-		OffTimer.schedule(task, to);
-		
 		lc.getConnectionExit();
+		
+		return new Callable<Map<String, String>>() {
+            @Override
+            public Map<String, String> call() throws Exception {
+            	
+            	
+            	long MSG = ServerTimer.GetTime(endTime);
+            	System.out.println(MSG / 1000 + "초 동안 Thread.sleep();");
+            	System.out.println("Endtime is " + endTime);
+                //Thread.sleep(252000);
+                // start
+                
+                long timeToSleep = MSG;
+                long start, end, slept;
+                boolean interrupted = false;
+
+                while(timeToSleep > 0){
+                    start=System.currentTimeMillis();
+                    try{
+                        Thread.sleep(timeToSleep);
+                        break;
+                    }
+                    catch(InterruptedException e){
+                        //work out how much more time to sleep for
+                        end=System.currentTimeMillis();
+                        slept=end-start;
+                        timeToSleep-=slept;
+                        interrupted=true;
+                        System.out.println("Thread Interrupt ! at " + transFormat.format(new Date()));
+                    }
+                }
+                if(interrupted){
+                    //restore interruption before exit
+                    Thread.currentThread().interrupt();
+                }
+                
+                // end
+                System.out.println("-----------------------------------------------------------------------------------------------");
+				System.out.println("PC 전원을 끕니다. [종료시각 : " + transFormat.format(new Date())+"]");
+				Map<String, String> jsonObjectExit = new HashMap<String, String>();
+				jsonObjectExit.put("id", id);
+				jsonObjectExit.put("endTime", endTime);
+				jsonObjectExit.put("powerStatus", "OFF");
+				lc.getConnection();
+				lc.getConnectionHset(id, jsonObjectExit);
+				lc.getConnectionExit();
+
+                return jsonObjectExit;
+            }
+        };
 	}
 }

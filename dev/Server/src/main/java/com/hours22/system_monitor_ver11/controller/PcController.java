@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hours22.system_monitor_ver11.client.ClientInfoController;
+import com.hours22.system_monitor_ver11.client.ServerTimer;
 import com.hours22.system_monitor_ver11.db.DataService;
 import com.hours22.system_monitor_ver11.db.LettuceController;
 
@@ -69,42 +70,15 @@ public class PcController {
 		response.getWriter().print("Success /pc/"+id+"/data <- POST method !!");
 	}
 	
-	@Async("threadPoolPcOffExecutor")
+	
 	@RequestMapping(value = "/pc/{id}/power/{endTime}", method = RequestMethod.POST)
-	public void PostPcPowerOff(HttpServletRequest request, HttpServletResponse response, @PathVariable String id, @PathVariable String endTime) throws IOException, InterruptedException, ParseException {
+	public @ResponseBody Callable<Map<String, String>> PostPcPowerOff(HttpServletRequest request, HttpServletResponse response, @PathVariable String id, @PathVariable String endTime) throws IOException, InterruptedException, ParseException {
+		
 		response.setContentType("application/json;charset=UTF-8"); 
 
 		System.out.println("--------------------------------------------------------------------------------------------");
-		System.out.println("Input : /pc/"+id+"/power/"+endTime+" <- POST method(언제꺼?) [Client Ip : " +cic.getClientIp(request)+" ] at "+transFormat.format(new Date()));
+		System.out.println("Input : /pc/"+id+"/power/"+endTime+" <- POST method(언제꺼? v2.0) [Client Ip : " +cic.getClientIp(request)+" ] at "+transFormat.format(new Date()));
 		
-		Timer OffTimer = new Timer();
-		Thread.sleep(5000);
-		TimerTask task = new TimerTask() {
-			@Override
-			public void run() {
-
-				System.out.println("--------------------------------------------------------------------------------------------");
-				Date nowTime = new Date();
-				SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-				
-				System.out.println("PC 전원을 끕니다. [종료시각 : " + transFormat.format(nowTime)+"]");
-				//OffTimer = null;
-				
-				Map<String, String> jsonObjectExit = new HashMap<String, String>();
-				jsonObjectExit.put("id", id);
-				jsonObjectExit.put("powerStatus", "OFF");
-				lc.getConnection();
-				lc.getConnectionHset(id, jsonObjectExit);
-				lc.getConnectionExit();
-				try {
-					response.getWriter().print(jsonObjectExit);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-			}
-		};
 		
 		lc.getConnection();
 		String jsonStringForAndroid = lc.getConnectionHgetall(id); 
@@ -116,7 +90,7 @@ public class PcController {
 		Date now = new Date();
 		String form = endTime;
 		SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		System.out.println("PC가 켜졌습니다!" + transFormat.format(now));
+		System.out.println("PC가 켜졌습니다! (변경된 methd)" + transFormat.format(now));
 		String [] seq = form.split("-");
 		form = seq[0] + "-" + seq[1] + "-" + seq[2] +" "+seq[3] +":"+seq[4];
 		System.out.println("종료예약 설정 [시간 : "+form+"]");
@@ -131,51 +105,68 @@ public class PcController {
 		lc.getConnectionHset(id,  jsonObject);
 		
 		// response
-		//response.getWriter().print(jsonString);
-		//response.getWriter().print("{aaaa}");
 		System.out.println("hget 디버깅 결과 : " + jsonString);
 		
 		Date to = transFormat.parse(form);
 		lc.getConnectionExit();
 		
-		OffTimer.schedule(task, to);
+		return new Callable<Map<String, String>>() {
+            @Override
+            public Map<String, String> call() throws Exception {
+            	
+            	
+            	long MSG = ServerTimer.GetTime(endTime);
+            	System.out.println(MSG / 1000 + "초 동안 Thread.sleep();");
+            	System.out.println("Endtime is " + endTime);
+                //Thread.sleep(252000);
+                // start
+                
+                long timeToSleep = MSG;
+                long start, end, slept;
+                boolean interrupted = false;
+
+                while(timeToSleep > 0){
+                    start=System.currentTimeMillis();
+                    try{
+                        Thread.sleep(timeToSleep);
+                        break;
+                    }
+                    catch(InterruptedException e){
+                        //work out how much more time to sleep for
+                        end=System.currentTimeMillis();
+                        slept=end-start;
+                        timeToSleep-=slept;
+                        interrupted=true;
+                        System.out.println("Thread Interrupt ! at " + transFormat.format(new Date()));
+                    }
+                }
+                if(interrupted){
+                    //restore interruption before exit
+                    Thread.currentThread().interrupt();
+                }
+                
+                // end
+                System.out.println("-----------------------------------------------------------------------------------------------");
+				System.out.println("PC 전원을 끕니다. [종료시각 : " + transFormat.format(new Date())+"]");
+				Map<String, String> jsonObjectExit = new HashMap<String, String>();
+				jsonObjectExit.put("id", id);
+				jsonObjectExit.put("endTime", endTime);
+				jsonObjectExit.put("powerStatus", "OFF");
+				lc.getConnection();
+				lc.getConnectionHset(id, jsonObjectExit);
+				lc.getConnectionExit();
+
+                return jsonObjectExit;
+            }
+        };
 	}
 
-	@Async("threadPoolPcMsgExecutor")
 	@RequestMapping(value = "/pc/{id}/message/{min}", method = RequestMethod.GET)
-	public void GetWarningMsg(HttpServletRequest request, HttpServletResponse response, @PathVariable String id, @PathVariable String min) throws IOException, InterruptedException, ParseException {
+	public @ResponseBody Callable<Map<String, String>> GetWarningMsg(HttpServletRequest request, HttpServletResponse response, @PathVariable String id, @PathVariable String min) throws IOException, InterruptedException, ParseException {
 		response.setContentType("application/json;charset=UTF-8"); 
 		
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : /pc/"+id+"/msg/"+min+" <- GET method [Client Ip : "+ cic.getClientIp(request)+" ] at "+transFormat.format(new Date()));
-		
-		Timer MsgTimer = new Timer();
-		
-		TimerTask warningTask = new TimerTask() {
-			@Override
-			public void run() {
-				
-				JSONObject jsonObject = new JSONObject();
-
-				System.out.println("--------------------------------------------------------------------------------------------");
-				System.out.println("[종료"+ min +"분전 알림 메세지!]");
-				jsonObject.put("id", id);
-				if(min == "2") {
-					jsonObject.put("msg", "잠시 후 PC가 종료될 예정입니다. 오늘 하루도 고생많으셨습니다. ");
-				}
-				else {
-					jsonObject.put("msg", "PC 종료 "+min+"분전입니다! 연장신청을 하거나, 자료정리를 서둘러주세요!");
-				}
-				System.out.println("response : " + jsonObject.toString());
-				try {
-					response.getWriter().print(jsonObject.toString());
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		};
-		
 		System.out.println("[system-monitor 알림봇 메세지 !"+min+"분전 알람!");
 		
 		String EndTime;
@@ -190,16 +181,66 @@ public class PcController {
 		String [] seq = form.split("-");
 		form = seq[0] + "-" + seq[1] + "-" + seq[2] +" "+seq[3] +":"+seq[4];
 		Date to = transFormat.parse(form);
+		Date now = new Date();
 		
 		int beforeMin = Integer.parseInt(min);
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(to);
 		cal.add(Calendar.MINUTE, -beforeMin);
 		
-		MsgTimer.schedule(warningTask, cal.getTime());
+		long endTime = cal.getTime().getTime() - now.getTime();
+		
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("msg", "PC 종료 "+min+"분전입니다! 연장신청을 하거나, 자료정리를 서둘러주세요!");
 		jsonObject.put("id", id);
 		//return new AsyncResult<Map<String, String>>(jsonObject);
+		
+		return new Callable<Map<String, String>>() {
+            @Override
+            public Map<String, String> call() throws Exception {
+            	
+            	
+            	long MSG = endTime;
+            	System.out.println(MSG / 1000 + "초 동안 Thread.sleep();");
+            	System.out.println("알림시간 is " + EndTime +" - "+min+"분");
+                //Thread.sleep(252000);
+                // start
+                
+                long timeToSleep = MSG;
+                long start, end, slept;
+                boolean interrupted = false;
+
+                while(timeToSleep > 0){
+                    start=System.currentTimeMillis();
+                    try{
+                        Thread.sleep(timeToSleep);
+                        break;
+                    }
+                    catch(InterruptedException e){
+                        //work out how much more time to sleep for
+                        end=System.currentTimeMillis();
+                        slept=end-start;
+                        timeToSleep-=slept;
+                        interrupted=true;
+                        System.out.println("Thread Interrupt ! at " + transFormat.format(new Date()));
+                    }
+                }
+                if(interrupted){
+                    //restore interruption before exit
+                    Thread.currentThread().interrupt();
+                }
+                
+                // end
+				JSONObject jsonObject = new JSONObject();
+
+				System.out.println("--------------------------------------------------------------------------------------------");
+				System.out.println("[종료"+ min +"분전 알림 메세지!]");
+				jsonObject.put("id", id);
+				jsonObject.put("msg", "PC 종료 "+min+"분전입니다! 연장신청을 하거나, 자료정리를 서둘러주세요!");
+				
+				System.out.println("response : " + jsonObject.toString());
+                return jsonObject;
+            }
+        };
 	}
 }
