@@ -10,6 +10,8 @@ import java.util.Set;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -72,11 +74,11 @@ public class DataService {
     
     public Map<String, String> GetAllPcDataRedis() throws JsonProcessingException {
     	
-    	//ÃÖÁ¾ ¿Ï¼ºµÉ JSONObject ¼±¾ð(ÀüÃ¼)
+    	//ï¿½ï¿½ï¿½ï¿½ ï¿½Ï¼ï¿½ï¿½ï¿½ JSONObject ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½Ã¼)
         JSONObject jsonObject = new JSONObject();
-        //personÀÇ JSONÁ¤º¸¸¦ ´ãÀ» Array ¼±¾ð
+        //personï¿½ï¿½ JSONï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Array ï¿½ï¿½ï¿½ï¿½
         JSONArray jsonArray = new JSONArray();
-        //personÀÇ ÇÑ¸í Á¤º¸°¡ µé¾î°¥ JSONObject ¼±¾ð
+        //personï¿½ï¿½ ï¿½Ñ¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½î°¥ JSONObject ï¿½ï¿½ï¿½ï¿½
         JSONObject jsonInfo = new JSONObject();
         
     	int i = 0;
@@ -93,10 +95,22 @@ public class DataService {
     	    	String tkey = new String(cursor.next());
     	    	//String kvalue = ojm.writeValueAsString((PcData)valueOperations.get(tkey));
     	    	String kvalue = mc.getConnectionHgetall(tkey);
-    	        System.out.println("key data [" + ++i +"] = " + tkey +" "+ kvalue); // Á¶È¸µÈ KeyÀÇ ÀÌ¸§À» Ãâ·Â
+    	        System.out.println("key data [" + ++i +"ë²ˆì§¸] = " + tkey +" "+ kvalue); // ï¿½ï¿½È¸ï¿½ï¿½ Keyï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
     	        System.out.println();
     	        //arrList.put(Integer.toString(i), kvalue);
-    	        jsonArray.add(kvalue);
+    	        
+    	        // String -> JsonParser
+    	        JSONParser parser = new JSONParser();
+    	        Object obj = null;
+				try {
+					obj = parser.parse(kvalue);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    	        JSONObject jsonTmpObj = (JSONObject) obj;
+    	        
+    	        jsonArray.add(jsonTmpObj);
     	    }
     	} finally {
     		jsonObject.put("pcs", jsonArray);
