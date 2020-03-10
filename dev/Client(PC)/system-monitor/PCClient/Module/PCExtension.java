@@ -5,19 +5,32 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import PCModel.PC;
+import sun.reflect.generics.tree.IntSignature;
 import PCClient.Http.PCPost;
 
 public class PCExtension {
-	public void Extension(PC pc, long hours) {
-		hours = hours*3600*1000;
+	private static PCExtension instance;
+	private PCExtension() {}
+	public static PCExtension getInstance() {
+		if(instance == null) {
+			instance = new PCExtension();
+		}
+		return instance;
+	}
+	public void Extension(PC pc, String extensionTime) {
+		SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd-HH-mm");
 		try {
-			SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd-HH-mm");
-			Date originalDate = dayTime.parse(pc.getEnd_time());
-			long extensionTime = originalDate.getTime() + hours;
-			String extension = dayTime.format(new Date(extensionTime));
-			pc.setEnd_time(extension);
-		} catch (ParseException e) {
-			e.printStackTrace();
+			Date endTimeDate = dayTime.parse(pc.getEnd_time());
+			long time = endTimeDate.getTime();
+			long tempTime = Integer.parseInt(extensionTime);
+			// tempTime *= 3600000;
+			tempTime *= 60000; // 1ºÐ ´Ã¸®±â
+			time += tempTime;
+			pc.setEnd_time(dayTime.format(new Date(time)));
+			System.out.println(dayTime.format(new Date(time)));
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 		try {
 			//PCPost.getInstance().Extension(pc);

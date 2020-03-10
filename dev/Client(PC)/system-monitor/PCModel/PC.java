@@ -22,11 +22,13 @@ public class PC {
 		long time = System.currentTimeMillis();
 		SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd-HH-mm");
 		this.start_time = dayTime.format(new Date(time));
-		time += 10800000;
+		//time += 10800000; // 3시간
+		//time+=1920000; //32분 후 임시 배포용
+		time+=300000; // 5분 후
 		this.end_time = dayTime.format(new Date(time));
 		this.cpu_data = CPU.getCPU().showCPU();
 		this.ram_data = Memory.getMemory().showMemory();
-		this.remainTime = "5";
+		this.remainTime = "30";
 	}
 
 	public String getId() {
