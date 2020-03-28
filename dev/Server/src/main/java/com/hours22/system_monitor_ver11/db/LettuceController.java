@@ -52,6 +52,7 @@ public class LettuceController {
 	@Autowired
 	DataService dss;
 	
+	private Object lock = new Object();
 	public static RedisClient redisClient = null;
 	public static StatefulRedisConnection<String, String> connection = null;
 	public static RedisCommands<String, String> syncCmd = null;		// Sync�� command
@@ -72,27 +73,30 @@ public class LettuceController {
         return "all";
     }
     
-    //@GetMapping(path="/connections/start")
+    
     public void getConnection() {
         // This returns a JSON or XML with the users
-    	String conn1 = "redis://localhost:6379/0 ";
-    	RedisURI redisUri = new RedisURI("localhost", 6379, 5, TimeUnit.SECONDS);
-    	
-    	try {
-    		redisClient = RedisClient.create(redisUri);
-    	} catch(Exception e) {
-    		System.out.println(e);
+    	synchronized(lock) {
+	    	String conn1 = "redis://localhost:6379/0 ";
+	    	RedisURI redisUri = new RedisURI("localhost", 6379, 60, TimeUnit.SECONDS);
+	    	
+	    	try {
+	    		redisClient = RedisClient.create(redisUri);
+	    	} catch(Exception e) {
+	    		
+	    		System.out.println(e);
+	    	}
+	    	 connection = redisClient.connect();
+	    	 syncCmd = connection.sync();
+	    	 asyncCmd = connection.async();
+	 		System.out.println("Redis Connection Success!");
+	 		try {
+	 			String ret = syncCmd.ping();
+	 			System.out.println("6379]ping-> [connection start!]"+ret);
+	 		}catch(Exception e){
+	 			System.out.println(e);
+	 		}
     	}
-    	 connection = redisClient.connect();
-    	 syncCmd = connection.sync();
-    	 asyncCmd = connection.async();
- 		System.out.println("Redis Connection Success!");
- 		try {
- 			String ret = syncCmd.ping();
- 			System.out.println("6379]ping->"+ret);
- 		}catch(Exception e){
- 			System.out.println(e);
- 		}
     }
     
     //@GetMapping(path="/connections/hset")
@@ -310,9 +314,11 @@ public class LettuceController {
     public void getConnectionExit() {
         // This returns a JSON or XML with the users
     	
- 		connection.close();
- 		redisClient.shutdown();
- 		System.out.println("Redis Connection Exit!");
- 		//return "Success Exit";
+    	synchronized(lock) {
+	 		connection.close();
+	 		redisClient.shutdown();
+	 		System.out.println("Redis Connection Exit! [connection End]");
+	 		//return "Success Exit";
+    	}
     }
 }

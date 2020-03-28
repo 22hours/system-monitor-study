@@ -37,6 +37,9 @@ import com.hours22.system_monitor_ver11.client.ClientInfoController;
 import com.hours22.system_monitor_ver11.client.ServerTimer;
 import com.hours22.system_monitor_ver11.db.DataService;
 import com.hours22.system_monitor_ver11.db.LettuceController;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @Controller
 @WebServlet(asyncSupported = true)
@@ -91,10 +94,50 @@ public class PcController {
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : /pc/"+id+"/power/"+endTime+" <- POST method(언제꺼? or 연장신청 v2.0) [Client Ip : " +cic.getClientIp(request)+" ] at "+transFormat.format(new Date()));
 
+		//-------------------------------------------------------------------
+		
+		lc.getConnection();
+		String jsonStringForAndroid = lc.getConnectionHgetall(id); 
+		System.out.println(jsonStringForAndroid);
+		
+		Date now = new Date();
+		
+		String eform = endTime;
+		String startTime = transFormat.format(now);
+
+		char[] sfromArr = null;
+		sfromArr = startTime.toCharArray();
+		for(int i=4; i<=13; i+=3) {
+			sfromArr[i] = '-';
+		}
+		startTime = String.valueOf(sfromArr);
+		
+		//2020-05-15 11:34
+		
+		String [] eseq = eform.split("-");
+		eform = eseq[0] + "-" + eseq[1] + "-" + eseq[2] +" "+eseq[3] +":"+eseq[4];
+		System.out.println("종료예약 설정 [시간 : "+eform+"]");
+		
+		Map<String, String> jsonObject = new HashMap<String, String>();
+		jsonObject.put("id", id);
+		jsonObject.put("powerStatus", "ON");
+		jsonObject.put("startTime", startTime);
+		jsonObject.put("endTime", endTime);
+		String jsonString = ojm.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject);
+		
+		//lc.getConnectionHsetAllData(id, jsonObject);
+		lc.getConnectionHset(id,  jsonObject);
+		
+		// response
+		System.out.println("hget 디버깅 결과 : " + jsonString);
+		
+		Date to = transFormat.parse(eform);
+		lc.getConnectionExit();
+		
+		//-------------------------------------------------------------------
+		
 		int opt = 1;
-		// 연장신청인지 언제꺼인지 판단
-		// thread.name으로 찾고 있으면 interrupt(연장신청) opt == 2 
-		//      ...         없으면 (언제꺼) opt == 1
+		
     	Set<Thread> setOfThread = Thread.getAllStackTraces().keySet();
     	for(Thread thread : setOfThread){
     		System.out.println("Active Thread's [ Number : " +thread.getId()+" / Name : "+thread.getName()+" ] ");
@@ -112,56 +155,29 @@ public class PcController {
     	}
 		
 		
-		
 		Thread ct = Thread.currentThread();
 		ct.setName("PCPowerOffExc-"+id);
 		System.out.println("현재 Thread [ ID : " + ct.getId()+ " / Name : "+ct.getName()+" ] ");   
 		
+		Thread.sleep(3000);
+		//// DB 업데이트
 		
 		lc.getConnection();
-		String jsonStringForAndroid = lc.getConnectionHgetall(id); 
-		System.out.println(jsonStringForAndroid);
-		// to send android!
-		// 어플이 먼저켜지고나서, 어플에서 long polling으로 업데이트.
-
-		
-		Date now = new Date();
-		
-		String eform = endTime;
-		String startTime = transFormat.format(now);
-
-		char[] sfromArr = null;
-		sfromArr = startTime.toCharArray();
-		for(int i=4; i<=13; i+=3) {
-			sfromArr[i] = '-';
-		}
-		startTime = String.valueOf(sfromArr);
-		
-		//2020-05-15 11:34
 
 		if(opt == 1) 
 			System.out.println(id+" PC가 켜졌습니다! (변경된 methd)" + transFormat.format(now));
 		else if(opt == 2) 
 			System.out.println(id+" PC의 종료시간이  변경되었습니다." + transFormat.format(now));
-		String [] eseq = eform.split("-");
-		eform = eseq[0] + "-" + eseq[1] + "-" + eseq[2] +" "+eseq[3] +":"+eseq[4];
-		System.out.println("종료예약 설정 [시간 : "+eform+"]");
 		
-		Map<String, String> jsonObject = new HashMap<String, String>();
 		if(opt == 1)
 			jsonObject.put("startTime", startTime);
-		jsonObject.put("id", id);
-		jsonObject.put("powerStatus", "OFF");
-		jsonObject.put("endTime", endTime);
-		String jsonString = ojm.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject);
+		jsonString = ojm.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject);
 		
-		//lc.getConnectionHsetAllData(id, jsonObject);
 		lc.getConnectionHset(id,  jsonObject);
 		
 		// response
 		System.out.println("hget 디버깅 결과 : " + jsonString);
-		
-		Date to = transFormat.parse(eform);
+		System.out.println("Connection 바로 앞.");
 		lc.getConnectionExit();
 		
 		return new Callable<Map<String, String>>() {
@@ -200,9 +216,33 @@ public class PcController {
 
                 // end
                 if(interrupted) {
+                	System.out.println("###### 일단 인터럽트 되긴 했는데..... ######");
+            		char[] nowArr = null;
+            		String nowTime = transFormat.format(new Date());
+            		lc.getConnection();
+            		nowArr = nowTime.toCharArray();
+            		for(int i=4; i<=13; i+=3) {
+            			nowArr[i] = '-';
+            		}
+            		nowTime = String.valueOf(nowArr);
+            		
 					Map<String, String> jsonObjectExit = new HashMap<String, String>();
 					jsonObjectExit.put("id", id);
-					jsonObjectExit.put("powerStatus", "ON");
+					String tmp = lc.getConnectionHgetField(id, "endTime");
+					if(nowTime.compareTo(tmp)>=0) {
+                		jsonObjectExit.put("powerStatus", "OFF");
+                		jsonObjectExit.put("endTime", tmp);
+                		System.out.println("즉시 종료합니다. [명령]");
+                		System.out.println("["+tmp + " vs " + nowTime+"]");
+                		// nowTime >= tmp 이면 끈다.
+					}
+                	else { 
+                		jsonObjectExit.put("powerStatus", "ON");
+                		jsonObjectExit.put("endTime", tmp);
+                		System.out.println("연장신청 [명령]");
+                		System.out.println("["+tmp + " vs " + nowTime+"]");
+                	}
+                	lc.getConnectionExit();
 					return jsonObjectExit;
                 }
                 else {
@@ -315,7 +355,7 @@ public class PcController {
                 if(interrupted) {
 					Map<String, String> jsonObjectExit = new HashMap<String, String>();
 					jsonObjectExit.put("id", id);
-					jsonObjectExit.put("msg", "null");
+					jsonObjectExit.put("msg", "extension");
 					return jsonObjectExit;
                 }
                 else {
