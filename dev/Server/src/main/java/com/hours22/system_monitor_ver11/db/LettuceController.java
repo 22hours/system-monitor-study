@@ -52,6 +52,7 @@ public class LettuceController {
 	@Autowired
 	DataService dss;
 	
+	private Object lock = new Object();
 	public static RedisClient redisClient = null;
 	public static StatefulRedisConnection<String, String> connection = null;
 	public static RedisCommands<String, String> syncCmd = null;		// Sync�� command
@@ -72,27 +73,30 @@ public class LettuceController {
         return "all";
     }
     
-    //@GetMapping(path="/connections/start")
+    
     public void getConnection() {
         // This returns a JSON or XML with the users
-    	String conn1 = "redis://localhost:6379/0 ";
-    	RedisURI redisUri = new RedisURI("localhost", 6379, 5, TimeUnit.SECONDS);
-    	
-    	try {
-    		redisClient = RedisClient.create(redisUri);
-    	} catch(Exception e) {
-    		System.out.println(e);
+    	synchronized(lock) {
+	    	String conn1 = "redis://localhost:6379/0 ";
+	    	RedisURI redisUri = new RedisURI("localhost", 6379, 60, TimeUnit.SECONDS);
+	    	
+	    	try {
+	    		redisClient = RedisClient.create(redisUri);
+	    	} catch(Exception e) {
+	    		
+	    		System.out.println(e);
+	    	}
+	    	 connection = redisClient.connect();
+	    	 syncCmd = connection.sync();
+	    	 asyncCmd = connection.async();
+	 		System.out.println("Redis Connection Success!");
+	 		try {
+	 			String ret = syncCmd.ping();
+	 			System.out.println("6379]ping-> [connection start!]"+ret);
+	 		}catch(Exception e){
+	 			System.out.println(e);
+	 		}
     	}
-    	 connection = redisClient.connect();
-    	 syncCmd = connection.sync();
-    	 asyncCmd = connection.async();
- 		System.out.println("Redis Connection Success!");
- 		try {
- 			String ret = syncCmd.ping();
- 			System.out.println("6379]ping->"+ret);
- 		}catch(Exception e){
- 			System.out.println(e);
- 		}
     }
     
     //@GetMapping(path="/connections/hset")
@@ -190,57 +194,57 @@ public class LettuceController {
     		// field : cpuData
     		if(map.get("cpuData") != null) {
     			syncCmd.hset(key, "cpuData", map.get("cpuData"));
-    			System.out.println("hset "+key+ "cpuData -> true");
+    			System.out.println("hset "+key+ " cpuData -> true");
     		} else {
-    			System.out.println("hset "+key+ "cpuData -> false");
+    			System.out.println("hset "+key+ " cpuData -> false");
     		}
     		
     		// field : ramData
     		if(map.get("ramData") != null) {
     			syncCmd.hset(key, "ramData", map.get("ramData"));
-    			System.out.println("hset "+key+ "ramData -> true");
+    			System.out.println("hset "+key+ " ramData -> true");
     		} else {
-    			System.out.println("hset "+key+ "ramData -> false");
+    			System.out.println("hset "+key+ " ramData -> false");
     		}
     		
     		// field : startTime
     		if(map.get("startTime") != null) {
     			syncCmd.hset(key, "startTime", map.get("startTime"));
-    			System.out.println("hset "+key+ "startTime -> true");
+    			System.out.println("hset "+key+ " startTime -> true");
     		} else {
-    			System.out.println("hset "+key+ "startTime -> false");
+    			System.out.println("hset "+key+ " startTime -> false");
     		}
     		
     		// field : endTime
     		if(map.get("endTime") != null) {
     			syncCmd.hset(key, "endTime", map.get("endTime"));
-    			System.out.println("hset "+key+ "endTime -> true");
+    			System.out.println("hset "+key+ " endTime -> true");
     		} else {
-    			System.out.println("hset "+key+ "endTime -> false");
+    			System.out.println("hset "+key+ " endTime -> false");
     		}
     		
     		// field : powerStatus
     		if(map.get("powerStatus") != null) {
     			syncCmd.hset(key, "powerStatus", map.get("powerStatus"));
-    			System.out.println("hset "+key+ "powerStatus -> true");
+    			System.out.println("hset "+key+ " powerStatus -> true");
     		} else {
-    			System.out.println("hset "+key+ "powerStatus -> false");
+    			System.out.println("hset "+key+ " powerStatus -> false");
     		}
     		
     		// field : name
     		if(map.get("name") != null) {
     			syncCmd.hset(key, "name", map.get("name"));
-    			System.out.println("hset "+key+ "name -> true");
+    			System.out.println("hset "+key+ " name -> true");
     		} else {
-    			System.out.println("hset "+key+ "name -> false");
+    			System.out.println("hset "+key+ " name -> false");
     		}
     		
     		// field : classId
     		if(map.get("classId") != null) {
     			syncCmd.hset(key, "classId", map.get("classId"));
-    			System.out.println("hset "+key+"classId -> true");
+    			System.out.println("hset "+key+" classId -> true");
     		} else {
-    			System.out.println("hset "+key+"classId -> false");
+    			System.out.println("hset "+key+" classId -> false");
     		}
     		
     		System.out.println("**** Finished Hset ****");
@@ -310,9 +314,11 @@ public class LettuceController {
     public void getConnectionExit() {
         // This returns a JSON or XML with the users
     	
- 		connection.close();
- 		redisClient.shutdown();
- 		System.out.println("Redis Connection Exit!");
- 		//return "Success Exit";
+    	synchronized(lock) {
+	 		connection.close();
+	 		redisClient.shutdown();
+	 		System.out.println("Redis Connection Exit! [connection End]");
+	 		//return "Success Exit";
+    	}
     }
 }
