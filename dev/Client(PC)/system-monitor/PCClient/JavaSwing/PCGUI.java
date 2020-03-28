@@ -1,44 +1,45 @@
 package PCClient.JavaSwing;
 
+import java.awt.Color;
 import java.awt.EventQueue;
-import java.awt.Graphics;
-import java.awt.Image;
-
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
 import java.awt.Font;
-import javax.swing.JTextField;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.net.URL;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import PCClient.Http.PCPost;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JToolBar;
+import javax.swing.UIManager;
+
+import PCClient.Module.ExtensionThread;
 import PCClient.Module.GetLongPolling;
 import PCClient.Module.GetMACAddress;
 import PCClient.Module.GetNowTime;
 import PCClient.Module.IsDigit;
+import PCClient.Module.PCExtension;
+import PCClient.Module.PostGeneralPolling;
 import PCClient.Module.PostLongPolling;
 import PCClient.Module.TimeDifference;
 import PCModel.PC;
+import sun.applet.Main;
+import test.shutdownhook;
 
-import javax.swing.JPasswordField;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.awt.event.ActionEvent;
-import java.awt.Color;
+import javax.swing.SwingConstants;
 
 public class PCGUI {
 
 	private JFrame frame;
-	private JTextField id;
-	private JPasswordField password;
-
+	ExecutorService executorService = Executors.newFixedThreadPool(10);
 	/**
 	 * Launch the application.
 	 */
@@ -70,56 +71,31 @@ public class PCGUI {
 		String pid = MAC.getLocalMacAddress();
 		final PC pc = new PC(pid);
 		frame = new JFrame();
-		frame.setTitle("22hours_System-Monitor");
-		ImagePanel panel = new ImagePanel(new ImageIcon(
-				"F:/eclipse-jee-2019-12-R-win32-x86_64/eclipse-workspace/System-Monitor(PC Client)/img/tag-bg.jpg")
-						.getImage());
+		URL imageURL = Main.class.getResource("/img/tag-bg.jpg");
+		URL iconURL = Main.class.getResource("/img/hours22.jpg");
+		frame.setTitle("System_monitor");
+		ImageIcon ig = new ImageIcon(imageURL);
+		ImageIcon ic = new ImageIcon(iconURL);
+		frame.setIconImage(ic.getImage());
+		ImagePanel panel = new ImagePanel(ig.getImage());
 		panel.setForeground(Color.WHITE);
 		panel.setBackground(Color.CYAN);
-		panel.setBounds(0, 0, 1274, 854);
+		panel.setBounds(0, 0, 450, 250);
 		frame.setSize(panel.getWidth(), panel.getHeight());
 		frame.getContentPane().setLayout(null);
 		panel.setLayout(null);
 
-		JLabel lblNewLabel = new JLabel("Log In");
-		lblNewLabel.setFont(new Font("Lucida Sans Typewriter", Font.PLAIN, 30));
-		lblNewLabel.setBounds(584, 199, 118, 63);
-		panel.add(lblNewLabel);
-
-		id = new JTextField();
-		id.setBounds(559, 274, 179, 43);
-		panel.add(id);
-		id.setColumns(10);
-
-		password = new JPasswordField();
-		password.setBounds(559, 331, 179, 43);
-		panel.add(password);
-
-		JLabel lblNewLabel_1 = new JLabel("ID");
-		lblNewLabel_1.setFont(new Font("Lucida Sans Typewriter", Font.PLAIN, 30));
-		lblNewLabel_1.setBounds(495, 274, 50, 43);
-		panel.add(lblNewLabel_1);
-
-		JLabel lblPassword = new JLabel("PW");
-		lblPassword.setFont(new Font("Lucida Sans Typewriter", Font.PLAIN, 30));
-		lblPassword.setBounds(495, 331, 50, 43);
-		panel.add(lblPassword);
-
 		JButton extensionButton = new JButton("\uC5F0\uC7A5 \uC2E0\uCCAD");
-		extensionButton.setFont(new Font("Gulim", Font.PLAIN, 15));
-		extensionButton.setBackground(Color.GRAY);
+		extensionButton.setFont(new Font("Gulim", Font.PLAIN, 12));
+		extensionButton.setBackground(Color.DARK_GRAY);
 		extensionButton.setForeground(Color.WHITE);
 		extensionButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				while (true) {
 					String time = JOptionPane.showInputDialog("늘릴 시간을 입력하세요.");
 					if (IsDigit.getInstance().isNumeric(time) && !time.equals("0")) {
-						/*try {
-							PCPost.getInstance().Extension(pc, time);
-						} catch (URISyntaxException | IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}*/
+						PCExtension.getInstance().Extension(pc, time);
+						executorService.execute(new ExtensionThread(pc, time));
 						JOptionPane.showMessageDialog(null, time + "시간 연장 되었습니다.");
 						break;
 					}
@@ -132,7 +108,7 @@ public class PCGUI {
 				}
 			}
 		});	
-		extensionButton.setBounds(525, 386, 109, 43);
+		extensionButton.setBounds(20, 32, 88, 30);
 		panel.add(extensionButton);
 
 		JPanel mainPanel = new JPanel();
@@ -159,19 +135,50 @@ public class PCGUI {
 			}
 		});
 		remainTimeButton.setForeground(Color.WHITE);
-		remainTimeButton.setFont(new Font("Gulim", Font.PLAIN, 15));
-		remainTimeButton.setBackground(Color.GRAY);
-		remainTimeButton.setBounds(654, 386, 109, 43);
+		remainTimeButton.setFont(new Font("Gulim", Font.PLAIN, 12));
+		remainTimeButton.setBackground(Color.DARK_GRAY);
+		remainTimeButton.setBounds(210, 32, 88, 30);
 		panel.add(remainTimeButton);
+		
+		JButton button = new JButton("\uB098\uC758 \uC815\uBCF4");
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String msg = "ID : damin\nStartTime : ";
+				msg += pc.getStart_time();
+				msg += "\nEndTime : ";
+				msg += pc.getEnd_time();
+				msg += "\nCPU Usage : ";
+				msg += pc.getCpu_data();
+				msg += "%\nRam Usage : ";
+				msg += pc.getRam_data();
+				msg += "%";
+				JOptionPane.showMessageDialog(null, msg);
+			}
+		});
+		button.setForeground(Color.WHITE);
+		button.setFont(new Font("Gulim", Font.PLAIN, 12));
+		button.setBackground(Color.DARK_GRAY);
+		button.setBounds(115, 32, 88, 30);
+		panel.add(button);
 		frame.setResizable(false);
-		frame.setLocationRelativeTo(null); // 가운데에서 Frame 출력하기
+		//frame.setLocationRelativeTo(null); // 가운데에서 Frame 출력하기
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+	    GraphicsDevice defaultScreen = ge.getDefaultScreenDevice();
+	    Rectangle rect = defaultScreen.getDefaultConfiguration().getBounds();
+	    int x = ((int) rect.getMaxX() - frame.getWidth()) /2;
+	    int y = 0;
+		frame.setLocation(x, y);
+		/*frame.setUndecorated(true);
+		Color color = UIManager.getColor("activeCaptionBorder");
+		frame.getRootPane().setBorder(BorderFactory.createLineBorder(color, 4));*/
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		Runtime runtime = Runtime.getRuntime();
+		runtime.addShutdownHook(new shutdownhook());
 		try {
-			Thread PostGeneralThread = new PostLongPolling(pc);
-			Thread GetLongThread = new GetLongPolling(pc);
-			PostGeneralThread.start();
-			Thread.sleep(15000);
-			GetLongThread.start();
+			executorService.execute(new PostLongPolling(pc));
+			Thread.sleep(3000);
+			executorService.execute(new GetLongPolling(pc));
+			executorService.execute(new PostGeneralPolling(pc));
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

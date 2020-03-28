@@ -34,7 +34,7 @@ public class TimeDifference {
 			difference%=3600;
 			String minute = String.valueOf(difference/60);
 			difference%=60;
-			return hour+"시 " + minute + "분  남았습니다.";
+			return hour+"시간 " + minute + "분  남았습니다.";
 		} catch (java.text.ParseException e) {
 			e.printStackTrace();
 		}

@@ -3,7 +3,7 @@ package PCClient.Module;
 import PCClient.Http.*;
 import PCModel.PC;
 
-public class PostGeneralPolling extends Thread{
+public class PostGeneralPolling implements Runnable{
 	PC pc = null;
 	
 	public PostGeneralPolling(PC pc) {
