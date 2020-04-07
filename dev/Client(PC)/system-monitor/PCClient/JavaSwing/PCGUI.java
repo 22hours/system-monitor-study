@@ -3,8 +3,10 @@ package PCClient.JavaSwing;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Desktop;
+import java.awt.Dialog;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
@@ -20,9 +22,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -30,6 +34,7 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
+import javax.swing.plaf.ColorUIResource;
 
 import PCClient.Module.ExtensionThread;
 import PCClient.Module.GetLongPolling;
@@ -52,6 +57,7 @@ public class PCGUI {
 
 	private JFrame frame;
 	ExecutorService executorService = Executors.newFixedThreadPool(10);
+
 	/**
 	 * Launch the application.
 	 */
@@ -74,33 +80,49 @@ public class PCGUI {
 	public PCGUI() {
 		initialize();
 	}
+
 	private WindowAdapter getWindowAdapter() {
-        return new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent we) {//overrode to show message
-                super.windowClosing(we);
+		return new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent we) {// overrode to show message
+				super.windowClosing(we);
+			}
 
-                JOptionPane.showMessageDialog(frame, "Cant Exit");
-            }
+			@Override
+			public void windowIconified(WindowEvent we) {
+				frame.setState(JFrame.NORMAL);
+			}
+		};
+	}
 
-            @Override
-            public void windowIconified(WindowEvent we) {
-                frame.setState(JFrame.NORMAL);
-            }
-        };
-    }
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		String[] extensionCombo = {"1시간","2시간","3시간","4시간","5시간"};
+
+		String[] extensionCombo = { "1시간", "2시간", "3시간", "4시간", "5시간" };
 		final JComboBox combo = new JComboBox(extensionCombo);
+		/*combo.setRenderer(new DefaultListCellRenderer() { 콤보 박스 select까지 색깔 바꾸기
+		    @Override
+		    public void paint(Graphics g) {
+		        setBackground(Color.WHITE);
+		        setForeground(Color.BLACK);
+		        super.paint(g);
+		    }
+		});*/ 
+		combo.setBackground(Color.WHITE);
+		combo.setForeground(Color.black);
 		final String title = "시간 선택";
-		final String[] options = {"선택","취소"};
+		final String[] options = { "선택", "취소" };
 		GetMACAddress MAC = new GetMACAddress();
 		String pid = MAC.getLocalMacAddress();
 		final PC pc = new PC(pid);
 		frame = new JFrame();
+		UIManager UI = new UIManager();
+		UI.put("OptionPane.background", Color.WHITE);
+		UI.put("Panel.background", Color.WHITE);
+		UI.put("Button.background", Color.DARK_GRAY);
+		UI.put("Button.foreground", Color.WHITE);
 		URL imageURL = Main.class.getResource("/img/tag-bg.jpg");
 		URL hours22 = Main.class.getResource("/img/hours22.png");
 		URL shutdownURL = Main.class.getResource("/img/stop2.png");
@@ -111,31 +133,34 @@ public class PCGUI {
 		ImageIcon ig = new ImageIcon(imageURL);
 		ImageIcon ic = new ImageIcon(iconURL);
 		frame.setIconImage(ic.getImage());
-		ImagePanel panel = new ImagePanel(ig.getImage());
+		final ImagePanel panel = new ImagePanel(ig.getImage());
 		panel.setForeground(Color.WHITE);
 		panel.setBackground(Color.CYAN);
 		panel.setBounds(0, 0, 300, 100);
 		frame.setSize(panel.getWidth(), panel.getHeight());
 		frame.getContentPane().setLayout(null);
 		panel.setLayout(null);
-        frame.addWindowListener(getWindowAdapter());
+		frame.addWindowListener(getWindowAdapter());
+
+		JDialog dialog = new JDialog(frame,"theTitle", Dialog.ModalityType.APPLICATION_MODAL);
+		dialog.setVisible(true);
 		
 		JLabel text = new JLabel("남은 시간 :");
 		text.setFont(new Font("TimesRoman", Font.BOLD, 25));
 		text.setHorizontalAlignment(JLabel.CENTER);
-		text.setSize(30,30);
+		text.setSize(30, 30);
 		text.setBounds(60, 10, 140, 50);
 		panel.add(text);
-		
+
 		JLabel label = new JLabel("");
 		label.setFont(new Font("TimesRoman", Font.PLAIN, 30));
 		label.setHorizontalAlignment(JLabel.CENTER);
-		label.setSize(30,30);
+		label.setSize(30, 30);
 		label.setBounds(170, 10, 140, 50);
 		panel.add(label);
-		
+
 		JButton shutdownButton = new JButton(new ImageIcon(shutdownURL));
-		//shutdownButton.setBounds(86, 8, 50, 50);
+		// shutdownButton.setBounds(86, 8, 50, 50);
 		shutdownButton.setBounds(20, 8, 50, 50);
 		shutdownButton.setBorderPainted(false);
 		shutdownButton.setFocusPainted(false);
@@ -145,67 +170,60 @@ public class PCGUI {
 		shutdownButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ImageIcon icon = new ImageIcon(Main.class.getResource("/img/hours22.png"));
-		        int input = JOptionPane.showConfirmDialog(frame, 
-		                "PC 종료하시겠습니까?", "PC 종료", 
-		                JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, icon);
-		        if(input==0) {
-		        	//shutdown 추가 해야 할 듯
+				JLabel label = new JLabel("<html><meta charset=\"utf-8\">PC 종료하시겠습니까?</html>");
+				label.setFont(new Font("Candara Light", Font.BOLD, 15));
+				int input = JOptionPane.showConfirmDialog(frame, label, "PC 종료", JOptionPane.OK_CANCEL_OPTION,
+						JOptionPane.INFORMATION_MESSAGE, icon);
+				if (input == 0) {
+					// shutdown 추가 해야 할 듯
 					System.exit(0);
-		        }
-		        else {
-		        	return; 
-		        }
-			}
-		});
-		panel.add(shutdownButton);
-		/*JButton aboutusButton = new JButton(new ImageIcon(aboutURL));
-		aboutusButton.setBounds(175, 2, 64, 64);
-		aboutusButton.setBorderPainted(false);
-		aboutusButton.setFocusPainted(false);
-		aboutusButton.setContentAreaFilled(false);
-		aboutusButton.setToolTipText("About Us");
-		aboutusButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					System.out.println("Button Clicked!");
-					Desktop.getDesktop().browse(new URI("https://winterlood.github.io/sys-monitor-deploy/"));
-				} catch (IOException | URISyntaxException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				} else {
+					return;
 				}
 			}
 		});
-		panel.add(aboutusButton);*/
+		panel.add(shutdownButton);
+		/*
+		 * JButton aboutusButton = new JButton(new ImageIcon(aboutURL));
+		 * aboutusButton.setBounds(175, 2, 64, 64);
+		 * aboutusButton.setBorderPainted(false); aboutusButton.setFocusPainted(false);
+		 * aboutusButton.setContentAreaFilled(false);
+		 * aboutusButton.setToolTipText("About Us"); aboutusButton.addActionListener(new
+		 * ActionListener() { public void actionPerformed(ActionEvent e) { try {
+		 * System.out.println("Button Clicked!"); Desktop.getDesktop().browse(new
+		 * URI("https://winterlood.github.io/sys-monitor-deploy/")); } catch
+		 * (IOException | URISyntaxException e1) { // TODO Auto-generated catch block
+		 * e1.printStackTrace(); } } }); panel.add(aboutusButton);
+		 */
 		JButton extensionButton = new JButton("\uC5F0\uC7A5 \uC2E0\uCCAD");
+		extensionButton.setBounds(20, 62, 88, 30);
 		extensionButton.setFont(new Font("Gulim", Font.PLAIN, 12));
 		extensionButton.setBackground(Color.DARK_GRAY);
 		extensionButton.setForeground(Color.WHITE);
+		extensionButton.setToolTipText("연장신청");
 		extensionButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				while (true) {
-					int selection = JOptionPane.showOptionDialog(null, combo, title, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null,options,options[0]);
-					if(selection==1 || selection==-1) break;
-					String time = combo.getSelectedItem().toString().substring(0,1);
+					int selection = JOptionPane.showOptionDialog(frame, combo, title, JOptionPane.DEFAULT_OPTION,
+							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					if (selection == 1 || selection == -1)
+						break;
+					String time = combo.getSelectedItem().toString().substring(0, 1);
 					if (IsDigit.getInstance().isNumeric(time) && !time.equals("0")) {
 						PCExtension.getInstance().Extension(pc, time);
-						/*for(Thread t : Thread.getAllStackTraces().keySet()) {
-							if(t.getName().equals("ExtensionThread")) {
-								executorService.execute(new PostLongPolling(pc));
-								break;
-							}
-							else if(t.getName().equals("PostLongPolling")) {
-								executorService.execute(new ExtensionThread(pc, time));
-								break;
-							}
-						}*/
+						/*
+						 * for(Thread t : Thread.getAllStackTraces().keySet()) {
+						 * if(t.getName().equals("ExtensionThread")) { executorService.execute(new
+						 * PostLongPolling(pc)); break; } else if(t.getName().equals("PostLongPolling"))
+						 * { executorService.execute(new ExtensionThread(pc, time)); break; } }
+						 */
 						executorService.execute(new PostLongPolling(pc));
 						JOptionPane.showMessageDialog(null, time + "시간 연장 되었습니다.");
 						break;
 					}
 				}
 			}
-		});	
-		extensionButton.setBounds(20, 62, 88, 30);
+		});
 		panel.add(extensionButton);
 
 		JPanel mainPanel = new JPanel();
@@ -213,22 +231,19 @@ public class PCGUI {
 		mainPanel.setBounds(0, 0, 1274, 842);
 		mainPanel.setLayout(null);
 		frame.getContentPane().add(panel);
-		
+
 		JButton remainTimeButton = new JButton("Dev");
 		remainTimeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) { // 개발자 정보로 바꾸기
-				/*String nowTime = GetNowTime.getInstance().getNowTime();
-				System.out.println(nowTime);
-				String endTime = pc.getEnd_time();
-				System.out.println(endTime);
-				String remainTime = TimeDifference.getInstance().calc(nowTime, endTime);
-				System.out.println(remainTime);
-				if(remainTime==null) {
-					JOptionPane.showMessageDialog(null, "잘못된 정보 수신!");
-				}
-				else {
-					JOptionPane.showMessageDialog(null, remainTime);
-				}*/
+				/*
+				 * String nowTime = GetNowTime.getInstance().getNowTime();
+				 * System.out.println(nowTime); String endTime = pc.getEnd_time();
+				 * System.out.println(endTime); String remainTime =
+				 * TimeDifference.getInstance().calc(nowTime, endTime);
+				 * System.out.println(remainTime); if(remainTime==null) {
+				 * JOptionPane.showMessageDialog(null, "잘못된 정보 수신!"); } else {
+				 * JOptionPane.showMessageDialog(null, remainTime); }
+				 */
 			}
 		});
 		remainTimeButton.setForeground(Color.WHITE);
@@ -236,20 +251,23 @@ public class PCGUI {
 		remainTimeButton.setBackground(Color.DARK_GRAY);
 		remainTimeButton.setBounds(210, 62, 88, 30);
 		panel.add(remainTimeButton);
-		
+
 		JButton button = new JButton("\uB098\uC758 \uC815\uBCF4");
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String msg = "ID : damin\nStartTime : ";
+				ImageIcon icon = new ImageIcon(Main.class.getResource("/img/hours22.png"));
+				String msg = "<html>ID : damin<br>StartTime : ";
 				msg += pc.getStart_time();
-				msg += "\nEndTime : ";
+				msg += "<br>EndTime : ";
 				msg += pc.getEnd_time();
-				msg += "\nCPU Usage : ";
+				msg += "<br>CPU Usage : ";
 				msg += pc.getCpu_data();
-				msg += "%\nRam Usage : ";
+				msg += "%<br>Ram Usage : ";
 				msg += pc.getRam_data();
-				msg += "%";
-				JOptionPane.showMessageDialog(null, msg);
+				msg += "%</html>";
+				JLabel label = new JLabel(msg);
+				label.setFont(new Font("Comic Sans MS", Font.BOLD, 15));
+				JOptionPane.showMessageDialog(frame,label,"사용자 정보",JOptionPane.INFORMATION_MESSAGE,icon);
 			}
 		});
 		button.setForeground(Color.WHITE);
@@ -258,34 +276,34 @@ public class PCGUI {
 		button.setBounds(115, 62, 88, 30);
 		panel.add(button);
 		frame.setResizable(false);
-		//frame.setLocationRelativeTo(null); // 가운데에서 Frame 출력하기
+		// frame.setLocationRelativeTo(null); // 가운데에서 Frame 출력하기
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-	    GraphicsDevice defaultScreen = ge.getDefaultScreenDevice();
-	    Rectangle rect = defaultScreen.getDefaultConfiguration().getBounds();
-	    int x = ((int) rect.getMaxX() - frame.getWidth());
-	    int y = 0;
+		GraphicsDevice defaultScreen = ge.getDefaultScreenDevice();
+		Rectangle rect = defaultScreen.getDefaultConfiguration().getBounds();
+		int x = ((int) rect.getMaxX() - frame.getWidth());
+		int y = 0;
 		frame.setLocation(x, y);
-		/*frame.setUndecorated(true);
-		Color color = UIManager.getColor("activeCaptionBorder");
-		frame.getRootPane().setBorder(BorderFactory.createLineBorder(color, 4));*/
-		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		/*
+		 * frame.setUndecorated(true); Color color =
+		 * UIManager.getColor("activeCaptionBorder");
+		 * frame.getRootPane().setBorder(BorderFactory.createLineBorder(color, 4));
+		 */
+		// frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		ShutdownHook shutdownhook = new ShutdownHook(pc);
 		shutdownhook.AttachShutdownHook();
 		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		frame.setUndecorated(true); // 타이틀바 삭제
 		frame.setBackground(new Color(255, 0, 0, 0)); // 투명
 		frame.setVisible(true);
-		executorService.execute(new TimerThread(label,pc));
-		
-		/*try {
-			executorService.execute(new PostLongPolling(pc));
-			Thread.sleep(3000);
-			executorService.execute(new GetLongPolling(pc));
-			executorService.execute(new PostGeneralPolling(pc));
-			
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
+		executorService.execute(new TimerThread(label, pc));
+
+		/*
+		 * try { executorService.execute(new PostLongPolling(pc)); Thread.sleep(3000);
+		 * executorService.execute(new GetLongPolling(pc)); executorService.execute(new
+		 * PostGeneralPolling(pc));
+		 * 
+		 * } catch (InterruptedException e) { // TODO Auto-generated catch block
+		 * e.printStackTrace(); }
+		 */
 	}
 }
