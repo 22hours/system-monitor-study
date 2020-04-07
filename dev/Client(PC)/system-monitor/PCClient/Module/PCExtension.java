@@ -23,8 +23,8 @@ public class PCExtension {
 			Date endTimeDate = dayTime.parse(pc.getEnd_time());
 			long time = endTimeDate.getTime();
 			long tempTime = Integer.parseInt(extensionTime);
-			// tempTime *= 3600000;
-			tempTime *= 60000; // 1ºÐ ´Ã¸®±â
+			tempTime *= 3600000;
+			//tempTime *= 60000; // 1ºÐ ´Ã¸®±â
 			time += tempTime;
 			pc.setEnd_time(dayTime.format(new Date(time)));
 			System.out.println(dayTime.format(new Date(time)));

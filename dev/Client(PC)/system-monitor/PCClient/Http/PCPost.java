@@ -45,15 +45,15 @@ public class PCPost {
 		return instance;
 	}
 
+	// 다시 사용하기 (연장신청 대비)
 	public void PostMethod(PC pc) throws URISyntaxException, ClientProtocolException, IOException {
-		URI uri = new URI("http://13.125.225.221/pc/damin/power/" + pc.getEnd_time());
-		System.out.println("uri = " + "http://13.125.225.221/pc/" + "damin/power/" + pc.getEnd_time());
+		URI uri = new URI("http://13.125.208.19/pc/hours22/power/" + pc.getEnd_time());
+		System.out.println("PostMethod URI = " + uri);
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		HttpPost postRequest = new HttpPost(uri);
-		System.out.println(uri);
 		JsonObject json = new JsonObject();
 		json.addProperty("classId", "1");
-		json.addProperty("id", "damin");
+		json.addProperty("id", "hours22");
 		json.addProperty("name", "Favian");
 		json.addProperty("cpuData", pc.getCpu_data());
 		json.addProperty("ramData", pc.getRam_data());
@@ -62,15 +62,7 @@ public class PCPost {
 		json.addProperty("endTime", pc.getEnd_time());
 		postRequest.setEntity(new StringEntity(json.toString(), "UTF-8"));
 		postRequest.addHeader("Content-type", "application/json");
-		System.out.println("=====POST======");
-		System.out.println("classId = 1");
-		System.out.println("name = Favian");
-		System.out.println("id = " + "damin");
-		System.out.println("powerStatus = " + pc.getPower_status());
-		System.out.println("endTime = " + pc.getEnd_time());
-		System.out.println("cpuData = " + pc.getCpu_data());
-		System.out.println("startTime = " + pc.getStart_time());
-		System.out.println("ramData = " + pc.getRam_data());
+		System.out.println(json.toString());
 		try {
 			HttpResponse response = httpClient.execute(postRequest);
 			HttpEntity entity = response.getEntity();
@@ -80,19 +72,24 @@ public class PCPost {
 			try {
 				JsonElement jsonElement = JsonParser.parseString(content);
 				JsonObject jsonObject = jsonElement.getAsJsonObject();
-				if (jsonObject.get("id").isJsonNull() || jsonObject.get("powerStatus").isJsonNull()) { // PC가 연장 신청 했을 때
+				if (jsonObject.get("msg").isJsonNull()) { // PC가 연장 신청 했을 때
 																										// 혹은 다른 경우
 					System.out.println("-----Post Long-Polling Response is null-----");
 				} else {
-					String id = jsonObject.get("id").getAsString(); // 널 포인터
-					String status = jsonObject.get("powerStatus").getAsString();
-					/*
-					 * if(!id.equals(pc.getId())) { System.out.println("잘못된 정보 수신!"); } else {
-					 * System.out.println("컴퓨터를 종료 합니다."); PCShutdown(pc); }
-					 */
-					if (status.equals("OFF")) {
+					String msg = jsonObject.get("msg").getAsString();
+					if(msg.equals("true")) {
+						System.out.println("Post 성공!");
+					}
+					else {
+						System.out.println("Post 실패 ㅠ");
+					}
+					/*String power_status = jsonObject.get("powerStatus").getAsString();
+					String end_time = jsonObject.get("endTime").getAsString();
+					if (!pc.getPower_status().equals("OFF") && power_status.equals("OFF")) {
 						Shutdown.getInstance().shutdown("300"); // 나중에 0으로 고쳐야 함.
 					}
+					pc.setEnd_time(end_time);
+					pc.setPower_status(power_status);*/
 				}
 			} catch (Exception e) {
 				System.out.println("-----Post Long-Polling Json 분석 오류!-----");
@@ -105,26 +102,44 @@ public class PCPost {
 	}
 
 	public void GeneralPollingPost(PC pc) throws URISyntaxException, ClientProtocolException, IOException {
-		URI uri = new URI("http://13.125.225.221/pc/" + "damin" + "/data");
-		System.out.println("uri = " + "http://13.125.225.221/pc/" + "damin" + "/data");
+		URI uri = new URI("http://13.125.208.19/pc/" + "hours22" + "/data");
+		System.out.println("GeneralPost URI = " + uri);
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		HttpPost postRequest = new HttpPost(uri);
 		pc.setCpu_data(CPU.getCPU().showCPU());
 		pc.setRam_data(Memory.getMemory().showMemory());
 		JsonObject json = new JsonObject();
-		json.addProperty("id", "damin");
+		json.addProperty("id", "hours22");
 		json.addProperty("cpuData", pc.getCpu_data());
 		json.addProperty("ramData", pc.getRam_data());
-		System.out.println("=====POST======");
-		System.out.println("id = " + "damin");
-		System.out.println("cpuData = " + pc.getCpu_data());
-		System.out.println("ramData = " + pc.getRam_data());
+		System.out.println(json.toString());
 		postRequest.setEntity(new StringEntity(json.toString(), "UTF-8"));
 		postRequest.addHeader("Content-type", "application/json");
 		try {
 			HttpResponse response = httpClient.execute(postRequest);
 			HttpEntity entity = response.getEntity();
 			String content = EntityUtils.toString(entity);
+			System.out.println("=====GeneralPost Response=====");
+			System.out.println(content);
+			try {
+				JsonElement jsonElement = JsonParser.parseString(content);
+				JsonObject jsonObject = jsonElement.getAsJsonObject();
+				if (jsonObject.get("msg").isJsonNull()) { // PC가 연장 신청 했을 때
+																										// 혹은 다른 경우
+					System.out.println("-----GeneralPost Response is null-----");
+				} else {
+					String msg = jsonObject.get("msg").getAsString();
+					if(msg.equals("true")) {
+						System.out.println("GeneralPost 성공!");
+					}
+					else {
+						System.out.println("GeneralPost 실패 ㅠ");
+					}
+				}
+			} catch (Exception e) {
+				System.out.println("-----GeneralPost Json 분석 오류!-----");
+				e.printStackTrace();
+			}
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		}
@@ -168,7 +183,7 @@ public class PCPost {
 
 	public void PCShutdown(PC pc) throws URISyntaxException, ClientProtocolException, IOException {
 		// 프로그램이 꺼지기 전에 post로 보내주기
-		URI uri = new URI("http://13.125.225.221/pc/" + pc.getId());
+		URI uri = new URI("http://13.125.208.19/pc/" + pc.getId());
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		HttpPost postRequest = new HttpPost(uri);
 		JsonObject json = new JsonObject();
