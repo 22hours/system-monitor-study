@@ -74,11 +74,8 @@ public class DataService {
     
     public Map<String, String> GetAllPcDataRedis() throws JsonProcessingException {
     	
-    	//���� �ϼ��� JSONObject ����(��ü)
         JSONObject jsonObject = new JSONObject();
-        //person�� JSON������ ���� Array ����
         JSONArray jsonArray = new JSONArray();
-        //person�� �Ѹ� ������ �� JSONObject ����
         JSONObject jsonInfo = new JSONObject();
         
     	int i = 0;
@@ -92,12 +89,16 @@ public class DataService {
     	    ScanOptions options = ScanOptions.scanOptions().match("*").count(50).build();
     	    Cursor<byte[]> cursor = redisConnection.scan(options);
     	    while (cursor.hasNext()) {
+    	    	System.out.println("Cursor 작동중 !!!");
     	    	String tkey = new String(cursor.next());
-    	    	//String kvalue = ojm.writeValueAsString((PcData)valueOperations.get(tkey));
     	    	String kvalue = mc.getConnectionHgetall(tkey);
-    	        System.out.println("key data [" + ++i +"번째] = " + tkey +" "+ kvalue); // ��ȸ�� Key�� �̸��� ���
+    	    	Map<String, String> tmpMap = ojm.readValue(kvalue, Map.class);
+    	    	String type = tmpMap.get("type");
+    	    	System.out.println("지금 type : "+type);
+    	    	if(!type.equals("PC")) continue;
+    	    	
+    	        System.out.println("key data [" + ++i +"번째] = " + tkey +" "+ kvalue);
     	        System.out.println();
-    	        //arrList.put(Integer.toString(i), kvalue);
     	        
     	        // String -> JsonParser
     	        JSONParser parser = new JSONParser();

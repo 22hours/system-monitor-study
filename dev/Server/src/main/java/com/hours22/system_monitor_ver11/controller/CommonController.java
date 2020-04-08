@@ -47,8 +47,8 @@ public class CommonController {
 	public void GetIndex(HttpServletRequest req, HttpServletResponse response) throws IOException {
 		response.setContentType("text/html;charset=UTF-8");
 		response.getWriter().println("Welcome 22Hours!<br>");
-		response.getWriter().println("This is system-monitor project.<br>");
-		response.getWriter().println("서버작업중 by jongchu. 2020-03-28 11:30<br><br><br><br>");
+		response.getWriter().println("This is system-monitor project. Version 3.0<br>");
+		response.getWriter().println("서버작업중 by jongchu. 2020-04-08<br><br><br><br>");
 
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : / <- GET method [Client Ip : "+ cic.getClientIp(req) +" ] at " + transFormat.format(new Date()));
