@@ -1,0 +1,37 @@
+.topMenu{
+    width: 100%;
+}
+
+.title-logo{
+    width: auto; height: auto;
+    max-width: 100px;
+    max-height: 100px;
+}
+
+.header-link-box{
+    margin-right: 40px;
+}
+.header-link-box a{
+    font-size: 18px;
+    color : rgb(199, 199, 199);
+    text-decoration: none;
+}
+.header-link-box a:hover{
+    color : white;
+    text-decoration: none;
+}
+.header-link-box a:active{
+    color : white;
+    text-decoration: none;
+}
+
+.header-logo-box{
+    margin-right: 20px;
+    margin-top: 5px;
+}
+
+.header-logo-box img{
+    width: 20px;
+    height: 20px;
+}
+
