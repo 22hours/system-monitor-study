@@ -60,6 +60,20 @@ public class PcController {
 	Date now = new Date();
 	SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	
+	@RequestMapping(value = "/pc/{id}/data", method = RequestMethod.POST)
+	public void PostPcData(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map, @PathVariable String id) throws IOException {
+		response.setCharacterEncoding("UTF-8");
+
+		System.out.println("--------------------------------------------------------------------------------------------");
+		System.out.println("Input : /pc/"+id+"/data <- POST method [Client Ip : " +cic.getClientIp(request)+"] at "+transFormat.format(new Date()) );
+		lc.getConnection();
+		lc.getConnectionHset(id, map);
+		lc.getConnectionExit();
+		System.out.println(map.toString());
+		
+		response.getWriter().print("Success /pc/"+id+"/data <- POST method !!");
+	}
+	
 	
 	@RequestMapping(value = "/pc/{id}/power/{endTime}", method = RequestMethod.POST)
 	public @ResponseBody Map<String, String> PostPcPower(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map, @PathVariable String id, @PathVariable String endTime) throws IOException, InterruptedException {
@@ -68,7 +82,6 @@ public class PcController {
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : /pc/"+id+"/power/"+endTime+" <- POST method [Client Ip : " +cic.getClientIp(request)+"] at "+transFormat.format(new Date()) );
 		
-		boolean fg = false;
     	Set<Thread> setOfThread = Thread.getAllStackTraces().keySet();
     	for(Thread thread : setOfThread){
     		System.out.println("Active Thread's [ Number : " +thread.getId()+" / Name : "+thread.getName()+" ] ");
@@ -77,10 +90,8 @@ public class PcController {
     		if(res.equals("PCPowerOffMsg-Return-"+id)) {
     			thread.interrupt();
     			System.out.println("******"+res+" 스레드를 종료시킵니다.******");
-    			fg = true;
     		}
     	}
-    	if(fg) Thread.sleep(3000);
     	
 		lc.getConnection();
 		if(lc.getConnectionHkey(id) == false) {
@@ -194,6 +205,7 @@ public class PcController {
 
                 // end
                 if(interrupted) {
+                	Thread.sleep(3000);
 					Map<String, String> jsonObjectExit = new HashMap<String, String>();
 					jsonObjectExit.put("id", id);
 					jsonObjectExit.put("msg", "extension");

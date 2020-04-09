@@ -153,7 +153,6 @@ public class MobileController{
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : /mobile/pc/"+id+"/power/"+endTime+" <- POST method [Client Ip : " +cic.getClientIp(request)+"] at "+transFormat.format(new Date()) );
 		
-		boolean fg = false;
     	Set<Thread> setOfThread = Thread.getAllStackTraces().keySet();
     	for(Thread thread : setOfThread){
     		System.out.println("Active Thread's [ Number : " +thread.getId()+" / Name : "+thread.getName()+" ] ");
@@ -162,10 +161,9 @@ public class MobileController{
     		if(res.equals("PCPowerOffMsg-Return-"+id)) {
     			thread.interrupt();
     			System.out.println("******"+res+" 스레드를 종료시킵니다.******");
-    			fg = true;
     		}
     	}
-		if(fg) Thread.sleep(3000);
+    	
 		lc.getConnection();
 		if(lc.getConnectionHkey(id) == false) {
 			lc.getConnectionExit();
