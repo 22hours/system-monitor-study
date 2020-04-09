@@ -1,0 +1,66 @@
+.login-wrapper{
+    height: auto;
+    width: 100%;
+    background-color: white;
+    margin-bottom: 10px;
+    background-color:white;
+    border: gray;
+    border-bottom: 1px;
+    padding-top: 10px;
+    padding-left: 5px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(189, 189, 189, 0.16), 0 3px 6px rgba(187, 187, 187, 0.23);
+}
+
+.login-wrapper .header-box {
+    margin-top: 25px;
+    text-align: center;
+}
+.login-wrapper .header-box .header{
+    font-size: 28px;
+    font-family: 'Roboto Condensed', sans-serif;
+}
+
+.login-wrapper .copylight{
+    font-family: 'Roboto Condensed', sans-serif;
+    color: gray;
+}
+
+.login-wrapper .input-box{
+    margin-top: 45px;
+    width: 100%;
+    text-align: center;
+    height: auto;
+}
+
+.login-wrapper .input-box .input-box-sizing{
+    display: inline-block;
+    width: 70%;
+    height: auto;
+}
+
+.login-wrapper .input-box .input-box-sizing div{
+    width: 100%;
+}
+
+.login-wrapper .pw-box{
+    margin-top: 20px;
+}
+
+.submit-box{
+    margin-top: 25px;
+    width: 100%;   
+    text-align: center;
+}
+
+.submit-box .button-box{
+    display: inline-block;
+    width: 70%;
+}
+
+.submit-box .help-box{
+    margin-top: 25px;
+    margin-bottom: 25px;
+}

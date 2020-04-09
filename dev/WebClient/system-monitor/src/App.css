@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css?family=Do+Hyeon&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap');
+body{
+  background-color: gray;
+}
+
+a{
+  text-decoration: none;
+}
+
+.main{
+  margin-top: 50px;
+  padding-top: 10px;
+}
+
+.main .main-wrapper{
+  margin-top: 50px;
+}
+#root{
+  height: 100vh;
+  background-color: rgb(245, 245, 245);
+}
