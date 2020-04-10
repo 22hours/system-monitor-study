@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,6 +44,7 @@ public class CommonController {
 	ClientInfoController cic;
 	SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	
+	@CrossOrigin(origins="http://15.164.18.190:3000/")
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public void GetIndex(HttpServletRequest req, HttpServletResponse response) throws IOException {
 		response.setContentType("text/html;charset=UTF-8");

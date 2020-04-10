@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 
-
+@EnableCaching
 @SpringBootApplication
 public class Application {
 

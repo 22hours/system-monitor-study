@@ -24,6 +24,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,6 +55,7 @@ public class MobileController{
 	ClientInfoController cic;
 	SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	
+	@CrossOrigin(origins="http://15.164.18.190:3000/")
 	@RequestMapping(value = "/mobile/pc", method = RequestMethod.GET)
 	public void GetPcData(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		response.setContentType("application/json;charset=UTF-8"); 
@@ -126,7 +128,7 @@ public class MobileController{
         };
 	}
 	
-	
+	@CrossOrigin(origins="http://15.164.18.190:3000/")
 	@RequestMapping(value = "/mobile/pc/{id}/data", method = RequestMethod.GET)
 	public void GetPcRamCpuData(HttpServletRequest request, HttpServletResponse response, @PathVariable String id) throws IOException {
 		response.setContentType("application/json;charset=UTF-8"); 
@@ -145,7 +147,7 @@ public class MobileController{
 		lc.getConnectionExit();
 	}
 	
-
+	@CrossOrigin(origins="http://15.164.18.190:3000/")
 	@RequestMapping(value = "/mobile/pc/{id}/power/{endTime}", method = RequestMethod.POST)
 	public @ResponseBody Map<String, String> PostPcPower(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map, @PathVariable String id, @PathVariable String endTime) throws IOException, InterruptedException {
 		response.setCharacterEncoding("UTF-8");
@@ -184,7 +186,8 @@ public class MobileController{
 		return jsonObject;
 	}
 	
-	@RequestMapping(value = "/mobile/login", method = RequestMethod.GET)
+	@CrossOrigin(origins="http://15.164.18.190:3000/")
+	@RequestMapping(value = "/mobile/login", method = RequestMethod.POST)
 	public @ResponseBody Map<String, String> GetAdminLogin(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map) throws IOException, InterruptedException {
 		Map<String, String> jsonObject = new HashMap<String, String>();
 		
