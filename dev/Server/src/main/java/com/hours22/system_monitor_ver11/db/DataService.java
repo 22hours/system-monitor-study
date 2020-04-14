@@ -72,7 +72,7 @@ public class DataService {
         System.out.println(data2);
     }
     
-    public Map<String, String> GetAllPcDataRedis() throws JsonProcessingException {
+    public Map<String, String> GetAllTypeDataRedis(String t1, String t2) throws JsonProcessingException {
     	
         JSONObject jsonObject = new JSONObject();
         JSONArray jsonArray = new JSONArray();
@@ -95,7 +95,7 @@ public class DataService {
     	    	Map<String, String> tmpMap = ojm.readValue(kvalue, Map.class);
     	    	String type = tmpMap.get("type");
     	    	System.out.println("지금 type : "+type);
-    	    	if(!type.equals("PC")) continue;
+    	    	if(!type.equals(t1)) continue;
     	    	
     	        System.out.println("key data [" + ++i +"번째] = " + tkey +" "+ kvalue);
     	        System.out.println();
@@ -114,7 +114,7 @@ public class DataService {
     	        jsonArray.add(jsonTmpObj);
     	    }
     	} finally {
-    		jsonObject.put("pcs", jsonArray);
+    		jsonObject.put(t2, jsonArray);
         	jsonObject.put("total", Integer.toString(i));
     	    redisConnection.close();
     	}

@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.context.request.WebRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hours22.system_monitor_ver11.client.ClientInfoController;
@@ -42,18 +45,25 @@ public class CommonController {
 	
 	@Autowired
 	ClientInfoController cic;
+	
+	@Autowired
+	CacheController cache;
+	
 	SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	
-	@CrossOrigin(origins="http://15.164.18.190:3000/")
+	@CrossOrigin("*")
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public void GetIndex(HttpServletRequest req, HttpServletResponse response) throws IOException {
+	public ResponseEntity<String> GetIndex(WebRequest req, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		response.setContentType("text/html;charset=UTF-8");
-		response.getWriter().println("Welcome 22Hours!<br>");
-		response.getWriter().println("This is system-monitor project. Version 3.0<br>");
-		response.getWriter().println("서버작업중 by jongchu. 2020-04-08<br><br><br><br>");
+		if (req.checkNotModified(cache.GetCache())) {
+			return null;
+		}
+		String msg = "Welcome 22Hours!<br>" + "This is system-monitor project. Version 3.0<br>" + "서버작업중 by jongchu. 2020-04-08<br><br><br><br>";
 
 		System.out.println("--------------------------------------------------------------------------------------------");
-		System.out.println("Input : / <- GET method [Client Ip : "+ cic.getClientIp(req) +" ] at " + transFormat.format(new Date()));
+		System.out.println("Input : / <- GET method [Client Ip : "+ cic.getClientIp(request) +" ] at " + transFormat.format(new Date()));
+		cache.SetCache(req.getHeader("If-None-Match"));
+		return new ResponseEntity<String>(msg, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/testpage", method = RequestMethod.GET)
@@ -64,6 +74,7 @@ public class CommonController {
 		return "Test Page";
 	}
     
+	
 	@RequestMapping(value = "/pc/{id}", method = RequestMethod.GET)
 	public @ResponseBody String GetPcInstanceData(HttpServletRequest req, HttpServletResponse response,  @PathVariable String id) throws IOException {
 		System.out.println("--------------------------------------------------------------------------------------------");

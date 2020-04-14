@@ -20,7 +20,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
@@ -30,6 +34,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.context.request.WebRequest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,103 +59,60 @@ public class MobileController{
 	
 	@Autowired
 	ClientInfoController cic;
+	
+	@Autowired
+	CacheController cache;
 	SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	
-	@CrossOrigin(origins="http://15.164.18.190:3000/")
+	
+	@CrossOrigin("*")
 	@RequestMapping(value = "/mobile/pc", method = RequestMethod.GET)
-	public void GetPcData(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		response.setContentType("application/json;charset=UTF-8"); 
-		// RedisLoad_JsonToObj();
-		// HttpResponse_ObjToJson();
+	public ResponseEntity<String> GetPcData(WebRequest req, HttpServletRequest request, HttpServletResponse response) throws IOException {
+			
+		
+		if (req.checkNotModified(cache.GetCache())) {
+			return null;
+		}
+		
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : /mobile/pc <- GET method [Client Ip : "+ cic.getClientIp(request)+"] at "+transFormat.format(new Date()) );
 		
 		lc.getConnection();
 		
-		String json = ojm.writeValueAsString(dss.GetAllPcDataRedis());
+		String json = ojm.writeValueAsString(dss.GetAllTypeDataRedis("PC", "pcs"));
 		json = dss.PrettyPrinter(json);
 		System.out.println(json);
-		
 		lc.getConnectionExit();
-		response.getWriter().print(json);
+		cache.SetCache(req.getHeader("If-None-Match"));
+		return new ResponseEntity<String>(json, HttpStatus.OK);
 	}
 	
 	
-	@RequestMapping(value = "/mobile/pc/new/", method = RequestMethod.GET)
-	public @ResponseBody Callable<String> GetOnPCInstance(HttpServletRequest request, HttpServletResponse response) throws IOException, InterruptedException, ParseException {
-		response.setContentType("application/json;charset=UTF-8"); 
-		
-		System.out.println("--------------------------------------------------------------------------------------------");
-		System.out.println("Input : /mobile/pc/new <- GET method [Client Ip : "+ cic.getClientIp(request)+" ] at "+transFormat.format(new Date()));
-		
-		Thread ct = Thread.currentThread();
-		ct.setName("Mobile-GetNewPc");
-		System.out.println("현재 Thread [ ID : " + ct.getId()+" / Name : "+ct.getName()+" ] ");  
-		System.out.println("[Mobile 새로운 PC 추가 method !");
-		
-		
-		
-		return new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-            	System.out.println("================================");
-            	System.out.println("Mobile-GetNewPc Return 영역");
-        		Thread.currentThread().setName("Mobile-GetNewPc-Return");
-            	System.out.println("Thread ID : " + Thread.currentThread().getId());
-            	System.out.println("Thread Name : " + Thread.currentThread().getName());
-            	
-            	
-                boolean interrupted = false;
-              
-                while(true) {
-                    try{
-                    	Thread.sleep(5000);
-                    }catch(InterruptedException e){
-                    	System.out.println(Thread.currentThread().getName() +" Thread가 중지되었습니다.");
-                    	interrupted = true;
-                        break;
-                    }
-                }
-
-                // end
-                if(interrupted) {
-                	Thread.sleep(2000);
-                	String res = Thread.currentThread().getName();
-                	String id = res.split("-")[2];
-                	System.out.println("*******새로운 "+id+" PC가 켜졌습니다.********");
-					String jsonObjectNew = lc.getConnectionHgetall(id);
-					return jsonObjectNew;
-                }
-                else {
-                	// 에러상황
-	                return "";
-                }
-            }
-        };
-	}
-	
-	@CrossOrigin(origins="http://15.164.18.190:3000/")
+	@CrossOrigin("*")
 	@RequestMapping(value = "/mobile/pc/{id}/data", method = RequestMethod.GET)
-	public void GetPcRamCpuData(HttpServletRequest request, HttpServletResponse response, @PathVariable String id) throws IOException {
+	public ResponseEntity<String> GetPcRamCpuData(WebRequest req, HttpServletRequest request, HttpServletResponse response, @PathVariable String id) throws IOException {
 		response.setContentType("application/json;charset=UTF-8"); 
-		// RedisLoad_JsonToObj();
-		// HttpResponse_ObjToJson();
+		if (req.checkNotModified(cache.GetCache())) {
+			return null;
+		}
 		
 		lc.getConnection();
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : /mobile/pc/"+id+"/data <- GET method [Client Ip : "+ cic.getClientIp(request) +" ] at " + transFormat.format(new Date()));
 		
-		String json = ojm.writeValueAsString(dss.GetAllPcDataRedis());
+		String json = lc.getConnectionHgetall(id);
 		json = dss.PrettyPrinter(json);
 		System.out.println(json);
 		
-		response.getWriter().print(json);
+		//response.getWriter().print(json);
 		lc.getConnectionExit();
+		cache.SetCache(req.getHeader("If-None-Match"));
+		return new ResponseEntity(json, HttpStatus.OK);
 	}
 	
-	@CrossOrigin(origins="http://15.164.18.190:3000/")
+	@CrossOrigin("*")
 	@RequestMapping(value = "/mobile/pc/{id}/power/{endTime}", method = RequestMethod.POST)
-	public @ResponseBody Map<String, String> PostPcPower(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map, @PathVariable String id, @PathVariable String endTime) throws IOException, InterruptedException {
+	public ResponseEntity<Map<String, String>> PostPcPower(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map, @PathVariable String id, @PathVariable String endTime) throws IOException, InterruptedException {
 		response.setCharacterEncoding("UTF-8");
 
 		System.out.println("--------------------------------------------------------------------------------------------");
@@ -172,7 +135,7 @@ public class MobileController{
 			Map<String, String> jsonObject = new HashMap<String, String>();
 			jsonObject.put("id", id);
 			jsonObject.put("msg", "false");
-			return jsonObject;
+			return new ResponseEntity<Map<String, String>>(jsonObject, HttpStatus.OK);
 		}
 		lc.getConnectionHset(id, map);
 		lc.getConnectionExit();
@@ -183,12 +146,13 @@ public class MobileController{
     	jsonObject.put("id", id);
 		jsonObject.put("endTime", endTime);
 		jsonObject.put("msg", "true");
-		return jsonObject;
+		cache.SetCache(req.getHeader("If-None-Match"));
+		return new ResponseEntity<Map<String, String>>(jsonObject, HttpStatus.OK);
 	}
 	
-	@CrossOrigin(origins="http://15.164.18.190:3000/")
+	@CrossOrigin("*")
 	@RequestMapping(value = "/mobile/login", method = RequestMethod.POST)
-	public @ResponseBody Map<String, String> GetAdminLogin(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map) throws IOException, InterruptedException {
+	public Map<String, String> GetAdminLogin(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map) throws IOException, InterruptedException {
 		Map<String, String> jsonObject = new HashMap<String, String>();
 		
 		lc.getConnection();
@@ -202,5 +166,28 @@ public class MobileController{
 		}
 		lc.getConnectionExit();
 		return auth;
-	}	
+	}
+	
+	@CrossOrigin("*")
+	@RequestMapping(value = "/mobile/class", method = RequestMethod.GET)
+	public @ResponseBody String GetAllClassData(WebRequest req, HttpServletRequest request, HttpServletResponse response) throws IOException {
+		
+		if (req.checkNotModified(cache.GetCache())) {
+			return null;
+		}
+		
+		//req.check
+		System.out.println("--------------------------------------------------------------------------------------------");
+		System.out.println("Input : /mobile/class <- GET method [Client Ip : "+ cic.getClientIp(request)+"] at "+transFormat.format(new Date()) );
+		
+		lc.getConnection();
+		
+		String json = ojm.writeValueAsString(dss.GetAllTypeDataRedis("CLASS", "classes"));
+		json = dss.PrettyPrinter(json);
+		System.out.println(json);
+		
+		lc.getConnectionExit();
+		cache.SetCache(req.getHeader("If-None-Match"));
+		return json;
+	}
 }

@@ -22,6 +22,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -32,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.WebRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hours22.system_monitor_ver11.client.ClientInfoController;
@@ -57,13 +62,16 @@ public class PcController {
 	@Autowired
 	ClientInfoController cic;
 	
+	@Autowired
+	CacheController cache;
 	Date now = new Date();
 	SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	
+	
 	@RequestMapping(value = "/pc/{id}/data", method = RequestMethod.POST)
-	public void PostPcData(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map, @PathVariable String id) throws IOException {
+	public void PostPcData(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map, @PathVariable String id) throws IOException {
 		response.setCharacterEncoding("UTF-8");
-
+		
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : /pc/"+id+"/data <- POST method [Client Ip : " +cic.getClientIp(request)+"] at "+transFormat.format(new Date()) );
 		lc.getConnection();
@@ -72,11 +80,11 @@ public class PcController {
 		System.out.println(map.toString());
 		
 		response.getWriter().print("Success /pc/"+id+"/data <- POST method !!");
+		cache.SetCache(req.getHeader("If-None-Match"));
 	}
 	
-	
 	@RequestMapping(value = "/pc/{id}/power/{endTime}", method = RequestMethod.POST)
-	public @ResponseBody Map<String, String> PostPcPower(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map, @PathVariable String id, @PathVariable String endTime) throws IOException, InterruptedException {
+	public ResponseEntity<Map<String, String>> PostPcPower(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map, @PathVariable String id, @PathVariable String endTime) throws IOException, InterruptedException {
 		response.setCharacterEncoding("UTF-8");
 
 		System.out.println("--------------------------------------------------------------------------------------------");
@@ -99,7 +107,7 @@ public class PcController {
 			Map<String, String> jsonObject = new HashMap<String, String>();
 			jsonObject.put("id", id);
 			jsonObject.put("msg", "false");
-			return jsonObject;
+			return new ResponseEntity<Map<String, String>>(jsonObject, HttpStatus.OK);
 		}
 		lc.getConnectionHset(id, map);
 		lc.getConnectionExit();
@@ -110,7 +118,8 @@ public class PcController {
     	jsonObject.put("id", id);
 		jsonObject.put("endTime", endTime);
 		jsonObject.put("msg", "true");
-		return jsonObject;
+		cache.SetCache(req.getHeader("If-None-Match"));
+		return new ResponseEntity<Map<String, String>>(jsonObject, HttpStatus.OK);
 	}	
 	
 
