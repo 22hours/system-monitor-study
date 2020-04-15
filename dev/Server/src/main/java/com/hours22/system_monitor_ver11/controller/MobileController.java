@@ -190,4 +190,44 @@ public class MobileController{
 		cache.SetCache(req.getHeader("If-None-Match"));
 		return json;
 	}
+	
+	@CrossOrigin("*")
+	@RequestMapping(value = "/mobile/class/{classId}", method = RequestMethod.GET)
+	public @ResponseBody String GetAllClassPcData(WebRequest req, HttpServletRequest request, HttpServletResponse response, @PathVariable String classId) throws IOException {
+		
+		if (req.checkNotModified(cache.GetCache())) {
+			return null;
+		}
+		
+		//req.check
+		System.out.println("--------------------------------------------------------------------------------------------");
+		System.out.println("Input : /mobile/class/"+classId+" <- GET method [Client Ip : "+ cic.getClientIp(request)+"] at "+transFormat.format(new Date()) );
+		
+		lc.getConnection();
+		
+		String json = ojm.writeValueAsString(dss.ClassPcs(classId));
+		json = dss.PrettyPrinter(json);
+		System.out.println(json);
+		
+		lc.getConnectionExit();
+		cache.SetCache(req.getHeader("If-None-Match"));
+		return json;
+	}
+	
+	@CrossOrigin("*")
+	@RequestMapping(value = "/mobile/class/{classId}/power", method = RequestMethod.POST)
+	public void PostAllClassPcPower(WebRequest req, HttpServletRequest request, HttpServletResponse response, @PathVariable String classId) throws IOException, InterruptedException {
+		
+		
+		//req.check
+		System.out.println("--------------------------------------------------------------------------------------------");
+		System.out.println("Input : /mobile/class/"+classId+"/power <- POST method [Client Ip : "+ cic.getClientIp(request)+"] at "+transFormat.format(new Date()) );
+		
+		lc.getConnection();
+		
+		dss.PostClassPcsPowerOff(req, request, response, classId);
+
+		lc.getConnectionExit();
+		cache.SetCache(req.getHeader("If-None-Match"));
+	}
 }
