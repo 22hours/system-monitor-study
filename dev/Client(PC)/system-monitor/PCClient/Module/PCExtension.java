@@ -27,7 +27,6 @@ public class PCExtension {
 			//tempTime *= 60000; // 1ºÐ ´Ã¸®±â
 			time += tempTime;
 			pc.setEnd_time(dayTime.format(new Date(time)));
-			System.out.println(dayTime.format(new Date(time)));
 		} catch (ParseException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

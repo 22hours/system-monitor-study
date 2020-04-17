@@ -59,7 +59,12 @@ public class PCGet {
 				if (message.equals("extension")) {
 					String nowTime = GetNowTime.getInstance().getNowTime();
 					int remainTime = Integer.parseInt(TimeDifference.getInstance().calc(nowTime, endTime));
-					if (remainTime < 5 && remainTime > 0) { // 1~5분 남았을 때
+					if(remainTime<0) {
+						pc.setPower_status("OFF");
+						pc.setRemainTime("-1");
+						System.exit(0);
+					}
+					else if (remainTime < 5 && remainTime > 0) { // 1~5분 남았을 때
 						pc.setRemainTime("0");
 					} else if (remainTime >= 5 && remainTime < 10) {
 						pc.setRemainTime("5");
@@ -77,9 +82,10 @@ public class PCGet {
 					} else if (pc.getRemainTime().equals("5")) {
 						pc.setRemainTime("0");
 					} else if (pc.getRemainTime().equals("0")) {
-						Shutdown.getInstance().shutdown("300");
+						//Shutdown.getInstance().shutdown("300");
 						pc.setPower_status("OFF");
 						pc.setRemainTime("-1");
+						System.exit(0);
 					}
 					if (!pc.getRemainTime().equals("0")) {
 						message+="분 남았습니다.";

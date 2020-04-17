@@ -77,6 +77,8 @@ public class PCPost {
 					System.out.println("-----Post Long-Polling Response is null-----");
 				} else {
 					String msg = jsonObject.get("msg").getAsString();
+					String endTime = jsonObject.get("endTime").getAsString();
+					pc.setEnd_time(endTime);
 					if(msg.equals("true")) {
 						System.out.println("Post 성공!");
 					}
@@ -105,6 +107,7 @@ public class PCPost {
 		URI uri = new URI("http://13.125.208.19/pc/" + "hours22" + "/data");
 		System.out.println("GeneralPost URI = " + uri);
 		HttpClient httpClient = HttpClientBuilder.create().build();
+		
 		HttpPost postRequest = new HttpPost(uri);
 		pc.setCpu_data(CPU.getCPU().showCPU());
 		pc.setRam_data(Memory.getMemory().showMemory());
@@ -121,7 +124,7 @@ public class PCPost {
 			String content = EntityUtils.toString(entity);
 			System.out.println("=====GeneralPost Response=====");
 			System.out.println(content);
-			try {
+			/*try {
 				JsonElement jsonElement = JsonParser.parseString(content);
 				JsonObject jsonObject = jsonElement.getAsJsonObject();
 				if (jsonObject.get("msg").isJsonNull()) { // PC가 연장 신청 했을 때
@@ -139,7 +142,7 @@ public class PCPost {
 			} catch (Exception e) {
 				System.out.println("-----GeneralPost Json 분석 오류!-----");
 				e.printStackTrace();
-			}
+			}*/
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		}

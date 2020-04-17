@@ -13,8 +13,8 @@ public class PostLongPolling implements Runnable {
 
 	public void run() {
 		try {
-			/*Thread.currentThread().setName("PostLongPolling");
-			while (!stop) {
+			Thread.currentThread().setName("Post");
+			/*while (!stop) {
 				PCPost.getInstance().PostMethod(pc);
 				if (pc.getPower_status().equals("OFF"))
 					break;

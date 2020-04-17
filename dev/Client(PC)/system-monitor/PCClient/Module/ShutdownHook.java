@@ -28,16 +28,28 @@ public class ShutdownHook {
 			@Override
 			public void run() {
 				Runtime run = Runtime.getRuntime();
-				/*long currentTime = System.currentTimeMillis();
+				long currentTime = System.currentTimeMillis();
 				SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd-HH-mm");
 				String end_time = dayTime.format(new Date(currentTime));
 				pc.setEnd_time(end_time);
+				pc.setPower_status("OFF");				
 				try {
 					PCPost.getInstance().PostMethod(pc);
 				} catch (URISyntaxException | IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				}
+				/*for(Thread t : Thread.getAllStackTraces().keySet()) {
+					if(t.getName().equals("GetLongPolling")) {
+						try {
+							t.join();
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
 				}*/
+				
 				System.out.println("종료 됩니다.");
 			}
 		});
