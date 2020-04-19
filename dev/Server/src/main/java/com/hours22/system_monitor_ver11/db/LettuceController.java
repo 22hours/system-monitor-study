@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hours22.system_monitor_ver11.vo.PcData;
 
@@ -176,7 +179,7 @@ public class LettuceController {
     	}
     }
     */
-    public void getConnectionHset(String key, Map<String, String> map) {
+    public boolean getConnectionHset(String key, Map<String, String> map) {
         // This returns a JSON or XML with the users
     	try {
     		// syncCmd.del(key);
@@ -189,6 +192,7 @@ public class LettuceController {
     			System.out.println("hset " +key+ " id -> true");
     		} else {
     			System.out.println("hset " +key+ " id -> false");
+    			return false;
     		}
     		
     		// field : cpuData
@@ -247,11 +251,37 @@ public class LettuceController {
     			System.out.println("hset "+key+" classId -> false");
     		}
     		
+    		// field : type
+    		if(map.get("type") != null) {
+    			syncCmd.hset(key, "type", map.get("type"));
+    			System.out.println("hset "+key+" type -> true");
+    		} else {
+    			System.out.println("hset "+key+" type -> false");
+    		}
+    		
+    		if(map.get("posR") != null) {
+    			syncCmd.hset(key, "posR", map.get("posR"));
+    			System.out.println("hset "+key+" posR -> true");
+    		} else {
+    			System.out.println("hset "+key+" posR -> false");
+    		}
+    		
+    		if(map.get("posC") != null) {
+    			syncCmd.hset(key, "posC", map.get("posC"));
+    			System.out.println("hset "+key+" posC -> true");
+    		} else {
+    			System.out.println("hset "+key+" posC -> false");
+    		}
+    		
     		System.out.println("**** Finished Hset ****");
+    		return true;
     	} catch (Exception e) {
     		System.out.println(e);
+    		return false;
     	}
     }
+    
+
     
     //@GetMapping(path="/connections/hget/{keyMap}")
     public Map<String, String> getConnectionHget(String key) {
@@ -303,10 +333,33 @@ public class LettuceController {
     	}
  		return res;
     }
+    public boolean getConnectionHkey(String id) {
+    	List<String> res = null;
+    	res = syncCmd.keys(id);
+    	System.out.println("여기 HKEY \n"+id + " "+res);
+    	if(res.size() == 0) return false;
+    	else return true;
+    }
     
     public String getConnectionHgetField(String key, String field) {
     	String res = null;
     	res = syncCmd.hget(key, field);
+    	return res;
+    }
+    
+    public Map<String, String> getLoginSession(Map<String, String> map) throws JsonMappingException, JsonProcessingException {
+    	Map<String, String> res = new HashMap<String, String>();
+    	String id = map.get("id");
+    	String pw = map.get("pw");
+    	String resId = getConnectionHgetField(id, "id");
+    	String resPw = getConnectionHgetField(id, "pw");
+    	if(id.equals(resId) && pw.equals(resPw)) {
+    		String ret = getConnectionHgetall(id);
+    		res = ojm.readValue(ret, Map.class);
+    		res.put("msg", "true");
+    		return res;
+    	}
+    	res.put("msg", "false");
     	return res;
     }
     

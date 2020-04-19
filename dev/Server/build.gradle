@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.hours22'
-version = '2.3.8-SNAPSHOT'
+version = '3.4.0-SNAPSHOT'
 sourceCompatibility = '1.8'
 
 repositories {
@@ -24,6 +24,8 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-redis')
 	compile group: 'redis.clients', name: 'jedis', version: '2.9.0'
 	compile 'com.googlecode.json-simple:json-simple:1.1.1'
+	compile('org.springframework.boot:spring-boot-starter-cache')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
 test {
