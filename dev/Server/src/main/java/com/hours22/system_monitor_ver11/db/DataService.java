@@ -125,7 +125,11 @@ public class DataService {
 					e.printStackTrace();
 				}
     	        JSONObject jsonTmpObj = (JSONObject) obj;
-    	        
+    	        if(t1.equals("CLASS")) {
+    	        	Map<String, String> tmpmap = GetClassOnOffInfo(tmpMap.get("id"));
+    	        	jsonTmpObj.put("cntOn", tmpmap.get("cntOn"));
+    	        	jsonTmpObj.put("cntOff", tmpmap.get("cntOff"));
+    	        }
     	        jsonArray.add(jsonTmpObj);
     	    }
     	} finally {
@@ -133,6 +137,50 @@ public class DataService {
         	jsonObject.put("total", Integer.toString(i));
     	    redisConnection.close();
     	}
+    	return jsonObject;
+    }
+    
+    public Map<String, String> GetClassOnOffInfo (String className) throws JsonProcessingException {
+
+        ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
+        int cntON = 0, cntOFF = 0;
+        
+    	RedisConnection redisConnection = null;
+    	try {
+    	    redisConnection = redisTemplate.getConnectionFactory().getConnection();
+    	    ScanOptions options = ScanOptions.scanOptions().match("*").count(50).build();
+    	    Cursor<byte[]> cursor = redisConnection.scan(options);
+    	    while (cursor.hasNext()) {
+    	    	System.out.println("Cursor 작동중 !!!");
+    	    	String tkey = new String(cursor.next());
+    	    	String kvalue = mc.getConnectionHgetall(tkey);
+    	    	Map<String, String> tmpMap = ojm.readValue(kvalue, Map.class);
+    	    	String type = tmpMap.get("type");
+    	    	if(!type.equals("PC")) continue;
+    	    	
+    	    	String cid = tmpMap.get("classId");
+    	    	System.out.println("지금 type : "+type);
+    	    	
+    	    	if(!cid.equals(className)) continue;
+    	    	
+    	    	String tmp = tmpMap.get("powerStatus");
+    	    	System.out.println("여기에서 PowerStatus 는 "+tmp);
+    	    	if(tmp.equals("ON")) {
+    	    		cntON++;
+    	    		System.out.println("cntOn 증가중 ! - " + cntON);
+    	    	}
+    	    	else {
+    	    		cntOFF++;
+    	    		System.out.println("cntOff 증가중 ! - " + cntOFF);
+    	    	}
+    	    } 
+    	} finally {
+    		System.out.println("Finished!");
+    	}
+
+        JSONObject jsonObject = new JSONObject();
+    	jsonObject.put("cntOn", Integer.toString(cntON));
+    	jsonObject.put("cntOff", Integer.toString(cntOFF));
     	return jsonObject;
     }
     

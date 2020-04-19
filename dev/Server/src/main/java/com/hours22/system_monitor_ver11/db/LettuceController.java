@@ -259,6 +259,20 @@ public class LettuceController {
     			System.out.println("hset "+key+" type -> false");
     		}
     		
+    		if(map.get("posR") != null) {
+    			syncCmd.hset(key, "posR", map.get("posR"));
+    			System.out.println("hset "+key+" posR -> true");
+    		} else {
+    			System.out.println("hset "+key+" posR -> false");
+    		}
+    		
+    		if(map.get("posC") != null) {
+    			syncCmd.hset(key, "posC", map.get("posC"));
+    			System.out.println("hset "+key+" posC -> true");
+    		} else {
+    			System.out.println("hset "+key+" posC -> false");
+    		}
+    		
     		System.out.println("**** Finished Hset ****");
     		return true;
     	} catch (Exception e) {
@@ -266,6 +280,8 @@ public class LettuceController {
     		return false;
     	}
     }
+    
+
     
     //@GetMapping(path="/connections/hget/{keyMap}")
     public Map<String, String> getConnectionHget(String key) {

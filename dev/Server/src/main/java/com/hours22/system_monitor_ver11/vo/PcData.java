@@ -59,7 +59,7 @@ public class PcData implements Serializable {
 	public void setAllData(String cId, String status, String tid, String tname, String cpu, String ram, String st, String et, String pr, String pc, String ttype) {
 		this.classId = cId;
 		this.powerStatus = status;
-		this.id = id;
+		this.id = tid;
 		this.name = tname;
 		this.cpuData = cpu;
 		this.ramData = ram;
