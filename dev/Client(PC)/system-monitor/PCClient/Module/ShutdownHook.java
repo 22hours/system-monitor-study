@@ -39,24 +39,9 @@ public class ShutdownHook {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				/*for(Thread t : Thread.getAllStackTraces().keySet()) {
-					if(t.getName().equals("GetLongPolling")) {
-						try {
-							t.join();
-						} catch (InterruptedException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					}
-				}*/
-				
 				System.out.println("종료 됩니다.");
+				// 여기다가 끄는거 넣기
 			}
 		});
-
-		/*
-		 * try { } catch (IOException e) { // TODO Auto-generated catch block
-		 * e.printStackTrace(); }
-		 */
 	}
 }

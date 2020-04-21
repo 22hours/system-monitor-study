@@ -29,7 +29,7 @@ public class TimeDifference {
 			long extensionTime = extensionDate.getTime();
 			long difference = (extensionTime - originalTime) / 1000;
 			if(difference<0) {
-				return null;
+				return "0";
 			}
 			String hour = String.valueOf(difference/3600);
 			difference%=3600;
@@ -39,7 +39,7 @@ public class TimeDifference {
 		} catch (java.text.ParseException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return "0";
 	}
 	public String timer(String nowTime,String endTime) {
 		try {

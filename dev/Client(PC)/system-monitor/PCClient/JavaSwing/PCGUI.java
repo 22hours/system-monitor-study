@@ -222,14 +222,6 @@ public class PCGUI {
 					String time = combo.getSelectedItem().toString().substring(0, 1);
 					if (IsDigit.getInstance().isNumeric(time) && !time.equals("0")) {
 						PCExtension.getInstance().Extension(pc, time);
-						/*
-						 * for(Thread t : Thread.getAllStackTraces().keySet()) {
-						 * if(t.getName().equals("ExtensionThread")) { executorService.execute(new
-						 * PostLongPolling(pc)); break; } else if(t.getName().equals("PostLongPolling"))
-						 * { executorService.execute(new ExtensionThread(pc, time)); break; } }
-						 */
-						// Thread post = new PostLongPolling3(pc);
-						// post.start();
 						try {
 							PCPost.getInstance().PostMethod(pc);
 						} catch (URISyntaxException | IOException e1) {
@@ -263,15 +255,6 @@ public class PCGUI {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				/*
-				 * String nowTime = GetNowTime.getInstance().getNowTime();
-				 * System.out.println(nowTime); String endTime = pc.getEnd_time();
-				 * System.out.println(endTime); String remainTime =
-				 * TimeDifference.getInstance().calc(nowTime, endTime);
-				 * System.out.println(remainTime); if(remainTime==null) {
-				 * JOptionPane.showMessageDialog(null, "잘못된 정보 수신!"); } else {
-				 * JOptionPane.showMessageDialog(null, remainTime); }
-				 */
 			}
 		});
 		remainTimeButton.setForeground(Color.WHITE);
@@ -299,7 +282,7 @@ public class PCGUI {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				UIManager.put("ProgressBar.selectionBackground",Color.BLACK);
+				UIManager.put("ProgressBar.selectionBackground", Color.BLACK);
 				JProgressBar progressBar = new JProgressBar(0, 100);
 				progressBar.setValue((int) Double.parseDouble(pc.getCpu_data()));
 				progressBar.setStringPainted(true);
@@ -374,20 +357,13 @@ public class PCGUI {
 		frame.setBackground(new Color(255, 0, 0, 0)); // 투명
 		frame.setVisible(true);
 		executorService.execute(new TimerThread(label, pc));
-		/*
-		 * try { PCPost.getInstance().PostMethod(pc); executorService.execute(new
-		 * GetLongPolling(pc)); executorService.execute(new PostGeneralPolling(pc)); }
-		 * catch (URISyntaxException | IOException e1) { // TODO Auto-generated catch
-		 * block e1.printStackTrace(); } /*Thread post = new PostLongPolling3(pc);
-		 * post.start(); for(Thread t : Thread.getAllStackTraces().keySet()) {
-		 * if(t.getName().equals("Post")) { try { t.join(); } catch
-		 * (InterruptedException e1) { // TODO Auto-generated catch block
-		 * e1.printStackTrace(); } } }
-		 */
-		// executorService.execute(new PostLongPolling(pc));
-		// e
-		// Thread get = new GetLongPolling2(pc);
-		// get.start();
-		// executorService.execute(new PostGeneralPolling(pc));
+
+		try {
+			PCPost.getInstance().PostMethod(pc);
+			executorService.execute(new GetLongPolling(pc));
+			executorService.execute(new PostGeneralPolling(pc));
+		} catch (URISyntaxException | IOException e1) { // TODO Auto-generated catch
+			e1.printStackTrace();
+		}
 	}
 }

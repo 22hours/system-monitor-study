@@ -59,7 +59,7 @@ public class PCGet {
 				if (message.equals("extension")) {
 					String nowTime = GetNowTime.getInstance().getNowTime();
 					int remainTime = Integer.parseInt(TimeDifference.getInstance().calc(nowTime, endTime));
-					if(remainTime<0) {
+					if(remainTime<=0) {
 						pc.setPower_status("OFF");
 						pc.setRemainTime("-1");
 						System.exit(0);
@@ -99,34 +99,4 @@ public class PCGet {
 			e.printStackTrace();
 		}
 	}
-	/*
-	 * public void GetMethod(PC pc) throws URISyntaxException,
-	 * ClientProtocolException, IOException{ URI uri = new
-	 * URI("http://203.229.204.25:80/pc/5"); HttpClient httpClient =
-	 * HttpClientBuilder.create().build(); HttpResponse response =
-	 * httpClient.execute(new HttpGet(uri)); HttpEntity entity =
-	 * response.getEntity(); String content = EntityUtils.toString(entity); try {
-	 * 
-	 * JsonElement jsonElement = JsonParser.parseString(content); JsonObject
-	 * jsonObject = jsonElement.getAsJsonObject(); String id =
-	 * jsonObject.get("id").getAsString(); String power_status; String end_time;
-	 * if(jsonObject.get("power_status").isJsonNull()) { power_status = "null"; }
-	 * else{ power_status = jsonObject.get("power_status").getAsString(); }
-	 * if(jsonObject.get("end_time").isJsonNull()) { end_time = "null"; } else {
-	 * end_time = jsonObject.get("end_time").getAsString(); }
-	 * System.out.println("=====GET======"); System.out.println("id = "+id);
-	 * System.out.println("power_status = " + power_status);
-	 * System.out.println("end_time = "+end_time); if(!id.equals("5")) {
-	 * System.out.println("잘못된 정보 수신!"); return; }
-	 * if(!end_time.equals(pc.getEnd_time()) && !end_time.equals("null")) {
-	 * //Android 사용자가 연장 신청하면 다를 수 있다. TimeDifference timeDifference = new
-	 * TimeDifference(); Shutdown.getInstance().stopshutdown(); // Android 사용자가 바꿨다면
-	 * end_time이 더 커야 되는게 정상. String difference =
-	 * timeDifference.calc(pc.getEnd_time(), end_time);
-	 * Shutdown.getInstance().shutdown(difference); pc.setEnd_time(end_time); }
-	 * if(power_status.equals("false") && !power_status.equals("null")) {
-	 * pc.setPower_status(power_status); PCPost.getInstance().PCShutdown(pc);
-	 * Shutdown.getInstance().stopshutdown(); Shutdown.getInstance().shutdown("0");
-	 * } } catch(Exception e) { e.printStackTrace(); } }
-	 */
 }
