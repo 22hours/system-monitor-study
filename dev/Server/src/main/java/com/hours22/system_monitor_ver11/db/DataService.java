@@ -318,7 +318,7 @@ public class DataService {
     	        nowEndTime = nowEndTime.replace(" ", "-");
     	        nowEndTime = nowEndTime.replace(":", "-");
     	        System.out.println(tmpMap.get("id") + "는 지금 끄기직전 ~~~" + nowEndTime);
-    	        mobile.PostPcPower(req, request, response, tmpMap, tmpMap.get("id"), nowEndTime);
+    	        mobile.PostPcPower(req, request, response, tmpMap);
     	        System.out.println(tmpMap.get("id") + "는 지금 꺼!!!");
     	    }
     	} finally {

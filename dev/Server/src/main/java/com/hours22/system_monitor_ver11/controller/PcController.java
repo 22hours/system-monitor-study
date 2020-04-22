@@ -24,6 +24,7 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -48,6 +49,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @Controller
+@Configuration
 @WebServlet(asyncSupported = true)
 public class PcController {
 	@Autowired
@@ -68,25 +70,30 @@ public class PcController {
 	SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	
 	
-	@RequestMapping(value = "/pc/{id}/data", method = RequestMethod.POST)
-	public void PostPcData(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map, @PathVariable String id) throws IOException {
+	@RequestMapping(value = "/pc/data", method = RequestMethod.POST)
+	public void PostPcData(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map) throws IOException {
 		response.setCharacterEncoding("UTF-8");
+		
+		String id = map.get("id");
 		
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : /pc/"+id+"/data <- POST method [Client Ip : " +cic.getClientIp(request)+"] at "+transFormat.format(new Date()) );
-		lc.getConnection();
+		//lc.getConnection();
 		lc.getConnectionHset(id, map);
-		lc.getConnectionExit();
+		//lc.getConnectionExit();
 		System.out.println(map.toString());
 		
 		response.getWriter().print("Success /pc/"+id+"/data <- POST method !!");
 		cache.SetCache(req.getHeader("If-None-Match"));
 	}
 	
-	@RequestMapping(value = "/pc/{id}/power/{endTime}", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, String>> PostPcPower(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map, @PathVariable String id, @PathVariable String endTime) throws IOException, InterruptedException {
+	@RequestMapping(value = "/pc/power", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, String>> PostPcPower(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map) throws IOException, InterruptedException {
 		response.setCharacterEncoding("UTF-8");
 
+		String id = map.get("id");
+		String endTime = map.get("endTime");
+		
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : /pc/"+id+"/power/"+endTime+" <- POST method [Client Ip : " +cic.getClientIp(request)+"] at "+transFormat.format(new Date()) );
 		
@@ -101,16 +108,16 @@ public class PcController {
     		}
     	}
     	
-		lc.getConnection();
+		//lc.getConnection();
 		if(lc.getConnectionHkey(id) == false) {
-			lc.getConnectionExit();
+			//lc.getConnectionExit();
 			Map<String, String> jsonObject = new HashMap<String, String>();
 			jsonObject.put("id", id);
 			jsonObject.put("msg", "false");
 			return new ResponseEntity<Map<String, String>>(jsonObject, HttpStatus.OK);
 		}
 		lc.getConnectionHset(id, map);
-		lc.getConnectionExit();
+		//lc.getConnectionExit();
 		
 		System.out.println(map.toString());
 
@@ -152,9 +159,9 @@ public class PcController {
 
 		
 		String EndTime;
-		lc.getConnection();
+		//lc.getConnection();
 		EndTime = lc.getConnectionHgetField(id, "endTime");
-		lc.getConnectionExit();
+		//lc.getConnectionExit();
 		
 		System.out.println("일단 redis에서 불러온 값 : "+ EndTime);
 		
@@ -181,6 +188,7 @@ public class PcController {
 		return new Callable<Map<String, String>>() {
             @Override
             public Map<String, String> call() throws Exception {
+            	
             	System.out.println("================================");
             	System.out.println("PCPowerOffMsg Return 영역");
         		Thread.currentThread().setName("PCPowerOffMsg-Return-"+id);
@@ -190,7 +198,6 @@ public class PcController {
             	long MSG = endTime;
             	System.out.println(MSG / 1000 + "초 동안 Thread.sleep();");
             	System.out.println("알림시간 is " + EndTime +" - "+min+"분");
-                //Thread.sleep(252000);
                 // start
                 
                 long timeToSleep = MSG;
@@ -218,15 +225,14 @@ public class PcController {
 					Map<String, String> jsonObjectExit = new HashMap<String, String>();
 					jsonObjectExit.put("id", id);
 					jsonObjectExit.put("msg", "extension");
-					lc.getConnection();
+					//lc.getConnection();
 					String endTime = lc.getConnectionHgetField(id, "endTime");
-					lc.getConnectionExit();
-					
+					//lc.getConnectionExit();
 					jsonObjectExit.put("endTime", endTime);
 					return jsonObjectExit;
                 }
                 else {
-                // end
+                // endhttp://localhost/pc/hours22/message/2
 					JSONObject jsonObject = new JSONObject();
 	
 					System.out.println("--------------------------------------------------------------------------------------------");
@@ -234,9 +240,9 @@ public class PcController {
 					jsonObject.put("id", id);
 					jsonObject.put("msg", min);
 					
-					lc.getConnection();
+					//lc.getConnection();
 					String endTime = lc.getConnectionHgetField(id, "endTime");
-					lc.getConnectionExit();
+					//lc.getConnectionExit();
 					
 					jsonObject.put("endTime", endTime);
 					

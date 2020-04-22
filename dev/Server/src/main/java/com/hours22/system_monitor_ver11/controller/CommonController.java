@@ -80,9 +80,9 @@ public class CommonController {
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : /pc/"+ id +" <- GET method [Client Ip : "+ cic.getClientIp(req) + " ] at " + transFormat.format(new Date()));
 		
-		lc.getConnection();
+		//lc.getConnection();
 		String res = lc.getConnectionHgetall(id);
-		lc.getConnectionExit();
+		//lc.getConnectionExit();
 		
 		return res;
 	}
@@ -94,7 +94,7 @@ public class CommonController {
 		System.out.println("Input : "+ json +" <- POST method [Client : "+ cic.getClientIp(request) + " ] at "+transFormat.format(new Date()));
 		
 		
-		lc.getConnection();
+		//lc.getConnection();
 		lc.getConnectionHset(id, map);
 		//lc.getConnectionExit();
 		
