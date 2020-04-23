@@ -47,13 +47,14 @@ public class PCPost {
 
 	// 다시 사용하기 (연장신청 대비)
 	public void PostMethod(PC pc) throws URISyntaxException, ClientProtocolException, IOException {
-		URI uri = new URI("http://13.125.208.19/pc/hours22/power/" + pc.getEnd_time());
+		//URI uri = new URI("http://13.125.208.19/pc/hours23/power/" + pc.getEnd_time());
+		URI uri = new URI("http://13.125.208.19/pc/"+pc.getId()+"/power/" + pc.getEnd_time());
 		System.out.println("PostMethod URI = " + uri);
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		HttpPost postRequest = new HttpPost(uri);
 		JsonObject json = new JsonObject();
-		json.addProperty("classId", "1");
-		json.addProperty("id", "hours22");
+		//json.addProperty("classId", "D404");
+		json.addProperty("id", pc.getId());
 		json.addProperty("name", "Favian");
 		json.addProperty("cpuData", pc.getCpu_data());
 		json.addProperty("ramData", pc.getRam_data());
@@ -97,7 +98,7 @@ public class PCPost {
 	}
 
 	public void GeneralPollingPost(PC pc) throws URISyntaxException, ClientProtocolException, IOException {
-		URI uri = new URI("http://13.125.208.19/pc/" + "hours22" + "/data");
+		URI uri = new URI("http://13.125.208.19/pc/" + pc.getId() + "/data");
 		System.out.println("GeneralPost URI = " + uri);
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		
@@ -105,7 +106,7 @@ public class PCPost {
 		pc.setCpu_data(CPU.getCPU().showCPU());
 		pc.setRam_data(Memory.getMemory().showMemory());
 		JsonObject json = new JsonObject();
-		json.addProperty("id", "hours22");
+		json.addProperty("id", pc.getId());
 		json.addProperty("cpuData", pc.getCpu_data());
 		json.addProperty("ramData", pc.getRam_data());
 		System.out.println(json.toString());

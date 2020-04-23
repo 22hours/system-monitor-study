@@ -39,7 +39,7 @@ public class PCGet {
 	}
 
 	public void GetMethod(PC pc) throws URISyntaxException, ClientProtocolException, IOException {
-		URI uri = new URI("http://13.125.208.19/pc/hours22/message/" + pc.getRemainTime());
+		URI uri = new URI("http://13.125.208.19/pc/"+pc.getId()+"/message/" + pc.getRemainTime());
 		System.out.println("GetMethod URI = " + uri);
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		HttpResponse response = httpClient.execute(new HttpGet(uri));

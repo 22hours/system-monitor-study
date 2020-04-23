@@ -107,8 +107,11 @@ public class PCGUI {
 		JTextField zField = new JTextField(5);
 		JTextField xField = new JTextField(5);
 		JTextField yField = new JTextField(5);
+		JTextField wField = new JTextField(5);
 
 		JPanel myPanel = new JPanel();
+		myPanel.add(new JLabel("Id:"));
+		myPanel.add(wField);
 		myPanel.add(new JLabel("classId:"));
 		myPanel.add(zField);
 		myPanel.add(Box.createHorizontalStrut(15)); // a spacer
@@ -120,11 +123,12 @@ public class PCGUI {
 
 		int result = JOptionPane.showConfirmDialog(null, myPanel, pid, JOptionPane.OK_CANCEL_OPTION);
 		if (result == JOptionPane.OK_OPTION) {
+			String Id = wField.getText();
 			String classId = zField.getText();
 			int x = Integer.parseInt(xField.getText());
 			int y = Integer.parseInt(yField.getText());
 			try {
-				PCPost.getInstance().PostMethod(pid, classId, x, y);
+				PCPost.getInstance().PostMethod(Id, classId, x, y);
 			} catch (URISyntaxException | IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

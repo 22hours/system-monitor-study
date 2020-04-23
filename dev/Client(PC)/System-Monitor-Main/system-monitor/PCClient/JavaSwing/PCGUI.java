@@ -130,6 +130,15 @@ public class PCGUI {
 		GetMACAddress MAC = new GetMACAddress();
 		String pid = MAC.getLocalMacAddress();
 		final PC pc = new PC(pid);
+		JTextField wField = new JTextField(5);
+		JPanel myPanel = new JPanel();
+		myPanel.add(new JLabel("Id:"));
+		myPanel.add(wField);
+		int result = JOptionPane.showConfirmDialog(null, myPanel, pid, JOptionPane.OK_CANCEL_OPTION);
+		if (result == JOptionPane.OK_OPTION) {
+			String Id = wField.getText();
+			pc.setId(Id);
+		}
 		frame = new JFrame();
 		UIManager UI = new UIManager();
 		UI.put("OptionPane.background", Color.WHITE);
@@ -249,12 +258,13 @@ public class PCGUI {
 
 		remainTimeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try {
+				/*try {
 					Desktop.getDesktop().browse(new URI("https://damin8.github.io/"));
 				} catch (IOException | URISyntaxException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
-				}
+				}*/
+				
 			}
 		});
 		remainTimeButton.setForeground(Color.WHITE);
@@ -350,6 +360,7 @@ public class PCGUI {
 		 * frame.getRootPane().setBorder(BorderFactory.createLineBorder(color, 4));
 		 */
 		// frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
 		ShutdownHook shutdownhook = new ShutdownHook(pc);
 		shutdownhook.AttachShutdownHook();
 		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);

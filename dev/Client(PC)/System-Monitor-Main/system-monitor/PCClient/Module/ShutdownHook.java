@@ -40,7 +40,13 @@ public class ShutdownHook {
 					e.printStackTrace();
 				}
 				System.out.println("종료 됩니다.");
-				// 여기다가 끄는거 넣기
+				try {
+					Shutdown.getInstance().shutdown("0");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 			}
 		});
 	}

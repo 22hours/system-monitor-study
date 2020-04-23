@@ -30,7 +30,9 @@ public class PC {
 		this.ram_data = Memory.getMemory().showMemory();
 		this.remainTime = "30";
 	}
-
+	public void setId(String id) {
+		this.id = id;
+	}
 	public String getId() {
 		return this.id;
 	}
