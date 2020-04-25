@@ -285,9 +285,12 @@ public class DataService {
     	return jsonObject;
     }
     
-    public void PostClassPcsPowerOff(WebRequest req, HttpServletRequest request, HttpServletResponse response, String classId) throws IOException, InterruptedException {
+    public void PostClassPcsPowerOff(WebRequest req, HttpServletRequest request, HttpServletResponse response, Map<String, String> reqMap) throws IOException, InterruptedException {
     	
-
+    	
+        String tclassId = reqMap.get("id");
+        String tEndTime = reqMap.get("endTime");
+        String tPStatus = reqMap.get("powerStatus");
         
     	int i = 0;
     	
@@ -307,7 +310,7 @@ public class DataService {
     	    	System.out.println("지금 type : "+type);
     	    	if(!type.equals("PC")) continue;
     	    	String cid = tmpMap.get("classId");
-    	    	if(!cid.equals(classId)) continue;
+    	    	if(!cid.equals(tclassId)) continue;
     	    	
     	        System.out.println("key data [" + ++i +"번째] = " + tkey +" "+ kvalue);
     	        System.out.println();
@@ -317,9 +320,12 @@ public class DataService {
     	        //	SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     	        nowEndTime = nowEndTime.replace(" ", "-");
     	        nowEndTime = nowEndTime.replace(":", "-");
-    	        System.out.println(tmpMap.get("id") + "는 지금 끄기직전 ~~~" + nowEndTime);
+    	        System.out.println(tmpMap.get("id") + "는 강의실 전체동작! " + nowEndTime);
+    	        tmpMap.put("endTime", tEndTime);
+    	        tmpMap.put("powerStatus", tPStatus);
+    	        
     	        mobile.PostPcPower(req, request, response, tmpMap);
-    	        System.out.println(tmpMap.get("id") + "는 지금 꺼!!!");
+    	        System.out.println(tmpMap.get("id") + "는 지금 변경되었음!(강의실전체동작)");
     	    }
     	} finally {
     		System.out.println("Finished !");

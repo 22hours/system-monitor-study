@@ -156,7 +156,7 @@ public class MobileController{
 	
 	@CrossOrigin("*")
 	@RequestMapping(value = "/mobile/login", method = RequestMethod.POST)
-	public Map<String, String> GetAdminLogin(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map) throws IOException, InterruptedException {
+	public ResponseEntity<Map<String, String>> GetAdminLogin(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map) throws IOException, InterruptedException {
 		Map<String, String> jsonObject = new HashMap<String, String>();
 		
 		//lc.getConnection();
@@ -166,10 +166,11 @@ public class MobileController{
 		if(type.equals("admin") && ret.equals("false")) {
 			//lc.getConnectionExit();
 			jsonObject.put("msg", "false");
-			return jsonObject;
+			return new ResponseEntity<Map<String, String>>(jsonObject, HttpStatus.NON_AUTHORITATIVE_INFORMATION);
 		}
 		//lc.getConnectionExit();
-		return auth;
+		auth.put("msg", "true");
+		return new ResponseEntity<Map<String, String>>(auth, HttpStatus.OK);
 	}
 	
 	@CrossOrigin("*")
@@ -220,18 +221,22 @@ public class MobileController{
 	
 	@CrossOrigin("*")
 	@RequestMapping(value = "/mobile/class/power", method = RequestMethod.POST)
-	public void PostAllClassPcPower(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map) throws IOException, InterruptedException {
+	public ResponseEntity<Map<String, String>> PostAllClassPcPower(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map) throws IOException, InterruptedException {
 		String classId = map.get("id");
 		
 		//req.check
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : /mobile/class/"+classId+"/power <- POST method [Client Ip : "+ cic.getClientIp(request)+"] at "+transFormat.format(new Date()) );
 		
-		//lc.getConnection();
 		
-		dss.PostClassPcsPowerOff(req, request, response, classId);
-
+		
+		//lc.getConnection();
+		dss.PostClassPcsPowerOff(req, request, response, map);
+		//PostPcPower(req, request, response, map);
+		
 		//lc.getConnectionExit();
 		cache.SetCache(req.getHeader("If-None-Match"));
+		map.put("message", "success update!");
+		return new ResponseEntity<Map<String, String>>(map, HttpStatus.OK);
 	}
 }
