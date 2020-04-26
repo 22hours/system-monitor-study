@@ -15,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -130,7 +131,7 @@ public class PCGUI {
 		GetMACAddress MAC = new GetMACAddress();
 		String pid = MAC.getLocalMacAddress();
 		final PC pc = new PC(pid);
-		JTextField wField = new JTextField(5);
+		/*JTextField wField = new JTextField(5);
 		JPanel myPanel = new JPanel();
 		myPanel.add(new JLabel("Id:"));
 		myPanel.add(wField);
@@ -138,7 +139,7 @@ public class PCGUI {
 		if (result == JOptionPane.OK_OPTION) {
 			String Id = wField.getText();
 			pc.setId(Id);
-		}
+		}*/
 		frame = new JFrame();
 		UIManager UI = new UIManager();
 		UI.put("OptionPane.background", Color.WHITE);
@@ -164,24 +165,28 @@ public class PCGUI {
 		panel.setLayout(null);
 		frame.addWindowListener(getWindowAdapter());
 
-		JLabel text = new JLabel("남은 시간 ");
+		/*JLabel text = new JLabel("남은 시간 ");
 		text.setFont(new Font("TimesRoman", Font.BOLD, 21));
 		text.setHorizontalAlignment(JLabel.CENTER);
 		text.setForeground(Color.GRAY);
 		text.setSize(30, 30);
 		text.setBounds(65, 15, 152, 50);
-		panel.add(text);
+		panel.add(text);*/
 
 		JLabel label = new JLabel("");
-		label.setFont(new Font("TimesRoman", Font.PLAIN, 30));
+		//label.setFont(new Font("TimesRoman", Font.PLAIN, 30));
+		label.setFont(new Font("TimesRoman", Font.PLAIN, 50));
 		label.setHorizontalAlignment(JLabel.CENTER);
 		label.setSize(30, 30);
-		label.setBounds(170, 15, 140, 50);
+		label.setToolTipText("남은 시간");
+		//label.setBounds(170, 15, 140, 50);
+		
 		panel.add(label);
 
 		JButton shutdownButton = new JButton(new ImageIcon(shutdownURL));
-		// shutdownButton.setBounds(86, 8, 50, 50);
-		shutdownButton.setBounds(33, 17, 38, 38);
+		label.setBounds(0, 15, 200, 50);
+		shutdownButton.setBounds(260, 19, 38, 38);
+		//shutdownButton.setBounds(33, 17, 38, 38);
 		shutdownButton.setBorderPainted(false);
 		shutdownButton.setFocusPainted(false);
 		shutdownButton.setContentAreaFilled(false);
@@ -193,7 +198,7 @@ public class PCGUI {
 				JLabel label = new JLabel("<html><meta charset=\"utf-8\">PC 종료하시겠습니까?</html>");
 				label.setFont(new Font("TimesRoman", Font.BOLD, 15));
 				label.setForeground(Color.GRAY);
-				int input = JOptionPane.showConfirmDialog(frame, label, "PC 종료", JOptionPane.OK_CANCEL_OPTION,
+				int input = JOptionPane.showConfirmDialog(frame, label, " PC 종료", JOptionPane.OK_CANCEL_OPTION,
 						JOptionPane.INFORMATION_MESSAGE, icon);
 				if (input == 0) {
 					System.exit(0);
@@ -274,7 +279,7 @@ public class PCGUI {
 		panel.add(remainTimeButton);
 
 		JButton button = new JButton("\uB098\uC758 \uC815\uBCF4");
-		button.setToolTipText("나의 정보");
+		button.setToolTipText(" 나의 정보");
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ImageIcon icon = new ImageIcon(Main.class.getResource("/img/hours22.png"));
@@ -296,7 +301,7 @@ public class PCGUI {
 				JProgressBar progressBar = new JProgressBar(0, 100);
 				progressBar.setValue((int) Double.parseDouble(pc.getCpu_data()));
 				progressBar.setStringPainted(true);
-				progressBar.setForeground(Color.LIGHT_GRAY);
+				progressBar.setForeground(Color.BLUE);
 				progressBar.setBackground(Color.WHITE);
 				TitledBorder title = BorderFactory.createTitledBorder("CPU Usage");
 				title.setTitleColor(Color.BLACK);
@@ -309,7 +314,7 @@ public class PCGUI {
 				title1.setTitleColor(Color.BLACK);
 				title1.setTitleFont(new Font("TimesRoman", Font.BOLD, 9));
 				progressBar1.setBorder(title1);
-				progressBar1.setForeground(Color.LIGHT_GRAY);
+				progressBar1.setForeground(Color.BLUE);
 				progressBar1.setBackground(Color.WHITE);
 				JLabel Start = new JLabel("StartTime ");
 				Start.setForeground(Color.GRAY);
@@ -329,10 +334,12 @@ public class PCGUI {
 				myPanel2.setLayout(new BoxLayout(myPanel2, BoxLayout.X_AXIS));
 				myPanel2.add(End);
 				myPanel2.add(ETime);
+				JPanel myPanel4 = new JPanel();
 				JPanel myPanel3 = new JPanel();
 				myPanel3.setLayout(new BoxLayout(myPanel3, BoxLayout.Y_AXIS));
 				myPanel3.add(myPanel1);
 				myPanel3.add(myPanel2);
+				myPanel3.add(myPanel4);
 				myPanel3.add(progressBar);
 				myPanel3.add(progressBar1);
 				int result = JOptionPane.showConfirmDialog(frame, myPanel3, "ID : Damin", JOptionPane.OK_CANCEL_OPTION,
@@ -367,14 +374,16 @@ public class PCGUI {
 		frame.setUndecorated(true); // 타이틀바 삭제
 		frame.setBackground(new Color(255, 0, 0, 0)); // 투명
 		frame.setVisible(true);
+		frame.setShape(new RoundRectangle2D.Double(0, 0, panel.getWidth(), panel.getHeight(), 10, 10));
 		executorService.execute(new TimerThread(label, pc));
 
-		try {
+		/*try {
 			PCPost.getInstance().PostMethod(pc);
 			executorService.execute(new GetLongPolling(pc));
 			executorService.execute(new PostGeneralPolling(pc));
 		} catch (URISyntaxException | IOException e1) { // TODO Auto-generated catch
 			e1.printStackTrace();
-		}
+		}*/
 	}
 }
+

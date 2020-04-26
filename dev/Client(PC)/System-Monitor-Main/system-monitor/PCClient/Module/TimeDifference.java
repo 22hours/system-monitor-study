@@ -59,7 +59,7 @@ public class TimeDifference {
 			if(Integer.parseInt(minute)<10) {
 				minute = "0" + minute;
 			}
-			return hour + ":" + minute;
+			return hour + " : " + minute;
 		} catch (java.text.ParseException e) {
 			e.printStackTrace();
 		}
