@@ -77,13 +77,14 @@ public class MobileController{
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : /mobile/pc <- GET method [Client Ip : "+ cic.getClientIp(request)+"] at "+transFormat.format(new Date()) );
 		
-		lc.getConnection();
+		//lc.getConnection();
 		
 		String json = ojm.writeValueAsString(dss.GetAllTypeDataRedis("PC", "pcs"));
 		json = dss.PrettyPrinter(json);
 		System.out.println(json);
-		lc.getConnectionExit();
+		//lc.getConnectionExit();
 		cache.SetCache(req.getHeader("If-None-Match"));
+		System.out.println(req.getHeader("If-None-Match"));
 		return new ResponseEntity<String>(json, HttpStatus.OK);
 	}
 	
@@ -96,7 +97,7 @@ public class MobileController{
 			return null;
 		}
 		
-		lc.getConnection();
+		//lc.getConnection();
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : /mobile/pc/"+id+"/data <- GET method [Client Ip : "+ cic.getClientIp(request) +" ] at " + transFormat.format(new Date()));
 		
@@ -105,19 +106,22 @@ public class MobileController{
 		System.out.println(json);
 		
 		//response.getWriter().print(json);
-		lc.getConnectionExit();
+		//lc.getConnectionExit();
 		cache.SetCache(req.getHeader("If-None-Match"));
 		return new ResponseEntity(json, HttpStatus.OK);
 	}
 	
 	@CrossOrigin("*")
-	@RequestMapping(value = "/mobile/pc/{id}/power/{endTime}", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, String>> PostPcPower(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map, @PathVariable String id, @PathVariable String endTime) throws IOException, InterruptedException {
+	@RequestMapping(value = "/mobile/pc/power", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, String>> PostPcPower(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map) throws IOException, InterruptedException {
 		response.setCharacterEncoding("UTF-8");
 
+    	String id = map.get("id");
+		String endTime = map.get("endTime");
+    	
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : /mobile/pc/"+id+"/power/"+endTime+" <- POST method [Client Ip : " +cic.getClientIp(request)+"] at "+transFormat.format(new Date()) );
-		
+	
     	Set<Thread> setOfThread = Thread.getAllStackTraces().keySet();
     	for(Thread thread : setOfThread){
     		System.out.println("Active Thread's [ Number : " +thread.getId()+" / Name : "+thread.getName()+" ] ");
@@ -129,16 +133,16 @@ public class MobileController{
     		}
     	}
     	
-		lc.getConnection();
+		//lc.getConnection();
 		if(lc.getConnectionHkey(id) == false) {
-			lc.getConnectionExit();
+			//lc.getConnectionExit();
 			Map<String, String> jsonObject = new HashMap<String, String>();
 			jsonObject.put("id", id);
 			jsonObject.put("msg", "false");
 			return new ResponseEntity<Map<String, String>>(jsonObject, HttpStatus.OK);
 		}
 		lc.getConnectionHset(id, map);
-		lc.getConnectionExit();
+		//lc.getConnectionExit();
 		
 		System.out.println(map.toString());
 
@@ -152,20 +156,21 @@ public class MobileController{
 	
 	@CrossOrigin("*")
 	@RequestMapping(value = "/mobile/login", method = RequestMethod.POST)
-	public Map<String, String> GetAdminLogin(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map) throws IOException, InterruptedException {
+	public ResponseEntity<Map<String, String>> GetAdminLogin(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map) throws IOException, InterruptedException {
 		Map<String, String> jsonObject = new HashMap<String, String>();
 		
-		lc.getConnection();
+		//lc.getConnection();
 		Map<String, String> auth = lc.getLoginSession(map);
 		String type = auth.get("type");
 		String ret = auth.get("msg");
 		if(type.equals("admin") && ret.equals("false")) {
-			lc.getConnectionExit();
+			//lc.getConnectionExit();
 			jsonObject.put("msg", "false");
-			return jsonObject;
+			return new ResponseEntity<Map<String, String>>(jsonObject, HttpStatus.NON_AUTHORITATIVE_INFORMATION);
 		}
-		lc.getConnectionExit();
-		return auth;
+		//lc.getConnectionExit();
+		auth.put("msg", "true");
+		return new ResponseEntity<Map<String, String>>(auth, HttpStatus.OK);
 	}
 	
 	@CrossOrigin("*")
@@ -180,13 +185,13 @@ public class MobileController{
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : /mobile/class <- GET method [Client Ip : "+ cic.getClientIp(request)+"] at "+transFormat.format(new Date()) );
 		
-		lc.getConnection();
+		//lc.getConnection();
 		
 		String json = ojm.writeValueAsString(dss.GetAllTypeDataRedis("CLASS", "classes"));
 		json = dss.PrettyPrinter(json);
 		System.out.println(json);
 		
-		lc.getConnectionExit();
+		//lc.getConnectionExit();
 		cache.SetCache(req.getHeader("If-None-Match"));
 		return json;
 	}
@@ -203,31 +208,35 @@ public class MobileController{
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : /mobile/class/"+classId+" <- GET method [Client Ip : "+ cic.getClientIp(request)+"] at "+transFormat.format(new Date()) );
 		
-		lc.getConnection();
+		//lc.getConnection();
 		
 		String json = ojm.writeValueAsString(dss.ClassPcs(classId));
 		json = dss.PrettyPrinter(json);
 		System.out.println(json);
 		
-		lc.getConnectionExit();
+		//lc.getConnectionExit();
 		cache.SetCache(req.getHeader("If-None-Match"));
 		return json;
 	}
 	
 	@CrossOrigin("*")
-	@RequestMapping(value = "/mobile/class/{classId}/power", method = RequestMethod.POST)
-	public void PostAllClassPcPower(WebRequest req, HttpServletRequest request, HttpServletResponse response, @PathVariable String classId) throws IOException, InterruptedException {
-		
+	@RequestMapping(value = "/mobile/class/power", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, String>> PostAllClassPcPower(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map) throws IOException, InterruptedException {
+		String classId = map.get("id");
 		
 		//req.check
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : /mobile/class/"+classId+"/power <- POST method [Client Ip : "+ cic.getClientIp(request)+"] at "+transFormat.format(new Date()) );
 		
-		lc.getConnection();
 		
-		dss.PostClassPcsPowerOff(req, request, response, classId);
-
-		lc.getConnectionExit();
+		
+		//lc.getConnection();
+		dss.PostClassPcsPowerOff(req, request, response, map);
+		//PostPcPower(req, request, response, map);
+		
+		//lc.getConnectionExit();
 		cache.SetCache(req.getHeader("If-None-Match"));
+		map.put("message", "success update!");
+		return new ResponseEntity<Map<String, String>>(map, HttpStatus.OK);
 	}
 }

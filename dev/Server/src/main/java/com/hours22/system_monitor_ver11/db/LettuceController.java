@@ -4,6 +4,8 @@ import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.cache.CacheProperties.Redis;
 import org.springframework.stereotype.Controller;
@@ -48,7 +50,7 @@ import io.lettuce.core.support.ConnectionPoolSupport;
 
 
 @Controller    // This means that this class is a Controller
-public class LettuceController {
+public class LettuceController implements InitializingBean, DisposableBean {
 	@Autowired
 	ObjectMapper ojm;
 	
@@ -374,4 +376,16 @@ public class LettuceController {
 	 		//return "Success Exit";
     	}
     }
+
+	@Override
+	public void destroy() throws Exception {
+		// TODO Auto-generated method stub
+		getConnectionExit();
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		// TODO Auto-generated method stub
+		getConnection();
+	}
 }
