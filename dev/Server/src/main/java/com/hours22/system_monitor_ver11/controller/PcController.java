@@ -70,6 +70,7 @@ public class PcController {
 	SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	
 	
+	@Async(value = "threadPoolPcData")
 	@RequestMapping(value = "/pc/data", method = RequestMethod.POST)
 	public void PostPcData(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map) throws IOException {
 		response.setCharacterEncoding("UTF-8");
@@ -87,6 +88,7 @@ public class PcController {
 		cache.SetCache(req.getHeader("If-None-Match"));
 	}
 	
+	@Async(value = "threadPoolPcPowerOff")
 	@RequestMapping(value = "/pc/power", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, String>> PostPcPower(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map) throws IOException, InterruptedException {
 		response.setCharacterEncoding("UTF-8");
@@ -129,7 +131,7 @@ public class PcController {
 		return new ResponseEntity<Map<String, String>>(jsonObject, HttpStatus.OK);
 	}	
 	
-
+	@Async("threadPoolPCPowerOffMsg")
 	@RequestMapping(value = "/pc/{id}/message/{min}", method = RequestMethod.GET)
 	public @ResponseBody Callable<Map<String, String>> GetWarningMsg(HttpServletRequest request, HttpServletResponse response, @PathVariable String id, @PathVariable String min) throws IOException, InterruptedException, ParseException {
 		response.setContentType("application/json;charset=UTF-8"); 
@@ -185,8 +187,10 @@ public class PcController {
 		jsonObject.put("id", id);
 		//return new AsyncResult<Map<String, String>>(jsonObject);
 		
+	
 		return new Callable<Map<String, String>>() {
-            @Override
+            @Async(value = "threadPoolPCPowerOffMsgReturn")
+			@Override
             public Map<String, String> call() throws Exception {
             	
             	System.out.println("================================");

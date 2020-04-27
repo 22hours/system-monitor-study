@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -52,8 +54,9 @@ public class CommonController {
 	SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	
 	@CrossOrigin("*")
+	@Async(value = "threadPoolHome")
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public ResponseEntity<String> GetIndex(WebRequest req, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public CompletableFuture<ResponseEntity<String>> GetIndex(WebRequest req, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		response.setContentType("text/html;charset=UTF-8");
 		if (req.checkNotModified(cache.GetCache())) {
 			return null;
@@ -63,7 +66,7 @@ public class CommonController {
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : / <- GET method [Client Ip : "+ cic.getClientIp(request) +" ] at " + transFormat.format(new Date()));
 		cache.SetCache(req.getHeader("If-None-Match"));
-		return new ResponseEntity<String>(msg, HttpStatus.OK);
+		return CompletableFuture.completedFuture(new ResponseEntity<String>(msg, HttpStatus.OK));
 	}
 	
 	@RequestMapping(value = "/testpage", method = RequestMethod.GET)
