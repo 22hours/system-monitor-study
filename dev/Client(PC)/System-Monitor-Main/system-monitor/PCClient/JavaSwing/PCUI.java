@@ -85,7 +85,8 @@ public class PCUI {
 		final PC pc = new PC(pid);
 		
 		ClassInfo classInfo = ReadData.getInstance().readData();
-		
+		System.out.println("Read Data = " + classInfo.toString());
+
 		String dbname = classInfo.getName();
 		String dbclassID = classInfo.getClassID();
 		int dbposR = classInfo.getPosR();
@@ -96,6 +97,7 @@ public class PCUI {
 		pc.setClass_id(dbclassID);
 		pc.setPosR(dbposR);
 		pc.setPosC(dbposC);
+		pc.setId(dbname);
 		
 		URL shutdownURL = Main.class.getResource("/img/stop22.png");
 		URL shutdownPressedURL = Main.class.getResource("/img/stop11.png");

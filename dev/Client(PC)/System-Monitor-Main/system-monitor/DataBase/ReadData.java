@@ -47,7 +47,6 @@ public class ReadData {
 				int posC = resultSet.getInt("posC");
 
 				ClassInfo classInfo = new ClassInfo(name, classID, posR, posC);
-				System.out.println("Read Data = " + classInfo.toString());
 				resultSet.close();
 				statement.close();
 				connection.close();

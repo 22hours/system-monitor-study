@@ -53,14 +53,17 @@ public class PCPost {
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		HttpPost postRequest = new HttpPost(uri);
 		JsonObject json = new JsonObject();
-		//json.addProperty("classId", "D404");
+		json.addProperty("classId", pc.getClass_id());
 		json.addProperty("id", pc.getId());
-		json.addProperty("name", "Favian");
+		json.addProperty("posR", pc.getPosR());
+		json.addProperty("posC", pc.getPosC());
+		json.addProperty("name", pc.getName());
 		json.addProperty("cpuData", pc.getCpu_data());
 		json.addProperty("ramData", pc.getRam_data());
 		json.addProperty("powerStatus", pc.getPower_status());
 		json.addProperty("startTime", pc.getStart_time());
 		json.addProperty("endTime", pc.getEnd_time());
+		json.addProperty("type", pc.getType());
 		postRequest.setEntity(new StringEntity(json.toString(), "UTF-8"));
 		postRequest.addHeader("Content-type", "application/json");
 		System.out.println(json.toString());
@@ -78,6 +81,10 @@ public class PCPost {
 					System.out.println("-----Post Response is null-----");
 				} else {
 					String msg = jsonObject.get("msg").getAsString();
+					if(msg.equals("false")) { 
+						System.out.println("Post ½ÇÆÐ ¤Ð");
+						return;
+					}
 					String endTime = jsonObject.get("endTime").getAsString();
 					pc.setEnd_time(endTime);
 					if(msg.equals("true")) {
