@@ -27,6 +27,7 @@ public class ShutdownHook {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {
+				System.out.println("ShutdownHook Ω√¿€!");
 				Runtime run = Runtime.getRuntime();
 				long currentTime = System.currentTimeMillis();
 				SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd-HH-mm");

@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -12,6 +13,8 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.RoundRectangle2D;
@@ -33,7 +36,11 @@ import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
+import PCClient.Http.PCPost;
+import PCClient.Module.GetLongPolling;
 import PCClient.Module.GetMACAddress;
+import PCClient.Module.PostGeneralPolling;
+import PCClient.Module.ShutdownHook;
 import PCClient.Module.TimerThread;
 import PCModel.PC;
 import sun.applet.Main;
@@ -46,13 +53,17 @@ import javax.swing.JButton;
 public class PCUI {
 	private JFrame frame;
 	ExecutorService executorService = Executors.newFixedThreadPool(10);
+	/**
+	 * @wbp.nonvisual location=109,224
+	 */
+	private final JButton button = new JButton("New button");
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					PCUI window = new PCUI();
-					window.frame.setVisible(true);
+					// --window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -82,14 +93,35 @@ public class PCUI {
 	}
 
 	private void initialize() {
-		// GetMACAddress MAC = new GetMACAddress();
-		// String pid = MAC.getLocalMacAddress();
-		// final PC pc = new PC("");
+		GetMACAddress MAC = new GetMACAddress();
+		String pid = MAC.getLocalMacAddress();
+		final PC pc = new PC(pid);
 		URL shutdownURL = Main.class.getResource("/img/stop22.png");
 		URL shutdownPressedURL = Main.class.getResource("/img/stop11.png");
 		URL homeURL = Main.class.getResource("/img/Home.PNG");
+		URL dohyeonURL = Main.class.getResource("/img/MapoGoldenPier.ttf");
+		URL mapoURL = Main.class.getResource("/img/MapoGoldenPier.ttf");
+		URL iconURL = Main.class.getResource("/img/hours22.jpg");
+		
+		Font font = null;
+		Font mapofont = null;
+		try {
+			font = Font.createFont(Font.TRUETYPE_FONT, dohyeonURL.openStream());
+			mapofont = Font.createFont(Font.TRUETYPE_FONT, mapoURL.openStream());
+		} catch (FontFormatException | IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		ge.registerFont(font);
+		ge.registerFont(mapofont);
+		font = font.deriveFont(15f);
+		mapofont = mapofont.deriveFont(15f);
 
 		frame = new JFrame();
+		ImageIcon ic = new ImageIcon(iconURL);
+		frame.setIconImage(ic.getImage());
+		
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
@@ -98,8 +130,8 @@ public class PCUI {
 		upPanel.setBackground(SystemColor.control);
 		upPanel.setLayout(null);
 
-		JLabel label = new JLabel("12 : 12");
-		label.setFont(new Font("TimesRoman", Font.PLAIN, 45));
+		JLabel label = new JLabel("11 : 11");
+		label.setFont(font.deriveFont(40f));
 		label.setHorizontalAlignment(JLabel.CENTER);
 		label.setSize(30, 30);
 		label.setForeground(Color.BLACK);
@@ -107,11 +139,11 @@ public class PCUI {
 		upPanel.add(label);
 
 		JLabel text = new JLabel("남은 시간 ");
-		text.setFont(new Font("TimesRoman", Font.BOLD, 15));
+		text.setFont(mapofont);
 		text.setHorizontalAlignment(JLabel.CENTER);
 		text.setForeground(Color.GRAY);
 		text.setSize(30, 30);
-		text.setBounds(153, 34, 83, 30);
+		text.setBounds(148, 34, 74, 30);
 		upPanel.add(text);
 
 		JButton shutdownButton = new JButton(new ImageIcon(shutdownURL));
@@ -123,34 +155,25 @@ public class PCUI {
 		shutdownButton.setPressedIcon(new ImageIcon(shutdownPressedURL));
 		shutdownButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JLabel label = new JLabel("<html><meta charset=\"utf-8\">PC 종료하시겠습니까?</html>");
-				label.setFont(new Font("TimesRoman", Font.BOLD, 15));
-				label.setForeground(Color.GRAY);
-				int input = JOptionPane.showConfirmDialog(frame, label, " PC 종료", JOptionPane.OK_CANCEL_OPTION,
-						JOptionPane.INFORMATION_MESSAGE);
-				if (input == 0) {
-					System.exit(0);
-				} else {
-					return;
-				}
+				ShutdownFrame.getInstance().show(frame);
 			}
 		});
 		upPanel.add(shutdownButton);
-
-		JLabel classID = new JLabel("D404");
-		classID.setFont(new Font("TimesRoman", Font.BOLD, 15));
-		classID.setBounds(35, 72, 40, 18);
+		
+		JLabel classID = new JLabel(pc.getClass_id());
+		classID.setFont(mapofont);
+		classID.setBounds(35, 72, 50, 20);
 		upPanel.add(classID);
 
 		JLabel version = new JLabel("현재 버전 : 1.0.13");
-		version.setFont(new Font("TimesRoman", Font.BOLD, 13));
+		version.setFont(mapofont.deriveFont(13f));
+		version.setForeground(Color.GRAY);
 		version.setHorizontalAlignment(JLabel.CENTER);
-		version.setForeground(Color.DARK_GRAY);
-		version.setBounds(177, 76, 123, 18);
+		version.setBounds(190, 76, 123, 18);
 		upPanel.add(version);
 
 		JLabel home = new JLabel(new ImageIcon(homeURL));
-		home.setBounds(10, 70, 26, 18);
+		home.setBounds(10, 73, 26, 18);
 		upPanel.add(home);
 
 		JPanel downPanel = new JPanel();
@@ -158,45 +181,63 @@ public class PCUI {
 		downPanel.setBackground(Color.WHITE);
 		downPanel.setLayout(null);
 
-		JButton extensionButton = new JButton("연장 신청");
-		extensionButton.setBackground(new Color(106, 90, 205));
+		final MyButton extensionButton = new MyButton("연장 신청");
+		extensionButton.setBackground(new Color(192, 192, 192));
 		extensionButton.setForeground(Color.WHITE);
+		extensionButton.setHoverBackgroundColor(Color.BLACK);
+		extensionButton.setPressedBackgroundColor(Color.BLACK);
 		extensionButton.setBounds(14, 12, 90, 30);
-		extensionButton.setFont(new Font("TimesRoman", Font.PLAIN, 13));
+		extensionButton.setFont(mapofont);
 		extensionButton.setToolTipText("연장신청");
 		extensionButton.setBorder(null);
+		extensionButton.setFocusPainted(false);
+		extensionButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ExtensionFrame.getInstance().show(frame, pc);
+			}
+		});
 		downPanel.add(extensionButton);
 
-		JButton userData = new JButton("나의 정보");
-		userData.setBackground(new Color(106, 90, 205));
+		final MyButton userData = new MyButton("나의 정보");
+		userData.setBackground(new Color(192, 192, 192));
 		userData.setForeground(Color.WHITE);
-		userData.setFont(new Font("Dialog", Font.PLAIN, 13));
+		userData.setFont(mapofont);
 		userData.setBounds(114, 12, 90, 30);
 		userData.setBorder(null);
 		userData.setToolTipText("나의 정보");
+		userData.setHoverBackgroundColor(Color.BLACK);
+		userData.setPressedBackgroundColor(Color.BLACK);
+		userData.setFocusPainted(false);
+		userData.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				UserInfo.getInstance().show(frame,pc);
+			}
+		});
 		downPanel.add(userData);
 
-		JButton dev = new JButton("개발자");
-		//dev.setBackground(new Color(0, 206, 209));
-		dev.setBackground(new Color(106, 90, 205));
+		final MyButton dev = new MyButton("개발자");
+		// dev.setBackground(new Color(0, 206, 209));
+		dev.setBackground(new Color(192, 192, 192));
 		dev.setForeground(Color.WHITE);
 		dev.setBorder(null);
-		dev.setFont(new Font("Dialog", Font.PLAIN, 13));
+		dev.setFont(mapofont);
+		dev.setFocusPainted(false);
 		dev.setBounds(214, 12, 90, 30);
 		dev.setToolTipText("개발자 홈페이지");
+		dev.setHoverBackgroundColor(Color.BLACK);
+		dev.setPressedBackgroundColor(Color.BLACK);
 		dev.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
+
 					Desktop.getDesktop().browse(new URI("https://damin8.github.io/"));
 				} catch (IOException | URISyntaxException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-
 			}
 		});
 		downPanel.add(dev);
-
 		mainPanel.setLayout(null);
 		mainPanel.add(upPanel);
 		mainPanel.add(downPanel);
@@ -208,30 +249,26 @@ public class PCUI {
 		frame.setVisible(true);
 		frame.setSize(320, 150);
 		frame.setShape(new RoundRectangle2D.Double(0, 0, 320, 150, 10, 10));
-		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+
 		GraphicsDevice defaultScreen = ge.getDefaultScreenDevice();
 		Rectangle rect = defaultScreen.getDefaultConfiguration().getBounds();
 		int x = ((int) rect.getMaxX() - frame.getWidth());
 		int y = 0;
+
 		frame.setLocation(x, y);
-		// executorService.execute(new TimerThread(label, pc));
-		// frame.setShape(new RoundRectangle2D.Double(0, 0, 300, 150, 10, 10));
-		/*
-		 * JPanel panel = new JPanel(); panel.setBackground(Color.PINK);
-		 * panel.setBounds(0, 0, 100, 76); frame.setSize(500, 251);
-		 * frame.getContentPane().add(panel); panel.setLayout(null);
-		 * frame.addWindowListener(getWindowAdapter()); frame.setResizable(false);
-		 * frame.setForeground(Color.pink); GraphicsEnvironment ge =
-		 * GraphicsEnvironment.getLocalGraphicsEnvironment(); GraphicsDevice
-		 * defaultScreen = ge.getDefaultScreenDevice(); Rectangle rect =
-		 * defaultScreen.getDefaultConfiguration().getBounds(); int x = ((int)
-		 * rect.getMaxX() - frame.getWidth()); int y = 0; frame.setLocation(x, y);
-		 */
-		/*
-		 * frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-		 * frame.setUndecorated(true); // 타이틀바 삭제 frame.setBackground(Color.BLACK); //
-		 * 투명 frame.setVisible(true); frame.setShape(new RoundRectangle2D.Double(0, 0,
-		 * panel.getWidth(), panel.getHeight(), 10, 10));
-		 */
+		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+
+		executorService.execute(new TimerThread(label, pc));
+		ShutdownHook shutdownhook = new ShutdownHook(pc);
+		shutdownhook.AttachShutdownHook();
+
+		try {
+			PCPost.getInstance().PostMethod(pc);
+			executorService.execute(new GetLongPolling(pc));
+			executorService.execute(new PostGeneralPolling(pc));
+		} catch (URISyntaxException | IOException e1) { // TODO Auto-generated catch
+			e1.printStackTrace();
+		}
+
 	}
 }

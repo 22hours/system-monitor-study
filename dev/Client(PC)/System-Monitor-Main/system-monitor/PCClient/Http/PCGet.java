@@ -58,7 +58,9 @@ public class PCGet {
 				String endTime = jsonObject.get("endTime").getAsString();
 				if (message.equals("extension")) {
 					String nowTime = GetNowTime.getInstance().getNowTime();
-					int remainTime = Integer.parseInt(TimeDifference.getInstance().calc(nowTime, endTime));
+					System.out.println("nowTime = " + nowTime);
+					int remainTime = (int)Double.parseDouble(TimeDifference.getInstance().calc(nowTime, endTime));
+					System.out.println("remainTime = " + remainTime);
 					if(remainTime<=0) {
 						pc.setPower_status("OFF");
 						pc.setRemainTime("-1");

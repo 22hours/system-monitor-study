@@ -28,9 +28,11 @@ public class TimeDifference {
 			Date extensionDate = dayTime.parse(extension);
 			long extensionTime = extensionDate.getTime();
 			long difference = (extensionTime - originalTime) / 1000;
+			System.out.println("Difference = " + difference);
 			if(difference<0) {
 				return "0";
 			}
+			if(difference/3600 >= 1) return "60";
 			String hour = String.valueOf(difference/3600);
 			difference%=3600;
 			String minute = String.valueOf(difference/60);

@@ -8,6 +8,7 @@ import sun.org.mozilla.javascript.internal.json.JsonParser.ParseException;
 public class PC {
 	private String power_status;
 	private String id;
+	private String class_id;
 	private String start_time;
 	private String end_time;
 	private String cpu_data;
@@ -29,6 +30,7 @@ public class PC {
 		this.cpu_data = CPU.getCPU().showCPU();
 		this.ram_data = Memory.getMemory().showMemory();
 		this.remainTime = "30";
+		this.class_id = "D404";
 	}
 	public void setId(String id) {
 		this.id = id;
@@ -36,7 +38,14 @@ public class PC {
 	public String getId() {
 		return this.id;
 	}
-
+	
+	public void setClass_id(String class_id) {
+		this.class_id = class_id;
+	}
+	
+	public String getClass_id() {
+		return this.class_id;
+	}
 	public String getPower_status() {
 		return this.power_status;
 	}

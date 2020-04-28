@@ -48,7 +48,7 @@ public class PCPost {
 	// 다시 사용하기 (연장신청 대비)
 	public void PostMethod(PC pc) throws URISyntaxException, ClientProtocolException, IOException {
 		//URI uri = new URI("http://13.125.208.19/pc/hours23/power/" + pc.getEnd_time());
-		URI uri = new URI("http://13.125.208.19/pc/"+pc.getId()+"/power/" + pc.getEnd_time());
+		URI uri = new URI("http://13.125.208.19/pc/power");
 		System.out.println("PostMethod URI = " + uri);
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		HttpPost postRequest = new HttpPost(uri);
@@ -98,7 +98,7 @@ public class PCPost {
 	}
 
 	public void GeneralPollingPost(PC pc) throws URISyntaxException, ClientProtocolException, IOException {
-		URI uri = new URI("http://13.125.208.19/pc/" + pc.getId() + "/data");
+		URI uri = new URI("http://13.125.208.19/pc/data");
 		System.out.println("GeneralPost URI = " + uri);
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		
