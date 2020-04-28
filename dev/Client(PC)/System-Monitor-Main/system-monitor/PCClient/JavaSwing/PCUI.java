@@ -109,7 +109,6 @@ public class PCUI {
 			font = Font.createFont(Font.TRUETYPE_FONT, dohyeonURL.openStream());
 			mapofont = Font.createFont(Font.TRUETYPE_FONT, mapoURL.openStream());
 		} catch (FontFormatException | IOException e2) {
-			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
