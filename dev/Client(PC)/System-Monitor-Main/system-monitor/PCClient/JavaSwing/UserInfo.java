@@ -8,6 +8,11 @@ import java.awt.SystemColor;
 import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -18,6 +23,10 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.UIManager;
 
+import PCClient.Module.CPUUsageThread;
+import PCClient.Module.EndTimeThread;
+import PCClient.Module.RamUsageThread;
+import PCClient.Module.TimerThread;
 import PCModel.PC;
 import sun.applet.Main;
 
@@ -26,6 +35,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 public class UserInfo {
+	ExecutorService executorService = Executors.newFixedThreadPool(10);
 	JFrame userInfo = new JFrame();
 	PC pc = null;
 	private Boolean isit = false;
@@ -51,10 +61,10 @@ public class UserInfo {
 	
 	private void initialize() {
 		isit = true;
-		URL dohyeonURL = Main.class.getResource("/img/MapoGoldenPier.ttf");
-		URL logoURL = Main.class.getResource("/img/logo.png");
-		URL onURL = Main.class.getResource("/img/on.png");
-		URL offURL = Main.class.getResource("/img/off.png");
+		URL dohyeonURL = getClass().getClassLoader().getResource("MapoGoldenPier.ttf");
+		URL logoURL = getClass().getClassLoader().getResource("logo.png");
+		URL onURL = getClass().getClassLoader().getResource("on.png");
+		URL offURL = getClass().getClassLoader().getResource("off.png");
 		Font font = null;
 		try {
 			font = Font.createFont(Font.TRUETYPE_FONT, dohyeonURL.openStream());
@@ -72,15 +82,31 @@ public class UserInfo {
 		logo.setBounds(0, 0, logoImage.getIconWidth(), logoImage.getIconHeight());
 		upPanel.add(logo);
 		
-		JLabel startTime = new JLabel(pc.getStart_time());
+		SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd-HH-mm");
+		String tempstartTime = null, tempendTime = null;
+		try {
+			Date originalDate = dayTime.parse(pc.getStart_time());
+			long originalTime = originalDate.getTime();
+			Date end_Time = dayTime.parse(pc.getEnd_time());
+			long end_Time1 = end_Time.getTime();
+			dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			tempstartTime = dayTime.format(new Date(originalTime));
+			tempendTime = dayTime.format(new Date(end_Time1));
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		JLabel startTime = new JLabel(tempstartTime);
 		startTime.setFont(font.deriveFont(15f));
 		startTime.setBounds(120,20,180,22); // x위치 y위치 x크기 y크기
 		upPanel.add(startTime);
 		
-		JLabel endTime = new JLabel(pc.getEnd_time());
+		JLabel endTime = new JLabel(tempendTime);
 		endTime.setFont(font.deriveFont(15f));
 		endTime.setBounds(120,52,180,22); // x위치 y위치 x크기 y크기
 		upPanel.add(endTime);
+		executorService.execute(new EndTimeThread(endTime, pc));
 		
 		JLabel on = new JLabel("ON");
 		on.setFont(font.deriveFont(12f));
@@ -116,6 +142,7 @@ public class UserInfo {
 		cpuBar.setBorderPainted(false);
 		cpuBar.setBounds(10, 110, 300, 30);
 		upPanel.add(cpuBar);
+		executorService.execute(new CPUUsageThread(cpuBar, pc));
 		
 		JLabel cpuUsage = new JLabel("CPU 사용량");
 		cpuUsage.setFont(font.deriveFont(12f));
@@ -138,6 +165,7 @@ public class UserInfo {
 		ramBar.setBorderPainted(false);
 		ramBar.setBounds(10, 170, 300, 30);
 		upPanel.add(ramBar);
+		executorService.execute(new RamUsageThread(ramBar, pc));
 		
 		JLabel ramUsage = new JLabel("RAM 사용량");
 		ramUsage.setFont(font.deriveFont(12f));

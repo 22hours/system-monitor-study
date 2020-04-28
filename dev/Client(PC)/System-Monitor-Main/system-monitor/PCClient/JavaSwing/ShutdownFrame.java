@@ -45,7 +45,7 @@ public class ShutdownFrame {
 	}
 	
 	private void initialize() {
-		URL dohyeonURL = Main.class.getResource("/img/MapoGoldenPier.ttf");
+		URL dohyeonURL = getClass().getClassLoader().getResource("MapoGoldenPier.ttf");
 		Font font = null;
 		try {
 			font = Font.createFont(Font.TRUETYPE_FONT, dohyeonURL.openStream());

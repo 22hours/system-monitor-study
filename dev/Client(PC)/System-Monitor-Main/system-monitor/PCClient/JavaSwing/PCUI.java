@@ -99,12 +99,12 @@ public class PCUI {
 		pc.setPosC(dbposC);
 		pc.setId(dbname);
 		
-		URL shutdownURL = Main.class.getResource("/img/stop22.png");
-		URL shutdownPressedURL = Main.class.getResource("/img/stop11.png");
-		URL homeURL = Main.class.getResource("/img/Home.PNG");
-		URL dohyeonURL = Main.class.getResource("/img/MapoGoldenPier.ttf");
-		URL mapoURL = Main.class.getResource("/img/MapoGoldenPier.ttf");
-		URL iconURL = Main.class.getResource("/img/hours22.jpg");
+		URL shutdownURL = getClass().getClassLoader().getResource("stop22.png");
+		URL shutdownPressedURL = getClass().getClassLoader().getResource("stop11.png");
+		URL homeURL = getClass().getClassLoader().getResource("Home.PNG");
+		URL dohyeonURL = getClass().getClassLoader().getResource("MapoGoldenPier.ttf");
+		URL mapoURL = getClass().getClassLoader().getResource("MapoGoldenPier.ttf");
+		URL iconURL = getClass().getClassLoader().getResource("hours22.jpg");
 
 		Font font = null;
 		Font mapofont = null;

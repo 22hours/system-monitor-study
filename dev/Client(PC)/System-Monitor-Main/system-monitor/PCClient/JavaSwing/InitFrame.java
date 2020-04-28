@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.FontFormatException;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.SystemColor;
 import java.awt.geom.RoundRectangle2D;
@@ -63,7 +64,7 @@ public class InitFrame {
 	}
 	
 	private void show() {
-		URL dohyeonURL = Main.class.getResource("/img/MapoGoldenPier.ttf");
+		URL dohyeonURL = getClass().getClassLoader().getResource("MapoGoldenPier.ttf");
 		Font font = null;
 		try {
 			font = Font.createFont(Font.TRUETYPE_FONT, dohyeonURL.openStream());
@@ -71,6 +72,9 @@ public class InitFrame {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		ge.registerFont(font);
+		
 		JPanel upPanel = new JPanel();
 		upPanel.setBounds(0, 0, 240, 170); // x y x크기 y크기
 		upPanel.setBackground(Color.WHITE);

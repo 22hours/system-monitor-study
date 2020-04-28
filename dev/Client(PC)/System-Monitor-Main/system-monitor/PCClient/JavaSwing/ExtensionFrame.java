@@ -54,7 +54,7 @@ public class ExtensionFrame {
 	
 	private void initialize() {
 		isit = true;
-		URL dohyeonURL = Main.class.getResource("/img/MapoGoldenPier.ttf");
+		URL dohyeonURL = getClass().getClassLoader().getResource("MapoGoldenPier.ttf");
 		Font font = null;
 		try {
 			font = Font.createFont(Font.TRUETYPE_FONT, dohyeonURL.openStream());
