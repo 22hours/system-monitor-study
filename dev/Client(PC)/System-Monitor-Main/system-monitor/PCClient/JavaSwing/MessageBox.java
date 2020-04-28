@@ -24,23 +24,24 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class ShutdownFrame {
-	JFrame userInfo = new JFrame();
-	private static ShutdownFrame instance = null;
-	private ShutdownFrame() {
+public class MessageBox {
+	JFrame messageBox = new JFrame();
+
+	private static MessageBox instance = null;
+	private MessageBox() {
 		initialize();
 	}
 	
-	public static ShutdownFrame getInstance() {
+	public static MessageBox getInstance() {
 		if(instance==null)
-			instance = new ShutdownFrame();
+			instance = new MessageBox();
 		return instance;
 	}
 	
-	public synchronized void show(JFrame jframe) {
-		userInfo.setLocationRelativeTo(jframe);
-		if(!userInfo.isVisible()) {
-			userInfo.setVisible(true);
+	public synchronized void show() {
+		messageBox.setLocationRelativeTo(null);
+		if(!messageBox.isVisible()) {
+			messageBox.setVisible(true);
 		}
 	}
 	
@@ -54,13 +55,14 @@ public class ShutdownFrame {
 			e2.printStackTrace();
 		}
 		JPanel upPanel = new JPanel();
-		upPanel.setBounds(0, 0, 200, 100); // x y x크기 y크기
+		upPanel.setBounds(0, 0, 300, 100); // x y x크기 y크기
 		upPanel.setBackground(Color.WHITE);
 		upPanel.setLayout(null);
 		
-		JLabel message = new JLabel("PC를 종료하시겠습니까?");
+		//JLabel message = new JLabel("PC를 종료하시겠습니까?");
+		JLabel message = new JLabel("제대로 된 정보를 입력해 주시기 바랍니다.");
 		message.setFont(font.deriveFont(15f));
-		message.setBounds(20,20,200,25);
+		message.setBounds(17,20,290,25);
 		upPanel.add(message);
 		
 		final MyButton okayButton = new MyButton("확인");
@@ -73,38 +75,21 @@ public class ShutdownFrame {
 		okayButton.setPressedBackgroundColor(Color.BLACK);
 		okayButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				userInfo.setVisible(false);
-				System.exit(0);
+				messageBox.setVisible(false);
 			}
 		});
-		okayButton.setBounds(30, 60, 60, 25);
+		okayButton.setBounds(120, 60, 60, 25);
 		upPanel.add(okayButton);
-		
-		final MyButton noButton = new MyButton("취소");
-		noButton.setFont(font.deriveFont(12f));
-		noButton.setFocusPainted(false);
-		noButton.setBackground(new Color(192, 192, 192));
-		noButton.setForeground(Color.WHITE);
-		noButton.setBorder(null);
-		noButton.setHoverBackgroundColor(Color.BLACK);
-		noButton.setPressedBackgroundColor(Color.BLACK);
-		noButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				userInfo.setVisible(false);
-			}
-		});
-		noButton.setBounds(110, 60, 60, 25);
-		upPanel.add(noButton);
 		
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(null);
 		mainPanel.add(upPanel);
 		
-		userInfo.getContentPane().add(mainPanel);
-		userInfo.setUndecorated(true);
-		userInfo.setVisible(false);
-		userInfo.setResizable(false);
-		userInfo.setSize(200, 100);
-		userInfo.setShape(new RoundRectangle2D.Double(0, 0, 200, 100, 10, 10));
+		messageBox.getContentPane().add(mainPanel);
+		messageBox.setUndecorated(true);
+		messageBox.setVisible(false);
+		messageBox.setResizable(false);
+		messageBox.setSize(300, 100);
+		messageBox.setShape(new RoundRectangle2D.Double(0, 0, 300, 100, 10, 10));
 	}
 }

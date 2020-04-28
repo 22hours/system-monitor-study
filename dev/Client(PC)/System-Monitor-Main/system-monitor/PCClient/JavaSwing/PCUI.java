@@ -36,12 +36,15 @@ import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
+import DataBase.CreateTable;
+import DataBase.ReadData;
 import PCClient.Http.PCPost;
 import PCClient.Module.GetLongPolling;
 import PCClient.Module.GetMACAddress;
 import PCClient.Module.PostGeneralPolling;
 import PCClient.Module.ShutdownHook;
 import PCClient.Module.TimerThread;
+import PCModel.ClassInfo;
 import PCModel.PC;
 import sun.applet.Main;
 
@@ -51,31 +54,15 @@ import javax.swing.SwingConstants;
 import javax.swing.JButton;
 
 public class PCUI {
-	private JFrame frame;
 	ExecutorService executorService = Executors.newFixedThreadPool(10);
-	/**
-	 * @wbp.nonvisual location=109,224
-	 */
-	private final JButton button = new JButton("New button");
-
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					PCUI window = new PCUI();
-					// --window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the application.
-	 */
-	public PCUI() {
+	private static PCUI instance = null;
+	private JFrame frame;
+	private PCUI() {
 		initialize();
+	}
+	public static void show() {
+		if(instance==null)
+			instance = new PCUI();
 	}
 
 	private WindowAdapter getWindowAdapter() {
@@ -96,13 +83,27 @@ public class PCUI {
 		GetMACAddress MAC = new GetMACAddress();
 		String pid = MAC.getLocalMacAddress();
 		final PC pc = new PC(pid);
+		
+		ClassInfo classInfo = ReadData.getInstance().readData();
+		
+		String dbname = classInfo.getName();
+		String dbclassID = classInfo.getClassID();
+		int dbposR = classInfo.getPosR();
+		int dbposC = classInfo.getPosC();
+		
+
+		pc.setName(dbname);
+		pc.setClass_id(dbclassID);
+		pc.setPosR(dbposR);
+		pc.setPosC(dbposC);
+		
 		URL shutdownURL = Main.class.getResource("/img/stop22.png");
 		URL shutdownPressedURL = Main.class.getResource("/img/stop11.png");
 		URL homeURL = Main.class.getResource("/img/Home.PNG");
 		URL dohyeonURL = Main.class.getResource("/img/MapoGoldenPier.ttf");
 		URL mapoURL = Main.class.getResource("/img/MapoGoldenPier.ttf");
 		URL iconURL = Main.class.getResource("/img/hours22.jpg");
-		
+
 		Font font = null;
 		Font mapofont = null;
 		try {
@@ -120,7 +121,7 @@ public class PCUI {
 		frame = new JFrame();
 		ImageIcon ic = new ImageIcon(iconURL);
 		frame.setIconImage(ic.getImage());
-		
+
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
@@ -158,10 +159,10 @@ public class PCUI {
 			}
 		});
 		upPanel.add(shutdownButton);
-		
+
 		JLabel classID = new JLabel(pc.getClass_id());
 		classID.setFont(mapofont);
-		classID.setBounds(35, 72, 50, 20);
+		classID.setBounds(35, 75, 50, 20);
 		upPanel.add(classID);
 
 		JLabel version = new JLabel("현재 버전 : 1.0.13");
@@ -172,7 +173,7 @@ public class PCUI {
 		upPanel.add(version);
 
 		JLabel home = new JLabel(new ImageIcon(homeURL));
-		home.setBounds(10, 73, 26, 18);
+		home.setBounds(10, 76, 26, 18);
 		upPanel.add(home);
 
 		JPanel downPanel = new JPanel();
@@ -209,7 +210,7 @@ public class PCUI {
 		userData.setFocusPainted(false);
 		userData.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				UserInfo.getInstance().show(frame,pc);
+				UserInfo.getInstance().show(frame, pc);
 			}
 		});
 		downPanel.add(userData);
@@ -260,7 +261,7 @@ public class PCUI {
 		executorService.execute(new TimerThread(label, pc));
 		ShutdownHook shutdownhook = new ShutdownHook(pc);
 		shutdownhook.AttachShutdownHook();
-
+		
 		try {
 			PCPost.getInstance().PostMethod(pc);
 			executorService.execute(new GetLongPolling(pc));

@@ -22,7 +22,7 @@ public class ReadData {
 		return instance;
 	}
 
-	public ClassInfo readData(String classID, int posR, int posC) {
+	public ClassInfo readData() {
 		String query = "SELECT * FROM classInfo";
 
 		Connection connection = null;
@@ -40,20 +40,20 @@ public class ReadData {
 			statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(query);
 
-			if (resultSet.next()) { // 데이터 없을 경우
-				String tempName = resultSet.getString("name");
-				String tempClassID = resultSet.getString("classID");
-				int tempPosR = resultSet.getInt("posR");
-				int tempPosC = resultSet.getInt("posC");
+			if (resultSet.next()) {
+				String name = resultSet.getString("name");
+				String classID = resultSet.getString("classID");
+				int posR = resultSet.getInt("posR");
+				int posC = resultSet.getInt("posC");
 
-				ClassInfo classInfo = new ClassInfo(tempName, tempClassID, tempPosR, tempPosC);
-				System.out.println(classInfo.toString());
+				ClassInfo classInfo = new ClassInfo(name, classID, posR, posC);
+				System.out.println("Read Data = " + classInfo.toString());
 				resultSet.close();
 				statement.close();
 				connection.close();
 				return classInfo;
 				
-			} else {
+			} else { // 데이터 없을 경우
 				statement.close();
 				connection.close();
 				return null;

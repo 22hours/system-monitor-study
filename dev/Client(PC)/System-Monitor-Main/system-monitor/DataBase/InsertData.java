@@ -18,7 +18,6 @@ public class InsertData {
 	}
 	public boolean insertData(String classID, int posR, int posC) {
 		String name = classID + "_" + posR + "_" +posC;
-		System.out.println("name = " + name);
 		String query =  "INSERT INTO classInfo(name,classID,posR,posC) VALUES(?,?,?,?)";
 
 		Connection connection = null;
@@ -37,7 +36,7 @@ public class InsertData {
 			statement.setString(1, name);
 			statement.setString(2, classID);
 			statement.setInt(3, posR);
-			statement.setInt(3, posC);
+			statement.setInt(4, posC);
 			statement.executeUpdate();
 			statement.close();
 			connection.close();

@@ -19,7 +19,7 @@ public class CreateTable {
 		String query = "CREATE TABLE IF NOT EXISTS classInfo (\n"
                 + "	name text PRIMARY KEY,\n"
                 + "	classID text NOT NULL,\n"
-                + "	posR Integer\n"
+                + "	posR Integer,\n"
                 + "	posC Integer\n"
                 + ");";
 		Connection connection = null;
