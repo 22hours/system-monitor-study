@@ -3,6 +3,7 @@ package com.hours22.system_monitor_ver11.controller;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
@@ -66,7 +67,7 @@ public class CommonController {
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : / <- GET method [Client Ip : "+ cic.getClientIp(request) +" ] at " + transFormat.format(new Date()));
 		cache.SetCache(req.getHeader("If-None-Match"));
-		return CompletableFuture.completedFuture(new ResponseEntity<String>(msg, HttpStatus.OK));
+		return CompletableFuture.completedFuture(ResponseEntity.ok().body(msg));
 	}
 	
 	@RequestMapping(value = "/testpage", method = RequestMethod.GET)
@@ -79,7 +80,7 @@ public class CommonController {
     
 	
 	@RequestMapping(value = "/pc/{id}", method = RequestMethod.GET)
-	public @ResponseBody String GetPcInstanceData(HttpServletRequest req, HttpServletResponse response,  @PathVariable String id) throws IOException {
+	public CompletableFuture<ResponseEntity<String>> GetPcInstanceData(HttpServletRequest req, HttpServletResponse response,  @PathVariable String id) throws IOException {
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : /pc/"+ id +" <- GET method [Client Ip : "+ cic.getClientIp(req) + " ] at " + transFormat.format(new Date()));
 		
@@ -87,7 +88,7 @@ public class CommonController {
 		String res = lc.getConnectionHgetall(id);
 		//lc.getConnectionExit();
 		
-		return res;
+		return CompletableFuture.completedFuture(ResponseEntity.ok().body(res));
 	}
 	
 	@RequestMapping(value = "/pc/{id}", method = RequestMethod.POST)

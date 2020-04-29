@@ -2,8 +2,11 @@ package com.hours22.system_monitor_ver11.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 import javax.servlet.AsyncContext;
@@ -11,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Controller;
@@ -23,7 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.hours22.system_monitor_ver11.client.ServerTimer;
 
 @Controller
-@RequestMapping(value = "/async/callable", method = RequestMethod.GET)
+//@RequestMapping(value = "/async/callable", method = RequestMethod.GET)
 public class AsyncTestController {
  
 	String InterruptKey = null;
@@ -95,28 +99,18 @@ public class AsyncTestController {
     	}
     }
     
-    @Async("threadPoolHome")
-    @RequestMapping(value = "/test2", method = RequestMethod.GET)
-    public Future<String> GetThreadIdTest2() {
-    	Set<Thread> setOfThread = Thread.getAllStackTraces().keySet();
+	@Async("threadPoolHome")
+    @RequestMapping(value = "/test22", method = RequestMethod.GET)
+    public CompletableFuture<ResponseEntity<Map<String, String>>> GetThreadIdTest22() {
+    	Map<String, String> map = new HashMap<String, String>();
+    	map.put("key", "1");
+    	map.put("keys", "2");
 
-		System.out.println("----------------------------------------------------------------------------------------------------");
-		System.out.println("Input : /async/callable/threads/");
-		System.out.println("GetThreadIdTesting.....");
-		System.out.println("현재 Thread ID : " + Thread.currentThread().getId());
-		System.out.println("현재 Thread Name : " + Thread.currentThread().getName());  
-    	//Iterate over set to find yours
-    	/*
-    	for(Thread thread : setOfThread){
-    		System.out.println("Active Thread's [ Number : " +thread.getId()+" / Name : "+thread.getName()+" ] ");
-    	    
-    		String res = thread.getName();
-    		if(res.equals(thName)) {
-    			thread.interrupt();
-    			System.out.println("******"+res+" 스레드를 종료시킵니다.******");
-    		}
-    	}
-    	*/
-		return new AsyncResult<>("hahaha");
+  
+    	String info = "123123123";
+    	System.out.println("ID : "+Thread.currentThread().getId());
+    	System.out.println("NAME : "+Thread.currentThread().getName());
+    	System.out.println(info);
+    	return CompletableFuture.completedFuture(ResponseEntity.accepted().body(map));
     }
 }

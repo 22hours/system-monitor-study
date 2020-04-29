@@ -51,7 +51,6 @@ import com.hours22.system_monitor_ver11.db.LettuceController;
 import com.hours22.system_monitor_ver11.vo.PcData;
 
 @Controller
-@WebServlet(asyncSupported = true)
 public class MobileController{
 	@Autowired
 	ObjectMapper ojm;
@@ -73,12 +72,12 @@ public class MobileController{
 	@CrossOrigin("*")
 	@Async(value = "threadPoolMobileGetPcs")
 	@RequestMapping(value = "/mobile/pc", method = RequestMethod.GET)
-	public Future<ResponseEntity<String>> GetPcData(WebRequest req, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public CompletableFuture<ResponseEntity<String>> GetPcData(WebRequest req, HttpServletRequest request, HttpServletResponse response) throws IOException {
 			
 		
-		if (req.checkNotModified(cache.GetCache())) {
-			return null;
-		}
+		//if (req.checkNotModified(cache.GetCache())) {
+		//	return null;
+		//}
 		
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : /mobile/pc <- GET method [Client Ip : "+ cic.getClientIp(request)+"] at "+transFormat.format(new Date()) );
@@ -86,19 +85,20 @@ public class MobileController{
 		//lc.getConnection();
 		
 		String json = ojm.writeValueAsString(dss.GetAllTypeDataRedis("PC", "pcs"));
+	
 		json = dss.PrettyPrinter(json);
 		System.out.println(json);
 		//lc.getConnectionExit();
-		cache.SetCache(req.getHeader("If-None-Match"));
-		System.out.println(req.getHeader("If-None-Match"));
-		return new AsyncResult<>(new ResponseEntity<String>(json, HttpStatus.OK));
+		//cache.SetCache(req.getHeader("If-None-Match"));
+		//System.out.println(req.getHeader("If-None-Match"));
+		return CompletableFuture.completedFuture(ResponseEntity.ok().body(json));
 	}
 	
 	
 	@CrossOrigin("*")
 	@Async(value = "threadPoolMobileGetPcData")
 	@RequestMapping(value = "/mobile/pc/{id}/data", method = RequestMethod.GET)
-	public Future<ResponseEntity<String>> GetPcRamCpuData(WebRequest req, HttpServletRequest request, HttpServletResponse response, @PathVariable String id) throws IOException {
+	public CompletableFuture<ResponseEntity<String>> GetPcRamCpuData(WebRequest req, HttpServletRequest request, HttpServletResponse response, @PathVariable String id) throws IOException {
 		response.setContentType("application/json;charset=UTF-8"); 
 		if (req.checkNotModified(cache.GetCache())) {
 			return null;
@@ -115,7 +115,7 @@ public class MobileController{
 		//response.getWriter().print(json);
 		//lc.getConnectionExit();
 		cache.SetCache(req.getHeader("If-None-Match"));
-		return new AsyncResult<>(new ResponseEntity(json, HttpStatus.OK));
+		return CompletableFuture.completedFuture(ResponseEntity.ok().body(json));
 	}
 	
 	@CrossOrigin("*")
@@ -147,7 +147,7 @@ public class MobileController{
 			Map<String, String> jsonObject = new HashMap<String, String>();
 			jsonObject.put("id", id);
 			jsonObject.put("msg", "false");
-			return CompletableFuture.completedFuture(new ResponseEntity<Map<String, String>>(jsonObject, HttpStatus.OK));
+			return CompletableFuture.completedFuture(ResponseEntity.badRequest().body(jsonObject));
 		}
 		lc.getConnectionHset(id, map);
 		//lc.getConnectionExit();
@@ -159,7 +159,7 @@ public class MobileController{
 		jsonObject.put("endTime", endTime);
 		jsonObject.put("msg", "true");
 		cache.SetCache(req.getHeader("If-None-Match"));
-		return CompletableFuture.completedFuture(new ResponseEntity<Map<String, String>>(jsonObject, HttpStatus.OK));
+		return CompletableFuture.completedFuture(ResponseEntity.ok().body(jsonObject));
 	}
 	
 	@CrossOrigin("*")
@@ -175,17 +175,17 @@ public class MobileController{
 		if(type.equals("admin") && ret.equals("false")) {
 			//lc.getConnectionExit();
 			jsonObject.put("msg", "false");
-			return CompletableFuture.completedFuture(new ResponseEntity<Map<String, String>>(jsonObject, HttpStatus.NON_AUTHORITATIVE_INFORMATION));
+			return CompletableFuture.completedFuture(ResponseEntity.badRequest().body(jsonObject));
 		}
 		//lc.getConnectionExit();
 		auth.put("msg", "true");
-		return CompletableFuture.completedFuture(new ResponseEntity<Map<String, String>>(auth, HttpStatus.OK));
+		return CompletableFuture.completedFuture(ResponseEntity.ok().body(auth));
 	}
 	
 	@CrossOrigin("*")
 	@Async(value = "threadPoolMobileClass")
 	@RequestMapping(value = "/mobile/class", method = RequestMethod.GET)
-	public CompletableFuture<ResponseEntity<Map<String, String>>> GetAllClassData(WebRequest req, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public CompletableFuture<ResponseEntity<String>> GetAllClassData(WebRequest req, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		
 		if (req.checkNotModified(cache.GetCache())) {
 			return null;
@@ -197,14 +197,13 @@ public class MobileController{
 		
 		//lc.getConnection();
 		
-		Map<String, String> map = dss.GetAllTypeDataRedis("CLASS", "classes");
- 		//String json = ojm.writeValueAsString(dss.GetAllTypeDataRedis("CLASS", "classes"));
-		//json = dss.PrettyPrinter(json);
-		System.out.println(map);
+ 		String json = ojm.writeValueAsString(dss.GetAllTypeDataRedis("CLASS", "classes"));
+		json = dss.PrettyPrinter(json);
+		System.out.println(json);
 		
 		//lc.getConnectionExit();
 		cache.SetCache(req.getHeader("If-None-Match"));
-		return CompletableFuture.completedFuture(new ResponseEntity<Map<String, String>>(map, HttpStatus.OK));
+		return CompletableFuture.completedFuture(ResponseEntity.ok().body(json));
 	}
 	
 	@CrossOrigin("*")
@@ -228,7 +227,7 @@ public class MobileController{
 		
 		//lc.getConnectionExit();
 		cache.SetCache(req.getHeader("If-None-Match"));
-		return CompletableFuture.completedFuture(new ResponseEntity<String>(json, HttpStatus.OK));
+		return CompletableFuture.completedFuture(ResponseEntity.ok().body(json));
 	}
 	
 	@CrossOrigin("*")
@@ -250,6 +249,7 @@ public class MobileController{
 		//lc.getConnectionExit();
 		cache.SetCache(req.getHeader("If-None-Match"));
 		map.put("message", "success update!");
-		return CompletableFuture.completedFuture(new ResponseEntity<Map<String, String>>(map, HttpStatus.OK));
+		return CompletableFuture.completedFuture(ResponseEntity.ok().body(map));
 	}
+	
 }

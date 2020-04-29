@@ -1,7 +1,6 @@
 package com.hours22.system_monitor_ver11.async;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -11,8 +10,6 @@ import java.util.concurrent.Executor;
 @Configuration
 @EnableAsync
 public class SpringAsyncConfig {
-
-	
 	//Common 
 	@Bean(name = "threadPoolHome")
 	public Executor threadPoolHomeExecutor() {
@@ -75,8 +72,8 @@ public class SpringAsyncConfig {
     public Executor threadPoolMobileGetPcsExecutor() {
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
         taskExecutor.setCorePoolSize(5);
-        taskExecutor.setMaxPoolSize(100);
-        taskExecutor.setQueueCapacity(30);
+        taskExecutor.setMaxPoolSize(20);
+        taskExecutor.setQueueCapacity(10);
         taskExecutor.setThreadNamePrefix("MobilePcs-");
         taskExecutor.initialize();
         return taskExecutor;
