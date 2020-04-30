@@ -3,8 +3,10 @@ package com.hours22.system_monitor_ver11.controller;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -51,10 +54,11 @@ public class CommonController {
 	
 	SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	
+	
 	@CrossOrigin("*")
-	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public ResponseEntity<String> GetIndex(WebRequest req, HttpServletRequest request, HttpServletResponse response) throws IOException {
-		response.setContentType("text/html;charset=UTF-8");
+	@Async(value = "threadPoolHome")
+	@RequestMapping(value = "/")
+	public CompletableFuture<String> GetIndex(WebRequest req, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		if (req.checkNotModified(cache.GetCache())) {
 			return null;
 		}
@@ -62,8 +66,7 @@ public class CommonController {
 
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : / <- GET method [Client Ip : "+ cic.getClientIp(request) +" ] at " + transFormat.format(new Date()));
-		cache.SetCache(req.getHeader("If-None-Match"));
-		return new ResponseEntity<String>(msg, HttpStatus.OK);
+		return CompletableFuture.completedFuture("index.html");
 	}
 	
 	@RequestMapping(value = "/testpage", method = RequestMethod.GET)
@@ -76,7 +79,7 @@ public class CommonController {
     
 	
 	@RequestMapping(value = "/pc/{id}", method = RequestMethod.GET)
-	public @ResponseBody String GetPcInstanceData(HttpServletRequest req, HttpServletResponse response,  @PathVariable String id) throws IOException {
+	public CompletableFuture<ResponseEntity<String>> GetPcInstanceData(HttpServletRequest req, HttpServletResponse response,  @PathVariable String id) throws IOException {
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : /pc/"+ id +" <- GET method [Client Ip : "+ cic.getClientIp(req) + " ] at " + transFormat.format(new Date()));
 		
@@ -84,7 +87,7 @@ public class CommonController {
 		String res = lc.getConnectionHgetall(id);
 		//lc.getConnectionExit();
 		
-		return res;
+		return CompletableFuture.completedFuture(ResponseEntity.ok().body(res));
 	}
 	
 	@RequestMapping(value = "/pc/{id}", method = RequestMethod.POST)

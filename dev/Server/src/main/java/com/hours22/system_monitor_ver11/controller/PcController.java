@@ -13,6 +13,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 import javax.servlet.AsyncContext;
@@ -50,7 +51,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 @Controller
 @Configuration
-@WebServlet(asyncSupported = true)
 public class PcController {
 	@Autowired
 	ObjectMapper ojm;
@@ -70,8 +70,9 @@ public class PcController {
 	SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	
 	
+	@Async(value = "threadPoolPcData")
 	@RequestMapping(value = "/pc/data", method = RequestMethod.POST)
-	public void PostPcData(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map) throws IOException {
+	public CompletableFuture<ResponseEntity<String>> PostPcData(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map) throws IOException {
 		response.setCharacterEncoding("UTF-8");
 		
 		String id = map.get("id");
@@ -83,12 +84,14 @@ public class PcController {
 		//lc.getConnectionExit();
 		System.out.println(map.toString());
 		
-		response.getWriter().print("Success /pc/"+id+"/data <- POST method !!");
+		//response.getWriter().print("Success /pc/"+id+"/data <- POST method !!");
 		cache.SetCache(req.getHeader("If-None-Match"));
+		return CompletableFuture.completedFuture(ResponseEntity.ok().body("Success /pc/"+id+"/data <- POST method !!"));
 	}
 	
+	@Async(value = "threadPoolPcPowerOff")
 	@RequestMapping(value = "/pc/power", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, String>> PostPcPower(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map) throws IOException, InterruptedException {
+	public CompletableFuture<ResponseEntity<Map<String, String>>> PostPcPower(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map) throws IOException, InterruptedException {
 		response.setCharacterEncoding("UTF-8");
 
 		String id = map.get("id");
@@ -114,7 +117,7 @@ public class PcController {
 			Map<String, String> jsonObject = new HashMap<String, String>();
 			jsonObject.put("id", id);
 			jsonObject.put("msg", "false");
-			return new ResponseEntity<Map<String, String>>(jsonObject, HttpStatus.OK);
+			return CompletableFuture.completedFuture(ResponseEntity.badRequest().body(jsonObject));
 		}
 		lc.getConnectionHset(id, map);
 		//lc.getConnectionExit();
@@ -126,12 +129,12 @@ public class PcController {
 		jsonObject.put("endTime", endTime);
 		jsonObject.put("msg", "true");
 		cache.SetCache(req.getHeader("If-None-Match"));
-		return new ResponseEntity<Map<String, String>>(jsonObject, HttpStatus.OK);
+		return CompletableFuture.completedFuture(ResponseEntity.ok().body(jsonObject));
 	}	
 	
-
+	@Async("threadPoolPCPowerOffMsg")
 	@RequestMapping(value = "/pc/{id}/message/{min}", method = RequestMethod.GET)
-	public @ResponseBody Callable<Map<String, String>> GetWarningMsg(HttpServletRequest request, HttpServletResponse response, @PathVariable String id, @PathVariable String min) throws IOException, InterruptedException, ParseException {
+	public CompletableFuture<Callable<ResponseEntity<Map<String, String>>>> GetWarningMsg(HttpServletRequest request, HttpServletResponse response, @PathVariable String id, @PathVariable String min) throws IOException, InterruptedException, ParseException {
 		response.setContentType("application/json;charset=UTF-8"); 
 		
 		System.out.println("--------------------------------------------------------------------------------------------");
@@ -185,9 +188,12 @@ public class PcController {
 		jsonObject.put("id", id);
 		//return new AsyncResult<Map<String, String>>(jsonObject);
 		
-		return new Callable<Map<String, String>>() {
-            @Override
-            public Map<String, String> call() throws Exception {
+	
+		return CompletableFuture.completedFuture(new Callable<ResponseEntity<Map<String, String>>>() {
+            
+			@Async(value = "threadPoolPCPowerOffMsgReturn")
+			@Override
+            public ResponseEntity<Map<String, String>> call() throws Exception {
             	
             	System.out.println("================================");
             	System.out.println("PCPowerOffMsg Return 영역");
@@ -229,12 +235,13 @@ public class PcController {
 					String endTime = lc.getConnectionHgetField(id, "endTime");
 					//lc.getConnectionExit();
 					jsonObjectExit.put("endTime", endTime);
-					return jsonObjectExit;
+					return ResponseEntity.ok().body(jsonObjectExit);
                 }
                 else {
                 // endhttp://localhost/pc/hours22/message/2
-					JSONObject jsonObject = new JSONObject();
+					Map<String, String> jsonObject = new JSONObject();
 	
+					
 					System.out.println("--------------------------------------------------------------------------------------------");
 					System.out.println("[종료"+ min +"분전 알림 메세지! PC : "+ id +" ]  at " + transFormat.format(new Date()));
 					jsonObject.put("id", id);
@@ -247,9 +254,9 @@ public class PcController {
 					jsonObject.put("endTime", endTime);
 					
 					System.out.println("response : " + jsonObject.toString());
-	                return jsonObject;
+	                return ResponseEntity.ok().body(jsonObject);
                 }
             }
-        };
+        });
 	}
 }

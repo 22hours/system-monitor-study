@@ -25,12 +25,12 @@ public class Application {
         return new StringHttpMessageConverter(Charset.forName("UTF-8"));
     }
 
-    @Bean
-    FilterRegistrationBean shallowEtagBean () {
-        FilterRegistrationBean frb = new FilterRegistrationBean();
-        frb.setFilter(new ShallowEtagHeaderFilter());
-        frb.addUrlPatterns("/mobile/*");
-        frb.setOrder(2);
-        return frb;
-    }
+    //@Bean
+    //FilterRegistrationBean shallowEtagBean () {
+    //    FilterRegistrationBean frb = new FilterRegistrationBean();
+    //    frb.setFilter(new ShallowEtagHeaderFilter());
+    //    frb.addUrlPatterns("/mobile/*");
+    //    frb.setOrder(2);
+    //    return frb;
+    //}
 }

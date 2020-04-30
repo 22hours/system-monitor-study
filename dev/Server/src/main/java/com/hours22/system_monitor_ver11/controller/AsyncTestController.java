@@ -2,14 +2,21 @@ package com.hours22.system_monitor_ver11.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpRequest;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.hours22.system_monitor_ver11.client.ServerTimer;
 
 @Controller
-@RequestMapping(value = "/async/callable", method = RequestMethod.GET)
+//@RequestMapping(value = "/async/callable", method = RequestMethod.GET)
 public class AsyncTestController {
  
 	String InterruptKey = null;
@@ -90,5 +97,20 @@ public class AsyncTestController {
     			System.out.println("******"+res+" 스레드를 종료시킵니다.******");
     		}
     	}
+    }
+    
+	@Async("threadPoolHome")
+    @RequestMapping(value = "/test22", method = RequestMethod.GET)
+    public CompletableFuture<ResponseEntity<Map<String, String>>> GetThreadIdTest22() {
+    	Map<String, String> map = new HashMap<String, String>();
+    	map.put("key", "1");
+    	map.put("keys", "2");
+
+  
+    	String info = "123123123";
+    	System.out.println("ID : "+Thread.currentThread().getId());
+    	System.out.println("NAME : "+Thread.currentThread().getName());
+    	System.out.println(info);
+    	return CompletableFuture.completedFuture(ResponseEntity.accepted().body(map));
     }
 }

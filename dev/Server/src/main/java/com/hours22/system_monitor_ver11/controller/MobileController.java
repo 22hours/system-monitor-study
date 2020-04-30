@@ -11,6 +11,9 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Future;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.annotation.WebServlet;
@@ -26,7 +29,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,7 +51,6 @@ import com.hours22.system_monitor_ver11.db.LettuceController;
 import com.hours22.system_monitor_ver11.vo.PcData;
 
 @Controller
-@WebServlet(asyncSupported = true)
 public class MobileController{
 	@Autowired
 	ObjectMapper ojm;
@@ -66,13 +70,14 @@ public class MobileController{
 	
 	
 	@CrossOrigin("*")
+	@Async(value = "threadPoolMobileGetPcs")
 	@RequestMapping(value = "/mobile/pc", method = RequestMethod.GET)
-	public ResponseEntity<String> GetPcData(WebRequest req, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public CompletableFuture<ResponseEntity<String>> GetPcData(WebRequest req, HttpServletRequest request, HttpServletResponse response) throws IOException {
 			
 		
-		if (req.checkNotModified(cache.GetCache())) {
-			return null;
-		}
+		//if (req.checkNotModified(cache.GetCache())) {
+		//	return null;
+		//}
 		
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : /mobile/pc <- GET method [Client Ip : "+ cic.getClientIp(request)+"] at "+transFormat.format(new Date()) );
@@ -80,18 +85,20 @@ public class MobileController{
 		//lc.getConnection();
 		
 		String json = ojm.writeValueAsString(dss.GetAllTypeDataRedis("PC", "pcs"));
+	
 		json = dss.PrettyPrinter(json);
 		System.out.println(json);
 		//lc.getConnectionExit();
-		cache.SetCache(req.getHeader("If-None-Match"));
-		System.out.println(req.getHeader("If-None-Match"));
-		return new ResponseEntity<String>(json, HttpStatus.OK);
+		//cache.SetCache(req.getHeader("If-None-Match"));
+		//System.out.println(req.getHeader("If-None-Match"));
+		return CompletableFuture.completedFuture(ResponseEntity.ok().body(json));
 	}
 	
 	
 	@CrossOrigin("*")
+	@Async(value = "threadPoolMobileGetPcData")
 	@RequestMapping(value = "/mobile/pc/{id}/data", method = RequestMethod.GET)
-	public ResponseEntity<String> GetPcRamCpuData(WebRequest req, HttpServletRequest request, HttpServletResponse response, @PathVariable String id) throws IOException {
+	public CompletableFuture<ResponseEntity<String>> GetPcRamCpuData(WebRequest req, HttpServletRequest request, HttpServletResponse response, @PathVariable String id) throws IOException {
 		response.setContentType("application/json;charset=UTF-8"); 
 		if (req.checkNotModified(cache.GetCache())) {
 			return null;
@@ -108,12 +115,13 @@ public class MobileController{
 		//response.getWriter().print(json);
 		//lc.getConnectionExit();
 		cache.SetCache(req.getHeader("If-None-Match"));
-		return new ResponseEntity(json, HttpStatus.OK);
+		return CompletableFuture.completedFuture(ResponseEntity.ok().body(json));
 	}
 	
 	@CrossOrigin("*")
+	@Async(value = "threadPoolMobilePowerOff")
 	@RequestMapping(value = "/mobile/pc/power", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, String>> PostPcPower(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map) throws IOException, InterruptedException {
+	public CompletableFuture<ResponseEntity<Map<String, String>>> PostPcPower(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map) throws IOException, InterruptedException {
 		response.setCharacterEncoding("UTF-8");
 
     	String id = map.get("id");
@@ -139,7 +147,7 @@ public class MobileController{
 			Map<String, String> jsonObject = new HashMap<String, String>();
 			jsonObject.put("id", id);
 			jsonObject.put("msg", "false");
-			return new ResponseEntity<Map<String, String>>(jsonObject, HttpStatus.OK);
+			return CompletableFuture.completedFuture(ResponseEntity.badRequest().body(jsonObject));
 		}
 		lc.getConnectionHset(id, map);
 		//lc.getConnectionExit();
@@ -151,12 +159,13 @@ public class MobileController{
 		jsonObject.put("endTime", endTime);
 		jsonObject.put("msg", "true");
 		cache.SetCache(req.getHeader("If-None-Match"));
-		return new ResponseEntity<Map<String, String>>(jsonObject, HttpStatus.OK);
+		return CompletableFuture.completedFuture(ResponseEntity.ok().body(jsonObject));
 	}
 	
 	@CrossOrigin("*")
+	@Async(value = "threadPoolMobileLogin")
 	@RequestMapping(value = "/mobile/login", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, String>> GetAdminLogin(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map) throws IOException, InterruptedException {
+	public CompletableFuture<ResponseEntity<Map<String, String>>> GetAdminLogin(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map) throws IOException, InterruptedException {
 		Map<String, String> jsonObject = new HashMap<String, String>();
 		
 		//lc.getConnection();
@@ -166,16 +175,17 @@ public class MobileController{
 		if(type.equals("admin") && ret.equals("false")) {
 			//lc.getConnectionExit();
 			jsonObject.put("msg", "false");
-			return new ResponseEntity<Map<String, String>>(jsonObject, HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+			return CompletableFuture.completedFuture(ResponseEntity.badRequest().body(jsonObject));
 		}
 		//lc.getConnectionExit();
 		auth.put("msg", "true");
-		return new ResponseEntity<Map<String, String>>(auth, HttpStatus.OK);
+		return CompletableFuture.completedFuture(ResponseEntity.ok().body(auth));
 	}
 	
 	@CrossOrigin("*")
+	@Async(value = "threadPoolMobileClass")
 	@RequestMapping(value = "/mobile/class", method = RequestMethod.GET)
-	public @ResponseBody String GetAllClassData(WebRequest req, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public CompletableFuture<ResponseEntity<String>> GetAllClassData(WebRequest req, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		
 		if (req.checkNotModified(cache.GetCache())) {
 			return null;
@@ -187,18 +197,19 @@ public class MobileController{
 		
 		//lc.getConnection();
 		
-		String json = ojm.writeValueAsString(dss.GetAllTypeDataRedis("CLASS", "classes"));
+ 		String json = ojm.writeValueAsString(dss.GetAllTypeDataRedis("CLASS", "classes"));
 		json = dss.PrettyPrinter(json);
 		System.out.println(json);
 		
 		//lc.getConnectionExit();
 		cache.SetCache(req.getHeader("If-None-Match"));
-		return json;
+		return CompletableFuture.completedFuture(ResponseEntity.ok().body(json));
 	}
 	
 	@CrossOrigin("*")
+	@Async(value = "threadPoolMobileClassId")
 	@RequestMapping(value = "/mobile/class/{classId}", method = RequestMethod.GET)
-	public @ResponseBody String GetAllClassPcData(WebRequest req, HttpServletRequest request, HttpServletResponse response, @PathVariable String classId) throws IOException {
+	public CompletableFuture<ResponseEntity<String>> GetAllClassPcData(WebRequest req, HttpServletRequest request, HttpServletResponse response, @PathVariable String classId) throws IOException {
 		
 		if (req.checkNotModified(cache.GetCache())) {
 			return null;
@@ -216,12 +227,13 @@ public class MobileController{
 		
 		//lc.getConnectionExit();
 		cache.SetCache(req.getHeader("If-None-Match"));
-		return json;
+		return CompletableFuture.completedFuture(ResponseEntity.ok().body(json));
 	}
 	
 	@CrossOrigin("*")
+	@Async(value = "threadPoolMobileClassPowerOff")
 	@RequestMapping(value = "/mobile/class/power", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, String>> PostAllClassPcPower(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map) throws IOException, InterruptedException {
+	public CompletableFuture<ResponseEntity<Map<String, String>>> PostAllClassPcPower(WebRequest req, HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map) throws IOException, InterruptedException {
 		String classId = map.get("id");
 		
 		//req.check
@@ -237,6 +249,7 @@ public class MobileController{
 		//lc.getConnectionExit();
 		cache.SetCache(req.getHeader("If-None-Match"));
 		map.put("message", "success update!");
-		return new ResponseEntity<Map<String, String>>(map, HttpStatus.OK);
+		return CompletableFuture.completedFuture(ResponseEntity.ok().body(map));
 	}
+	
 }
