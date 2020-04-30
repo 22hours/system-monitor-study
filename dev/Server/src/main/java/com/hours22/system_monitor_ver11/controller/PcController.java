@@ -51,7 +51,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 @Controller
 @Configuration
-//@WebServlet(asyncSupported = true)
 public class PcController {
 	@Autowired
 	ObjectMapper ojm;

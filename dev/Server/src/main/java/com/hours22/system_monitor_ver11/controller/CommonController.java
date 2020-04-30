@@ -54,11 +54,11 @@ public class CommonController {
 	
 	SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	
+	
 	@CrossOrigin("*")
 	@Async(value = "threadPoolHome")
-	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public CompletableFuture<ResponseEntity<String>> GetIndex(WebRequest req, HttpServletRequest request, HttpServletResponse response) throws IOException {
-		response.setContentType("text/html;charset=UTF-8");
+	@RequestMapping(value = "/")
+	public CompletableFuture<String> GetIndex(WebRequest req, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		if (req.checkNotModified(cache.GetCache())) {
 			return null;
 		}
@@ -66,8 +66,7 @@ public class CommonController {
 
 		System.out.println("--------------------------------------------------------------------------------------------");
 		System.out.println("Input : / <- GET method [Client Ip : "+ cic.getClientIp(request) +" ] at " + transFormat.format(new Date()));
-		cache.SetCache(req.getHeader("If-None-Match"));
-		return CompletableFuture.completedFuture(ResponseEntity.ok().body(msg));
+		return CompletableFuture.completedFuture("index.html");
 	}
 	
 	@RequestMapping(value = "/testpage", method = RequestMethod.GET)
