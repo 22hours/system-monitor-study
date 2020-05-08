@@ -1,9 +1,14 @@
 package PCClient.JavaSwing;
 
+import java.awt.AlphaComposite;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.FontFormatException;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.SystemColor;
@@ -21,6 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
 
 import DataBase.CreateTable;
 import DataBase.InsertData;
@@ -64,6 +70,9 @@ public class InitFrame {
 	}
 	
 	private void show() {
+		URL iconURL = getClass().getClassLoader().getResource("hours22.png");
+		ImageIcon ic = new ImageIcon(iconURL);
+		
 		URL dohyeonURL = getClass().getClassLoader().getResource("MapoGoldenPier.ttf");
 		Font font = null;
 		try {
@@ -136,6 +145,11 @@ public class InitFrame {
 					int tempPosR = Integer.parseInt(posRField.getText());
 					int tempPposC = Integer.parseInt(posCField.getText());
 					boolean isit = InsertData.getInstance().insertData(classID, tempPosR, tempPposC);
+					try {
+						PCPost.getInstance().InitPost(classID, tempPosR, tempPposC);
+					} catch (URISyntaxException | IOException e1) {
+						e1.printStackTrace();
+					}
 					init.setVisible(false);
 					PCUI.show();
 					
@@ -165,14 +179,18 @@ public class InitFrame {
 
 		mainPanel.setLayout(null);
 		mainPanel.add(upPanel);
-
-		init.getContentPane().add(mainPanel);
+		
+		//init.getContentPane().add(mainPanel);
+		init.setContentPane(new ShadowPane());
+		init.add(mainPanel);
 		init.setUndecorated(true);
 		init.setVisible(true);
 		init.setResizable(false);
 		init.setSize(240, 170);
 		init.setShape(new RoundRectangle2D.Double(0, 0, 240, 170, 10, 10));
 		init.setLocationRelativeTo(null);
+		init.setIconImage(ic.getImage());
+		
 	}
 	
 	private void initialize() {
@@ -200,5 +218,28 @@ public class InitFrame {
 			return false;
 		}
 	}
+	public class ShadowPane extends JPanel {
 
+        public ShadowPane() {
+            setLayout(new BorderLayout());
+            setOpaque(false);
+            setBackground(Color.BLACK);
+            setBorder(new EmptyBorder(0, 0, 3, 3));
+        }
+
+        @Override
+        public Dimension getPreferredSize() {
+            return new Dimension(200, 200);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setComposite(AlphaComposite.SrcOver.derive(0.5f));
+            g2d.fillRect(0, 0, getWidth(), getHeight());
+            g2d.dispose();
+        }
+    }
 }
+

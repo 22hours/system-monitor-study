@@ -104,7 +104,7 @@ public class PCUI {
 		URL homeURL = getClass().getClassLoader().getResource("Home.PNG");
 		URL dohyeonURL = getClass().getClassLoader().getResource("MapoGoldenPier.ttf");
 		URL mapoURL = getClass().getClassLoader().getResource("MapoGoldenPier.ttf");
-		URL iconURL = getClass().getClassLoader().getResource("hours22.jpg");
+		URL iconURL = getClass().getClassLoader().getResource("hours22.png");
 
 		Font font = null;
 		Font mapofont = null;
@@ -128,6 +128,7 @@ public class PCUI {
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
 		JPanel upPanel = new JPanel();
+		upPanel.setBorder(null);
 		upPanel.setBounds(0, 0, 320, 100);
 		upPanel.setBackground(SystemColor.control);
 		upPanel.setLayout(null);
@@ -162,9 +163,9 @@ public class PCUI {
 		});
 		upPanel.add(shutdownButton);
 
-		JLabel classID = new JLabel(pc.getClass_id());
+		JLabel classID = new JLabel(pc.getName());
 		classID.setFont(mapofont);
-		classID.setBounds(35, 75, 50, 20);
+		classID.setBounds(35, 75, 100, 20);
 		upPanel.add(classID);
 
 		JLabel version = new JLabel("현재 버전 : 1.0.13");
@@ -179,6 +180,7 @@ public class PCUI {
 		upPanel.add(home);
 
 		JPanel downPanel = new JPanel();
+		downPanel.setBorder(null);
 		downPanel.setBounds(0, 100, 320, 50); // x y x크기 y크기
 		downPanel.setBackground(Color.WHITE);
 		downPanel.setLayout(null);
@@ -232,7 +234,7 @@ public class PCUI {
 			public void actionPerformed(ActionEvent e) {
 				try {
 
-					Desktop.getDesktop().browse(new URI("https://damin8.github.io/"));
+					Desktop.getDesktop().browse(new URI("https://www.22hours.online/"));
 				} catch (IOException | URISyntaxException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
