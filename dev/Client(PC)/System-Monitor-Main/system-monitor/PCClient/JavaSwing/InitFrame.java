@@ -70,7 +70,7 @@ public class InitFrame {
 	}
 	
 	private void show() {
-		URL iconURL = getClass().getClassLoader().getResource("hours22.png");
+		URL iconURL = getClass().getClassLoader().getResource("SystemMonitor.png");
 		ImageIcon ic = new ImageIcon(iconURL);
 		
 		URL dohyeonURL = getClass().getClassLoader().getResource("MapoGoldenPier.ttf");

@@ -9,6 +9,7 @@ import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -104,7 +105,7 @@ public class PCUI {
 		URL homeURL = getClass().getClassLoader().getResource("Home.PNG");
 		URL dohyeonURL = getClass().getClassLoader().getResource("MapoGoldenPier.ttf");
 		URL mapoURL = getClass().getClassLoader().getResource("MapoGoldenPier.ttf");
-		URL iconURL = getClass().getClassLoader().getResource("hours22.png");
+		URL iconURL = getClass().getClassLoader().getResource("SystemMonitor.png");
 
 		Font font = null;
 		Font mapofont = null;
