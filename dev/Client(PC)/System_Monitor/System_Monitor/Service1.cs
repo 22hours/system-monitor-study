@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.ServiceProcess;
 using System.Text;
@@ -12,6 +13,9 @@ namespace System_Monitor
 {
     public partial class Service1 : ServiceBase
     {
+        private const string folderPath = "C:\\Users\\damin\\Downloads";
+        private const string filePath = folderPath + "\\service.txt";
+        StreamWriter sw;
         public Service1()
         {
             InitializeComponent();
@@ -19,15 +23,12 @@ namespace System_Monitor
 
         protected override void OnStart(string[] args)
         {
-            /*System.Diagnostics.Process ps = new System.Diagnostics.Process();
-            ps.StartInfo.FileName = "SystemMonitor.exe";
-            ps.StartInfo.WorkingDirectory= "C:\\Users\\damin\\source\\repos\\System_Monitor\\System_Monitor\\bin\\Release";
-            ps.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
-            ps.Start();
-            ps.WaitForExit(1000);*/
-            System.Diagnostics.Process p1 = new System.Diagnostics.Process("notepad.exe");
-            p1.Start();
+            string applicationName = "SystemMonitor.exe";
+            //string applicationName = "C:\\Users\\damin\\source\\repos\\System_Monitor\\System_Monitor\\bin\\Release\\SystemMonitor.exe";
+            ApplicationLoader.PROCESS_INFORMATION procInfo;
+            ApplicationLoader.StartProcessAndBypassUAC(applicationName, out procInfo);
         }
+
 
         protected override void OnStop()
         {
