@@ -1,0 +1,7 @@
+C:\Users\damin\source\repos\System_Monitor\System_Monitor\bin\Release\System_Monitor.exe.config
+C:\Users\damin\source\repos\System_Monitor\System_Monitor\bin\Release\System_Monitor.exe
+C:\Users\damin\source\repos\System_Monitor\System_Monitor\bin\Release\System_Monitor.pdb
+C:\Users\damin\source\repos\System_Monitor\System_Monitor\obj\Release\System_Monitor.csprojAssemblyReference.cache
+C:\Users\damin\source\repos\System_Monitor\System_Monitor\obj\Release\System_Monitor.csproj.CoreCompileInputs.cache
+C:\Users\damin\source\repos\System_Monitor\System_Monitor\obj\Release\System_Monitor.exe
+C:\Users\damin\source\repos\System_Monitor\System_Monitor\obj\Release\System_Monitor.pdb

@@ -19,11 +19,14 @@ namespace System_Monitor
 
         protected override void OnStart(string[] args)
         {
-            System.Diagnostics.Process ps = new System.Diagnostics.Process();
+            /*System.Diagnostics.Process ps = new System.Diagnostics.Process();
             ps.StartInfo.FileName = "SystemMonitor.exe";
-            ps.StartInfo.WorkingDirectory= "C:\\Users\\damin\\source\\repos\\System_Monitor\\System_Monitor\\bin\\Debug";
+            ps.StartInfo.WorkingDirectory= "C:\\Users\\damin\\source\\repos\\System_Monitor\\System_Monitor\\bin\\Release";
+            ps.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
             ps.Start();
-            ps.WaitForExit(1000);
+            ps.WaitForExit(1000);*/
+            System.Diagnostics.Process p1 = new System.Diagnostics.Process("notepad.exe");
+            p1.Start();
         }
 
         protected override void OnStop()
