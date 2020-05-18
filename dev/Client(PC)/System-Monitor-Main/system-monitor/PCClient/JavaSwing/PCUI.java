@@ -234,7 +234,6 @@ public class PCUI {
 		dev.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-
 					Desktop.getDesktop().browse(new URI("https://www.22hours.online/"));
 				} catch (IOException | URISyntaxException e1) {
 					// TODO Auto-generated catch block

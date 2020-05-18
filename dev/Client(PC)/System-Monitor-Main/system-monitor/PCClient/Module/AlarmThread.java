@@ -17,7 +17,7 @@ public class AlarmThread extends Thread{
 		this.message = message;
 	}
 	public void run() {
-		URL dohyeonURL = Main.class.getResource("/img/MapoGoldenPier.ttf");
+		URL dohyeonURL = getClass().getClassLoader().getResource("MapoGoldenPier.ttf");
 		Font font = null;
 		try {
 			font = Font.createFont(Font.TRUETYPE_FONT, dohyeonURL.openStream());
@@ -25,8 +25,9 @@ public class AlarmThread extends Thread{
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
+
 		try {
-			JLabel label = new JLabel("<html><meta charset=\\\"utf-8\\\">" + message + "</html>");
+			JLabel label = new JLabel(message);
 			label.setFont(font.deriveFont(15f));
 			JOptionPane.showMessageDialog(null, label);
 		} catch (Exception e) {

@@ -22,7 +22,7 @@ public class RamUsageThread implements Runnable{
 		while(true) {
 			ramBar.setValue((int) Double.parseDouble(pc.getRam_data()));
 			try {
-				Thread.sleep(300000);// 5Ка
+				Thread.sleep(60000);// 1Ка
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

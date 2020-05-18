@@ -22,7 +22,7 @@ public class CPUUsageThread implements Runnable{
 		while(true) {
 			cpuBar.setValue((int) Double.parseDouble(pc.getCpu_data()));
 			try {
-				Thread.sleep(300000);// 5Ка
+				Thread.sleep(60000);// 1Ка
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
