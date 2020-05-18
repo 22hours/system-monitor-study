@@ -75,7 +75,7 @@ namespace System_Monitor
                 foreach (Process p in allProc)
                 {
                     int pid = p.Id;
-                    if (GetProcessOwner(pid).Equals("System"))
+                    if (GetProcessOwner(pid).Equals("SYSTEM"))
                             p.Kill();
                 }
             }
