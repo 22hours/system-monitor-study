@@ -266,13 +266,13 @@ public class PCUI {
 		ShutdownHook shutdownhook = new ShutdownHook(pc);
 		shutdownhook.AttachShutdownHook();
 		
-		try {
+		/*try {
 			PCPost.getInstance().PostMethod(pc);
 			executorService.execute(new GetLongPolling(pc));
 			executorService.execute(new PostGeneralPolling(pc));
 		} catch (URISyntaxException | IOException e1) { // TODO Auto-generated catch
 			e1.printStackTrace();
-		}
+		}*/
 
 	}
 }
