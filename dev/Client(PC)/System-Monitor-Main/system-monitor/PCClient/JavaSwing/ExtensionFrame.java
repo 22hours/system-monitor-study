@@ -85,17 +85,17 @@ public class ExtensionFrame {
 		}
 		JPanel upPanel = new JPanel();
 		upPanel.setBounds(0, 0, 300, 60); // x y x크기 y크기
-		upPanel.setBackground(Color.LIGHT_GRAY);
+		upPanel.setBackground(new Color(192, 192, 192));
 		upPanel.setLayout(null);
 
 		JLabel header = new JLabel("PC 연장 신청");
 		header.setFont(font.deriveFont(20f));
 		header.setBounds(88, 5, 150, 50);
-		header.setForeground(Color.BLACK);
+		header.setForeground(Color.WHITE);
 		upPanel.add(header);
 
 		JPanel downPanel = new JPanel();
-		downPanel.setBounds(0, 60, 300, 260);
+		downPanel.setBounds(0, 60, 300, 230);
 		downPanel.setBackground(Color.WHITE);
 		downPanel.setLayout(null);
 
@@ -111,10 +111,9 @@ public class ExtensionFrame {
 
 		msg.setBounds(80, 138, 140, 20);
 		msg.setBorder(new LineBorder(Color.LIGHT_GRAY));
+		msg.setFont(font.deriveFont(15f));
 		String defaultTime = PCExtension.getInstance().Extension(pc, "1");
 		msg.setText(defaultTime);
-		msg.setFont(font.deriveFont(15f));
-		
 		downPanel.add(msg);
 
 		combo = new JComboBox<String>(extensionTime);
@@ -150,9 +149,12 @@ public class ExtensionFrame {
 				time = time.substring(0, 1);
 				doPost(time);
 				extensionFrame.setVisible(false);
+				combo.setSelectedIndex(0);
+				String defaultTime = PCExtension.getInstance().Extension(pc, "1");
+				msg.setText(defaultTime);
 			}
 		});
-		yesButton.setBounds(75, 198, 60, 25);
+		yesButton.setBounds(70, 188, 60, 25);
 		downPanel.add(yesButton);
 
 		final MyButton noButton = new MyButton("취소");
@@ -166,9 +168,12 @@ public class ExtensionFrame {
 		noButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				extensionFrame.setVisible(false);
+				combo.setSelectedIndex(0);
+				String defaultTime = PCExtension.getInstance().Extension(pc, "1");
+				msg.setText(defaultTime);
 			}
 		});
-		noButton.setBounds(170, 198, 60, 25);
+		noButton.setBounds(170, 188, 60, 25);
 		downPanel.add(noButton);
 
 		JPanel mainPanel = new JPanel();
@@ -196,8 +201,8 @@ public class ExtensionFrame {
 		extensionFrame.setUndecorated(true);
 		extensionFrame.setVisible(false);
 		extensionFrame.setResizable(false);
-		extensionFrame.setSize(300, 320);
-		extensionFrame.setShape(new RoundRectangle2D.Double(0, 0, 300, 320, 10, 10));
+		extensionFrame.setSize(300, 290);
+		extensionFrame.setShape(new RoundRectangle2D.Double(0, 0, 300, 290, 10, 10));
 	}
 
 	private void doPost(String time) {
