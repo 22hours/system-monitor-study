@@ -91,6 +91,7 @@ public class ExtensionFrame {
 		JLabel header = new JLabel("PC 연장 신청");
 		header.setFont(font.deriveFont(20f));
 		header.setBounds(88, 5, 150, 50);
+		header.setForeground(Color.BLACK);
 		upPanel.add(header);
 
 		JPanel downPanel = new JPanel();
@@ -110,6 +111,8 @@ public class ExtensionFrame {
 
 		msg.setBounds(80, 138, 140, 20);
 		msg.setBorder(new LineBorder(Color.LIGHT_GRAY));
+		String defaultTime = PCExtension.getInstance().Extension(pc, "1");
+		msg.setText(defaultTime);
 		msg.setFont(font.deriveFont(15f));
 		
 		downPanel.add(msg);
@@ -143,6 +146,9 @@ public class ExtensionFrame {
 		yesButton.setPressedBackgroundColor(Color.BLACK);
 		yesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				String time = combo.getSelectedItem().toString();
+				time = time.substring(0, 1);
+				doPost(time);
 				extensionFrame.setVisible(false);
 			}
 		});
@@ -195,7 +201,7 @@ public class ExtensionFrame {
 	}
 
 	private void doPost(String time) {
-		PCExtension.getInstance().Extension(pc, time);
+		PCExtension.getInstance().ExtensionService(pc, time);
 		try {
 			PCPost.getInstance().PostMethod(pc);
 		} catch (URISyntaxException | IOException e1) {

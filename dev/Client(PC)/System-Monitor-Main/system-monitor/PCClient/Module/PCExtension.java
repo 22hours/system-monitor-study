@@ -38,4 +38,19 @@ public class PCExtension {
 			return null;
 		}
 	}
+	
+	public void ExtensionService(PC pc, String extensionTime) {
+		SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd-HH-mm");
+		try {
+			Date endTimeDate = dayTime.parse(pc.getEnd_time());
+			long time = endTimeDate.getTime();
+			long tempTime = Integer.parseInt(extensionTime);
+			tempTime *= 3600000;
+			time += tempTime;
+			pc.setEnd_time(dayTime.format(new Date(time)));
+			
+		} catch (ParseException e1) {
+			e1.printStackTrace();
+		}
+	}
 }
