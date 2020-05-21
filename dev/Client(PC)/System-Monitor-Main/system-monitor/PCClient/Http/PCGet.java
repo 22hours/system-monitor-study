@@ -20,6 +20,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import PCClient.JavaSwing.RemainMessageFrame;
 import PCClient.Module.*;
 import PCClient.Module.Shutdown;
 import PCModel.PC;
@@ -82,6 +83,9 @@ public class PCGet {
 					} else if (pc.getRemainTime().equals("10")) {
 						pc.setRemainTime("5");
 					} else if (pc.getRemainTime().equals("5")) {
+						message+="분 남았습니다.";
+						System.out.println(message);
+						RemainMessageFrame.getInstance().show(message);
 						pc.setRemainTime("0");
 					} else if (pc.getRemainTime().equals("0")) {
 						//Shutdown.getInstance().shutdown("300");
@@ -91,8 +95,8 @@ public class PCGet {
 					}
 					if (!pc.getRemainTime().equals("0")) {
 						message+="분 남았습니다.";
-						Thread alarmThread = new AlarmThread(message);
-						alarmThread.start();
+						System.out.println(message);
+						RemainMessageFrame.getInstance().show(message);
 					}
 				}
 			}

@@ -14,7 +14,7 @@ public class PostGeneralPolling implements Runnable{
 		try {
 			while (true) {
 				PCPost.getInstance().GeneralPollingPost(pc);
-				Thread.sleep(300000); // 5Ка
+				Thread.sleep(60000); // 1Ка
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

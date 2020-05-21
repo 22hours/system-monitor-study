@@ -9,6 +9,7 @@ import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -36,12 +37,15 @@ import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
+import DataBase.CreateTable;
+import DataBase.ReadData;
 import PCClient.Http.PCPost;
 import PCClient.Module.GetLongPolling;
 import PCClient.Module.GetMACAddress;
 import PCClient.Module.PostGeneralPolling;
 import PCClient.Module.ShutdownHook;
 import PCClient.Module.TimerThread;
+import PCModel.ClassInfo;
 import PCModel.PC;
 import sun.applet.Main;
 
@@ -51,31 +55,15 @@ import javax.swing.SwingConstants;
 import javax.swing.JButton;
 
 public class PCUI {
-	private JFrame frame;
 	ExecutorService executorService = Executors.newFixedThreadPool(10);
-	/**
-	 * @wbp.nonvisual location=109,224
-	 */
-	private final JButton button = new JButton("New button");
-
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					PCUI window = new PCUI();
-					// --window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the application.
-	 */
-	public PCUI() {
+	private static PCUI instance = null;
+	private JFrame frame;
+	private PCUI() {
 		initialize();
+	}
+	public static void show() {
+		if(instance==null)
+			instance = new PCUI();
 	}
 
 	private WindowAdapter getWindowAdapter() {
@@ -96,20 +84,35 @@ public class PCUI {
 		GetMACAddress MAC = new GetMACAddress();
 		String pid = MAC.getLocalMacAddress();
 		final PC pc = new PC(pid);
-		URL shutdownURL = Main.class.getResource("/img/stop22.png");
-		URL shutdownPressedURL = Main.class.getResource("/img/stop11.png");
-		URL homeURL = Main.class.getResource("/img/Home.PNG");
-		URL dohyeonURL = Main.class.getResource("/img/MapoGoldenPier.ttf");
-		URL mapoURL = Main.class.getResource("/img/MapoGoldenPier.ttf");
-		URL iconURL = Main.class.getResource("/img/hours22.jpg");
 		
+		ClassInfo classInfo = ReadData.getInstance().readData();
+		System.out.println("Read Data = " + classInfo.toString());
+
+		String dbname = classInfo.getName();
+		String dbclassID = classInfo.getClassID();
+		int dbposR = classInfo.getPosR();
+		int dbposC = classInfo.getPosC();
+		
+
+		pc.setName(dbname);
+		pc.setClass_id(dbclassID);
+		pc.setPosR(dbposR);
+		pc.setPosC(dbposC);
+		pc.setId(dbname);
+		
+		URL shutdownURL = getClass().getClassLoader().getResource("stop22.png");
+		URL shutdownPressedURL = getClass().getClassLoader().getResource("stop11.png");
+		URL homeURL = getClass().getClassLoader().getResource("Home.PNG");
+		URL dohyeonURL = getClass().getClassLoader().getResource("MapoGoldenPier.ttf");
+		URL mapoURL = getClass().getClassLoader().getResource("MapoGoldenPier.ttf");
+		URL iconURL = getClass().getClassLoader().getResource("SystemMonitor.png");
+
 		Font font = null;
 		Font mapofont = null;
 		try {
 			font = Font.createFont(Font.TRUETYPE_FONT, dohyeonURL.openStream());
 			mapofont = Font.createFont(Font.TRUETYPE_FONT, mapoURL.openStream());
 		} catch (FontFormatException | IOException e2) {
-			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -121,11 +124,12 @@ public class PCUI {
 		frame = new JFrame();
 		ImageIcon ic = new ImageIcon(iconURL);
 		frame.setIconImage(ic.getImage());
-		
+
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
 		JPanel upPanel = new JPanel();
+		upPanel.setBorder(null);
 		upPanel.setBounds(0, 0, 320, 100);
 		upPanel.setBackground(SystemColor.control);
 		upPanel.setLayout(null);
@@ -159,10 +163,10 @@ public class PCUI {
 			}
 		});
 		upPanel.add(shutdownButton);
-		
-		JLabel classID = new JLabel(pc.getClass_id());
+
+		JLabel classID = new JLabel(pc.getName());
 		classID.setFont(mapofont);
-		classID.setBounds(35, 72, 50, 20);
+		classID.setBounds(35, 75, 100, 20);
 		upPanel.add(classID);
 
 		JLabel version = new JLabel("현재 버전 : 1.0.13");
@@ -173,10 +177,11 @@ public class PCUI {
 		upPanel.add(version);
 
 		JLabel home = new JLabel(new ImageIcon(homeURL));
-		home.setBounds(10, 73, 26, 18);
+		home.setBounds(10, 76, 26, 18);
 		upPanel.add(home);
 
 		JPanel downPanel = new JPanel();
+		downPanel.setBorder(null);
 		downPanel.setBounds(0, 100, 320, 50); // x y x크기 y크기
 		downPanel.setBackground(Color.WHITE);
 		downPanel.setLayout(null);
@@ -210,7 +215,7 @@ public class PCUI {
 		userData.setFocusPainted(false);
 		userData.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				UserInfo.getInstance().show(frame,pc);
+				UserInfo.getInstance().show(frame, pc);
 			}
 		});
 		downPanel.add(userData);
@@ -229,8 +234,7 @@ public class PCUI {
 		dev.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-
-					Desktop.getDesktop().browse(new URI("https://damin8.github.io/"));
+					Desktop.getDesktop().browse(new URI("https://www.22hours.online/"));
 				} catch (IOException | URISyntaxException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -261,14 +265,14 @@ public class PCUI {
 		executorService.execute(new TimerThread(label, pc));
 		ShutdownHook shutdownhook = new ShutdownHook(pc);
 		shutdownhook.AttachShutdownHook();
-
-		try {
+		
+		/*try {
 			PCPost.getInstance().PostMethod(pc);
 			executorService.execute(new GetLongPolling(pc));
 			executorService.execute(new PostGeneralPolling(pc));
 		} catch (URISyntaxException | IOException e1) { // TODO Auto-generated catch
 			e1.printStackTrace();
-		}
+		}*/
 
 	}
 }
