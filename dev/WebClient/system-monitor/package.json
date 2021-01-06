@@ -14,7 +14,7 @@
         "apollo-client": "2.x",
         "apollo-link": "^1.2.13",
         "apollo-link-rest": "0.x",
-        "axios": "^0.19.2",
+        "axios": "^0.21.1",
         "bootstrap": "^4.4.1",
         "graphql": "^0.13.2",
         "graphql-anywhere": "4.x",
